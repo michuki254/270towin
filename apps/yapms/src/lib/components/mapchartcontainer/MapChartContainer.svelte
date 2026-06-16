@@ -25,8 +25,10 @@
 	class:flex-row={$ChartPositionStore === 'left'}
 >
 	<ChartArea />
-	<div class="overflow-hidden w-full h-full">
+	<div class="overflow-hidden w-full h-full flex flex-col">
 		<CandidateBoxContainer margins={$PresentationModeStore.enabled} />
-		{@render children()}
+		<div class="flex-1 min-h-0">
+			{@render children()}
+		</div>
 	</div>
 </div>

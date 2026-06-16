@@ -5,10 +5,8 @@
 	import EditRegionModal from '$lib/components/modals/editregionmodal/EditRegionModal.svelte';
 	import OptionsModal from '$lib/components/modals/optionsmodal/OptionsModal.svelte';
 	import ModeModal from '$lib/components/modals/modemodal/ModeModal.svelte';
-	import AuthModal from '$lib/components/modals/authmodal/AuthModal.svelte';
 	import LoadingErrorModal from '$lib/components/modals/loadingerrormodal/LoadingErrorModal.svelte';
 	import ShareModal from '$lib/components/modals/sharemodal/ShareModal.svelte';
-	import ImportModal from '$lib/components/modals/importmodal/ImportModal.svelte';
 	import CandidateModal from '$lib/components/modals/candidatemodal/CandidateModal.svelte';
 	import { InteractionStore } from '$lib/stores/Interaction';
 	import { handleCandidateSelectionShortcut } from '$lib/stores/Candidates';
@@ -21,7 +19,6 @@
 	import AddCandidateModal from '$lib/components/modals/candidatemodal/AddCandidateModal.svelte';
 	import AddCustomColorModal from '$lib/components/modals/candidatemodal/customcolors/AddCustomColorModal.svelte';
 	import EditCustomColorModal from '$lib/components/modals/candidatemodal/customcolors/EditCustomColorModal.svelte';
-	import ThemeModal from '$lib/components/modals/thememodal/ThemeModal.svelte';
 	import RegionTooltip from '$lib/components/tooltips/RegionTooltip.svelte';
 	import { browser } from '$app/environment';
 	import { SideBarStore } from '$lib/stores/SideBar';
@@ -124,15 +121,9 @@
 
 <ModeModal />
 
-<ThemeModal />
-
-<AuthModal />
-
 <LoadingErrorModal />
 
 <ShareModal />
-
-<ImportModal />
 
 <ToolsModal />
 

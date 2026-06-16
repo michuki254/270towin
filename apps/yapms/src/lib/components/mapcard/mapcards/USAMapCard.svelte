@@ -9,12 +9,12 @@
 			routes: [
 				{
 					label: 'Presidential 2028',
-					route: '/app/usa/presidential/2028/blank'
+					route: '/2028-presidential-election-interactive-map'
 				},
 				{
 					label: '2024 Results',
 					modalLabel: '2024 Presidential Results',
-					route: '/app/usa/presidential/2024310/results'
+					route: '/2024-presidential-election-results'
 				}
 			]
 		},

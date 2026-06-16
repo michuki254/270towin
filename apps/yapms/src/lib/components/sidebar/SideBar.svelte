@@ -3,7 +3,6 @@
 	import { SideBarStore } from '$lib/stores/SideBar';
 	import { PresentationModeStore } from '$lib/stores/PresentationMode';
 	import { onMount } from 'svelte';
-	import Shortcuts from './sections/shortcuts/Shortcuts.svelte';
 	import SavedMaps from './sections/savedmaps/SavedMaps.svelte';
 	import Sources from './sections/sources/Sources.svelte';
 	import SocialLinkGrid from '../links/SocialLinkGrid.svelte';
@@ -33,7 +32,6 @@
 			data-ad-slot="7948019306"
 			data-full-width-responsive="true"
 		></ins>
-		<Shortcuts />
 		<RegionSearch />
 		{#if $PocketBaseStore.authStore.isValid}
 			<SavedMaps />

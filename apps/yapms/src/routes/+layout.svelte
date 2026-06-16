@@ -2,6 +2,17 @@
 	import '$lib/styles/global.css';
 	import '@fontsource/roboto/400.css';
 	import { PUBLIC_UMAMI_URI, PUBLIC_UMAMI_DATA_WEBSITE_ID } from '$env/static/public';
+	import SiteNav from '$lib/components/sitenav/SiteNav.svelte';
+	import ImportModal from '$lib/components/modals/importmodal/ImportModal.svelte';
+	import ThemeModal from '$lib/components/modals/thememodal/ThemeModal.svelte';
+	import AuthModal from '$lib/components/modals/authmodal/AuthModal.svelte';
+	import { page } from '$app/stores';
+	import type { LayoutData } from './$types';
+
+	export let data: LayoutData;
+
+	// Hide the site nav when a page is loaded in embed mode (e.g. the home page hero iframe).
+	$: embed = $page.url.searchParams.has('embed');
 </script>
 
 <svelte:head>
@@ -14,4 +25,15 @@
 	></script>
 </svelte:head>
 
-<slot />
+<div class="flex flex-col h-full">
+	{#if !embed}
+		<SiteNav searchData={data.post.search} />
+	{/if}
+	<div class="flex-1 min-h-0">
+		<slot />
+	</div>
+</div>
+
+<ImportModal />
+<ThemeModal />
+<AuthModal />

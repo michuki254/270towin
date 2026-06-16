@@ -8,6 +8,8 @@ RUN go mod download
 
 COPY main.go ./
 
+COPY support/ ./support/
+
 COPY migrations/* ./migrations/
 
 RUN go build

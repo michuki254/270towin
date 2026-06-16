@@ -24,10 +24,15 @@ function applyPanZoom(svg: SVGElement) {
 		panZoomSettings.panzoom.dispose();
 	}
 	const panzoomInstance = panzoom(svg, {
-		maxZoom: 500,
+		// Lock the zoom scale so the map cannot be zoomed in or out
+		// (wheel, pinch and double-click are all clamped to scale 1). Panning still works.
+		minZoom: 1,
+		maxZoom: 1,
 		autocenter: true,
 		zoomDoubleClickSpeed: 1,
 		smoothScroll: false,
+		// Ignore wheel events so they scroll the page instead of zooming the map.
+		beforeWheel: () => true,
 		onTouch: (event) => {
 			if (event.touches.length >= 2) {
 				event.preventDefault();
@@ -43,7 +48,10 @@ function applyPanZoom(svg: SVGElement) {
 
 function applyFastPanZoom(svg: SVGElement) {
 	const panzoomInstance = panzoom(svg, {
-		autocenter: true
+		minZoom: 1,
+		maxZoom: 1,
+		autocenter: true,
+		beforeWheel: () => true
 	});
 	panZoomSettings = { panzoom: panzoomInstance, svg };
 	connectZoomAndStroke();
