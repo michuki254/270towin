@@ -13,7 +13,7 @@
 		since: number;
 		term: number;
 		rating: Rating;
-		market: number;
+		market?: number;
 		photo: string;
 		initials: string;
 	};
@@ -88,7 +88,8 @@
 				party: 'Democratic',
 				since: 2021,
 				term: 1,
-				rating: 'Toss-Up',
+				// Sabato moved GA to Likely Democratic on 30 Jul 2026.
+				rating: 'Likely',
 				market: 50,
 				photo: '/candidate-headshots/senate/jon-ossoff.jpg',
 				initials: 'JO'
@@ -99,7 +100,7 @@
 				party: 'Republican',
 				since: 2023,
 				term: 1,
-				rating: 'Toss-Up',
+				rating: 'Likely',
 				market: 49,
 				photo: '/candidate-headshots/senate/mike-collins.jpg',
 				initials: 'MC'
@@ -110,7 +111,7 @@
 				party: 'Republican',
 				since: 1997,
 				term: 5,
-				rating: 'Tilt',
+				rating: 'Toss-Up',
 				market: 54,
 				photo: '/candidate-headshots/senate/susan-collins.jpg',
 				initials: 'SC'
@@ -143,7 +144,7 @@
 				party: 'Republican',
 				since: 2021,
 				term: 3,
-				rating: 'Tilt',
+				rating: 'Toss-Up',
 				market: 53,
 				photo: '/candidate-headshots/senate/ashley-hinson.jpg',
 				initials: 'AH'
@@ -154,7 +155,7 @@
 				party: 'Democratic',
 				since: 2023,
 				term: 1,
-				rating: 'Tilt',
+				rating: 'Toss-Up',
 				market: 47,
 				photo: '/candidate-headshots/senate/josh-turek.jpg',
 				initials: 'JT'
@@ -207,6 +208,74 @@
 				market: 42,
 				photo: '/candidate-headshots/senate/john-sununu.jpg',
 				initials: 'JS'
+			},
+			// Ohio special: Husted was appointed to JD Vance's seat and must stand
+			// in 2026 for the remainder of the term through 2028. Sherrod Brown won
+			// the Democratic primary. Sabato rates it Toss-up.
+			{
+				state: 'OH',
+				candidate: 'Jon Husted',
+				party: 'Republican',
+				since: 2025,
+				term: 1,
+				rating: 'Toss-Up',
+				photo: '',
+				initials: 'JH'
+			},
+			{
+				state: 'OH',
+				candidate: 'Sherrod Brown',
+				party: 'Democratic',
+				since: 2027,
+				term: 1,
+				rating: 'Toss-Up',
+				photo: '',
+				initials: 'SB'
+			},
+			// Alaska is a Toss-up: Peltola out-raised Sullivan more than three to
+			// one in the most recent quarter.
+			{
+				state: 'AK',
+				candidate: 'Dan Sullivan',
+				party: 'Republican',
+				since: 2015,
+				term: 3,
+				rating: 'Toss-Up',
+				photo: '',
+				initials: 'DS'
+			},
+			{
+				state: 'AK',
+				candidate: 'Mary Peltola',
+				party: 'Democratic',
+				since: 2027,
+				term: 1,
+				rating: 'Toss-Up',
+				photo: '',
+				initials: 'MP'
+			},
+			// Kansas: Sabato shifted Safe -> Likely Republican on 5 Aug 2026 after
+			// Rev. Adam Hamilton won the Democratic primary, having out-raised
+			// Marshall by $3.09m last quarter.
+			{
+				state: 'KS',
+				candidate: 'Roger Marshall',
+				party: 'Republican',
+				since: 2021,
+				term: 1,
+				rating: 'Likely',
+				photo: '',
+				initials: 'RM'
+			},
+			{
+				state: 'KS',
+				candidate: 'Adam Hamilton',
+				party: 'Democratic',
+				since: 2027,
+				term: 1,
+				rating: 'Likely',
+				photo: '',
+				initials: 'AH'
 			}
 		],
 		2028: [
@@ -670,15 +739,21 @@
 										</span>
 									</td>
 									<td class="px-4 py-3">
-										<div class="flex items-center gap-3">
-											<div class="h-2 w-28 rounded-full bg-neutral-100">
-												<div
-													class="h-2 rounded-full bg-[#1f9d55]"
-													style={`width:${race.market}%`}
-												></div>
+										{#if race.market != null}
+											<div class="flex items-center gap-3">
+												<div class="h-2 w-28 rounded-full bg-neutral-100">
+													<div
+														class="h-2 rounded-full bg-[#1f9d55]"
+														style={`width:${race.market}%`}
+													></div>
+												</div>
+												<span class="w-12 text-right font-black text-[#157347]">{race.market}%</span>
 											</div>
-											<span class="w-12 text-right font-black text-[#157347]">{race.market}%</span>
-										</div>
+										{:else}
+											<!-- No sourced market figure for this race; a dash is honest,
+											     an invented percentage would not be. -->
+											<span class="text-xs font-semibold text-neutral-400">—</span>
+										{/if}
 									</td>
 								</tr>
 							{/each}
