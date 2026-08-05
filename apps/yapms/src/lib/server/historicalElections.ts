@@ -10,13 +10,31 @@ export type CandidateResult = {
 	portrait: string | null;
 };
 
+/* Which portraits ship with the build, resolved at BUILD time.
+ *
+ * This previously did fs.existsSync('./static/portraits/<slug>.jpg') at
+ * runtime. That works in dev, where the cwd is the app directory, and fails
+ * silently in production: the adapter output runs from /app with the images
+ * served out of client/portraits and no ./static directory at all. Every
+ * lookup returned null, so all 96 portraits existed on disk and none were
+ * ever shown — every card fell back to initials.
+ *
+ * import.meta.glob is evaluated by Vite when bundling, so the filename set is
+ * baked in and there is no filesystem access at request time. Keys only — the
+ * images are static assets and must not be bundled. */
+const PORTRAIT_FILES = new Set(
+	Object.keys(import.meta.glob('/static/portraits/*.jpg')).map((p) =>
+		p.slice(p.lastIndexOf('/') + 1).replace(/\.jpg$/, '')
+	)
+);
+
 /** Build a portrait URL for a candidate name, or null if no image is bundled. */
 function portraitFor(name: string): string | null {
 	const slug = name
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, '-')
 		.replace(/^-+|-+$/g, '');
-	return fs.existsSync(`./static/portraits/${slug}.jpg`) ? `/portraits/${slug}.jpg` : null;
+	return PORTRAIT_FILES.has(slug) ? `/portraits/${slug}.jpg` : null;
 }
 export type ElectionData = {
 	year: string; // display year, e.g. "1860"
