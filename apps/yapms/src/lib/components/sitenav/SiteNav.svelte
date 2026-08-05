@@ -19,7 +19,7 @@
 		{ label: 'News', href: '/news', items: [] },
 		{
 			label: 'President',
-			href: '/2028-presidential-election',
+			href: '/2028-presidential-election-interactive-map',
 			kicker: 'Electoral College',
 			description: 'Build presidential paths to 270, review certified results, and compare every historical election cycle.',
 			image: '/path-to-win-logo.svg',
@@ -41,12 +41,18 @@
 					href: '/historical-presidential-elections',
 					description: 'Explore presidential maps from early elections through the modern era.',
 					image: '/portraits/abraham-lincoln.jpg'
+				},
+				{
+					label: '2028 Presidential Hub',
+					href: '/2028-presidential-election',
+					description: 'Overview page: ratings, key states, and cycle context.',
+					image: '/path-to-win-logo.svg'
 				}
 			]
 		},
 		{
 			label: 'Senate',
-			href: '/2026-senate-election',
+			href: '/2026-senate-interactive-map',
 			kicker: 'Chamber Control',
 			description: 'Track the balance of power across Senate classes, current forecasts, and historical cycles.',
 			image: '/party-logos/democrats.png',
@@ -68,12 +74,18 @@
 					href: '/historical-senate-elections',
 					description: 'Cycle-by-cycle Senate maps and chamber balance summaries.',
 					image: '/party-logos/democrats.png'
+				},
+				{
+					label: '2026 Senate Hub',
+					href: '/2026-senate-election',
+					description: 'Overview page: chamber balance, classes, and cycle context.',
+					image: '/path-to-win-logo.svg'
 				}
 			]
 		},
 		{
 			label: 'House',
-			href: '/2026-house-election',
+			href: '/2026-house-interactive-map',
 			kicker: 'District Battles',
 			description: 'Use district-level maps and race tables to model the path to a House majority.',
 			image: '/party-logos/republicans.png',
@@ -95,12 +107,18 @@
 					href: '/#state-maps',
 					description: 'Browse state legislative and regional map tools.',
 					image: '/path-to-win-logo.svg'
+				},
+				{
+					label: '2026 House Hub',
+					href: '/2026-house-election',
+					description: 'Overview page: majority maths and district-level context.',
+					image: '/path-to-win-logo.svg'
 				}
 			]
 		},
 		{
 			label: 'Governor',
-			href: '/2026-governor-election',
+			href: '/2026-governor-interactive-map',
 			kicker: 'State Executives',
 			description: 'Forecast gubernatorial races with candidate tables, ratings, and future election tabs.',
 			image: '/favicon.svg',
@@ -122,6 +140,12 @@
 					href: '/historical-governor-elections',
 					description: 'Governor results by year with state-by-state historical context.',
 					image: '/party-logos/democrats.png'
+				},
+				{
+					label: '2026 Governor Hub',
+					href: '/2026-governor-election',
+					description: 'Overview page: seats up, open races, and cycle context.',
+					image: '/path-to-win-logo.svg'
 				}
 			]
 		},
@@ -277,16 +301,47 @@
 						onmouseenter={() => openMegaMenu(item.label)}
 						onmouseleave={closeMegaMenu}
 					>
-						<button
-							type="button"
-							aria-haspopup="true"
-							aria-expanded={openMenu === item.label}
-							class="cursor-pointer select-none rounded px-4 py-2.5 transition-colors hover:bg-[#b60b03]"
-							onclick={() => toggleMegaMenu(item.label)}
-							onfocus={() => openMegaMenu(item.label)}
-						>
-							{item.label}
-						</button>
+						<!-- Split control: the label is a real link straight to the
+						     interactive map, and the chevron opens the menu.
+						     A single <button> meant clicking "Senate" only toggled a
+						     dropdown and never went anywhere; a plain <a> would have
+						     fixed that but stranded touch users, since there is no
+						     hamburger here and tapping is the only way they reach the
+						     submenu. Desktop still opens on hover and on focus. -->
+						<span class="flex items-stretch rounded transition-colors hover:bg-[#b60b03]">
+							<a
+								class="select-none py-2.5 pl-4 pr-1"
+								href={item.href}
+								onfocus={() => openMegaMenu(item.label)}
+								onclick={() => (openMenu = undefined)}
+							>
+								{item.label}
+							</a>
+							<button
+								type="button"
+								aria-haspopup="true"
+								aria-expanded={openMenu === item.label}
+								aria-label={`${item.label} menu`}
+								class="cursor-pointer select-none py-2.5 pl-1 pr-3"
+								onclick={() => toggleMegaMenu(item.label)}
+								onfocus={() => openMegaMenu(item.label)}
+							>
+								<svg
+									class={`h-3 w-3 transition-transform ${openMenu === item.label ? 'rotate-180' : ''}`}
+									viewBox="0 0 12 12"
+									fill="none"
+									aria-hidden="true"
+								>
+									<path
+										d="M2.5 4.5 6 8l3.5-3.5"
+										stroke="currentColor"
+										stroke-width="1.6"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+								</svg>
+							</button>
+						</span>
 						{#if openMenu === item.label}
 						<div
 							class={`absolute top-full z-50 pt-2 ${item.label === 'More' ? 'right-0' : 'left-0'}`}
