@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { PocketBaseStore } from '$lib/stores/PocketBase';
+	import { browser } from '$app/environment';
+	import { PUBLIC_POCKETBASE_URI } from '$env/static/public';
 
-	const authMethods = $PocketBaseStore.collection('users').listAuthMethods();
+	const authMethods =
+		browser && PUBLIC_POCKETBASE_URI
+			? $PocketBaseStore.collection('users').listAuthMethods()
+			: Promise.resolve({ oauth2: { providers: [] } });
 
 	async function authenticate(provider: string) {
 		await $PocketBaseStore.collection('users').authWithOAuth2({

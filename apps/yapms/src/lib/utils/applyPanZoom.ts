@@ -6,6 +6,7 @@ import z from 'zod';
 
 let panZoomSettings: { panzoom: PanZoom; svg: SVGElement } | undefined;
 let autoStrokeSettings: { initStroke: number; upperStroke: number; svg: SVGElement } | undefined;
+let removeDoubleClickBlocker: (() => void) | undefined;
 
 LockMapStore.subscribe((locked) => {
 	lockMap(locked);
@@ -23,6 +24,7 @@ function applyPanZoom(svg: SVGElement) {
 	if (panZoomSettings !== undefined) {
 		panZoomSettings.panzoom.dispose();
 	}
+	blockDoubleClickZoom(svg);
 	const panzoomInstance = panzoom(svg, {
 		// Lock the zoom scale so the map cannot be zoomed in or out
 		// (wheel, pinch and double-click are all clamped to scale 1). Panning still works.
@@ -47,6 +49,7 @@ function applyPanZoom(svg: SVGElement) {
 }
 
 function applyFastPanZoom(svg: SVGElement) {
+	blockDoubleClickZoom(svg);
 	const panzoomInstance = panzoom(svg, {
 		minZoom: 1,
 		maxZoom: 1,
@@ -55,6 +58,18 @@ function applyFastPanZoom(svg: SVGElement) {
 	});
 	panZoomSettings = { panzoom: panzoomInstance, svg };
 	connectZoomAndStroke();
+}
+
+function blockDoubleClickZoom(svg: SVGElement) {
+	removeDoubleClickBlocker?.();
+	const handleDoubleClick = (event: MouseEvent) => {
+		event.preventDefault();
+		event.stopImmediatePropagation();
+	};
+	svg.addEventListener('dblclick', handleDoubleClick, { capture: true });
+	removeDoubleClickBlocker = () => {
+		svg.removeEventListener('dblclick', handleDoubleClick, { capture: true });
+	};
 }
 
 function applyAutoStroke(svg: SVGElement) {

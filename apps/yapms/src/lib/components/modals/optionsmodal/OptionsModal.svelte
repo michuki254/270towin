@@ -14,11 +14,16 @@
 	import { PUBLIC_POCKETBASE_URI } from '$env/static/public';
 	import { RegionTextsStore } from '$lib/stores/RegionTextsStore';
 	import { RegionStrokeColorStore } from '$lib/stores/RegionStrokeColorStore';
+	import { browser } from '$app/environment';
 
 	let logoFile: FileList | undefined = $state();
 	let logoFileInput: HTMLInputElement | undefined;
 
-	let logos = $derived($PocketBaseStore.collection('creator_logos').getFullList());
+	let logos = $derived(
+		browser && PUBLIC_POCKETBASE_URI
+			? $PocketBaseStore.collection('creator_logos').getFullList()
+			: Promise.resolve([])
+	);
 
 	const chartTypeValues = ['pie', 'doughnut', 'battle', 'arch', 'none'];
 	const chartPositionValues = ['bottom', 'left'];

@@ -20,14 +20,20 @@
 		onToggle: (folderID: string) => void;
 	} = $props();
 
-	let maps = $state<Promise<RecordModel[]>>(
-		open
+	let maps = $state<Promise<RecordModel[]>>(Promise.resolve([]));
+
+	function loadMaps() {
+		maps = open
 			? $PocketBaseStore.collection('user_maps').getFullList({
 					filter: `folder = '${folderID}'`,
 					requestKey: null
 				})
-			: Promise.resolve([])
-	);
+			: Promise.resolve([]);
+	}
+
+	$effect(() => {
+		loadMaps();
+	});
 
 	let submitting = $state(false);
 
@@ -58,12 +64,7 @@
 	});
 
 	function onCheck() {
-		if (open) {
-			maps = $PocketBaseStore.collection('user_maps').getFullList({
-				filter: `folder = '${folderID}'`,
-				requestKey: null
-			});
-		}
+		loadMaps();
 		onToggle(folderID);
 	}
 </script>

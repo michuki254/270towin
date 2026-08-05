@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
 </script>
@@ -80,4 +81,5 @@
 			page to view and modify the full map.
 		</footer>
 	</article>
+	<SiteFooter />
 </div>

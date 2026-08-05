@@ -1,0 +1,2969 @@
+{
+	"source": "https://en.wikipedia.org/wiki/United_States_gubernatorial_elections",
+	"generatedAt": "2026-06-17T20:38:35.578Z",
+	"parties": {
+		"D": {
+			"id": "0",
+			"name": "Democrats",
+			"color": "#1C408C"
+		},
+		"R": {
+			"id": "1",
+			"name": "Republicans",
+			"color": "#BF1D29"
+		},
+		"I": {
+			"id": "2",
+			"name": "Independents",
+			"color": "#6b7280"
+		},
+		"O": {
+			"id": "3",
+			"name": "Other",
+			"color": "#8a6f45"
+		}
+	},
+	"cycles": {
+		"1976": {
+			"year": "1976",
+			"token": "1976",
+			"races": {
+				"AR": {
+					"party": "D"
+				},
+				"DE": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "R"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "D"
+				},
+				"MT": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"UT": {
+					"party": "D"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 9,
+				"R": 5
+			},
+			"officialBalance": {
+				"D": 37,
+				"R": 12,
+				"O": 1
+			},
+			"seatsWon": {
+				"D": 9,
+				"R": 5
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1976_United_States_gubernatorial_elections&action=raw"
+		},
+		"1977": {
+			"year": "1977",
+			"token": "1977",
+			"races": {
+				"NJ": {
+					"party": "D"
+				},
+				"VA": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 1,
+				"R": 1
+			},
+			"officialBalance": {
+				"D": 37,
+				"R": 12,
+				"O": 1
+			},
+			"seatsWon": {
+				"D": 1,
+				"R": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1977_United_States_gubernatorial_elections&action=raw"
+		},
+		"1978": {
+			"year": "1978",
+			"token": "1978",
+			"races": {
+				"AL": {
+					"party": "D"
+				},
+				"AK": {
+					"party": "R"
+				},
+				"AZ": {
+					"party": "D"
+				},
+				"AR": {
+					"party": "D"
+				},
+				"CA": {
+					"party": "D"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "D"
+				},
+				"FL": {
+					"party": "D"
+				},
+				"GA": {
+					"party": "D"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "D"
+				},
+				"IL": {
+					"party": "R"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "D"
+				},
+				"ME": {
+					"party": "D"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "D"
+				},
+				"MI": {
+					"party": "R"
+				},
+				"MN": {
+					"party": "R"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NM": {
+					"party": "D"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "D"
+				},
+				"OR": {
+					"party": "R"
+				},
+				"PA": {
+					"party": "R"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"SC": {
+					"party": "D"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "R"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WI": {
+					"party": "R"
+				},
+				"WY": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 21,
+				"R": 15
+			},
+			"officialBalance": {
+				"D": 32,
+				"R": 18,
+				"I": 0
+			},
+			"seatsWon": {
+				"D": 21,
+				"R": 15,
+				"I": 0
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1978_United_States_gubernatorial_elections&action=raw"
+		},
+		"1979": {
+			"year": "1979",
+			"token": "1979",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "R"
+				},
+				"MS": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 2,
+				"R": 1
+			},
+			"officialBalance": {
+				"D": 31,
+				"R": 19
+			},
+			"seatsWon": {
+				"D": 2,
+				"R": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1979_United_States_gubernatorial_elections&action=raw"
+		},
+		"1980": {
+			"year": "1980",
+			"token": "1980",
+			"races": {
+				"AR": {
+					"party": "R"
+				},
+				"DE": {
+					"party": "R"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "R"
+				},
+				"MT": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"UT": {
+					"party": "D"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WA": {
+					"party": "R"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 7,
+				"D": 6
+			},
+			"officialBalance": {
+				"D": 27,
+				"R": 23
+			},
+			"seatsWon": {
+				"D": 6,
+				"R": 7
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1980_United_States_gubernatorial_elections&action=raw"
+		},
+		"1981": {
+			"year": "1981",
+			"token": "1981",
+			"races": {
+				"NJ": {
+					"party": "R"
+				},
+				"VA": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 1,
+				"D": 1
+			},
+			"officialBalance": {
+				"D": 27,
+				"R": 23
+			},
+			"seatsWon": {
+				"D": 1,
+				"R": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1981_United_States_gubernatorial_elections&action=raw"
+		},
+		"1982": {
+			"year": "1982",
+			"token": "1982",
+			"races": {
+				"AL": {
+					"party": "D"
+				},
+				"AK": {
+					"party": "D"
+				},
+				"AZ": {
+					"party": "D"
+				},
+				"AR": {
+					"party": "D"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "D"
+				},
+				"FL": {
+					"party": "D"
+				},
+				"GA": {
+					"party": "D"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "D"
+				},
+				"IL": {
+					"party": "R"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "D"
+				},
+				"ME": {
+					"party": "D"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "D"
+				},
+				"MI": {
+					"party": "D"
+				},
+				"MN": {
+					"party": "D"
+				},
+				"NE": {
+					"party": "D"
+				},
+				"NV": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NM": {
+					"party": "D"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "D"
+				},
+				"OK": {
+					"party": "D"
+				},
+				"OR": {
+					"party": "R"
+				},
+				"PA": {
+					"party": "R"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"SC": {
+					"party": "D"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "R"
+				},
+				"TX": {
+					"party": "D"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WI": {
+					"party": "D"
+				},
+				"WY": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 27,
+				"R": 8
+			},
+			"officialBalance": {
+				"D": 34,
+				"R": 16
+			},
+			"seatsWon": {
+				"D": 27,
+				"R": 9
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1982_United_States_gubernatorial_elections&action=raw"
+		},
+		"1983": {
+			"year": "1983",
+			"token": "1983",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "D"
+				},
+				"MS": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 3
+			},
+			"officialBalance": {
+				"D": 35,
+				"R": 15
+			},
+			"seatsWon": {
+				"D": 3,
+				"R": 0
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1983_United_States_gubernatorial_elections&action=raw"
+		},
+		"1984": {
+			"year": "1984",
+			"token": "1984",
+			"races": {
+				"AR": {
+					"party": "D"
+				},
+				"DE": {
+					"party": "R"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "R"
+				},
+				"MT": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NC": {
+					"party": "R"
+				},
+				"ND": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 5,
+				"R": 8
+			},
+			"officialBalance": {
+				"D": 34,
+				"R": 16
+			},
+			"seatsWon": {
+				"D": 5,
+				"R": 8
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1984_United_States_gubernatorial_elections&action=raw"
+		},
+		"1985": {
+			"year": "1985",
+			"token": "1985",
+			"races": {
+				"NJ": {
+					"party": "R"
+				},
+				"VA": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 1,
+				"D": 1
+			},
+			"officialBalance": {
+				"D": 34,
+				"R": 16
+			},
+			"seatsWon": {
+				"D": 1,
+				"R": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1985_United_States_gubernatorial_elections&action=raw"
+		},
+		"1986": {
+			"year": "1986",
+			"token": "1986",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AK": {
+					"party": "D"
+				},
+				"AZ": {
+					"party": "R"
+				},
+				"AR": {
+					"party": "D"
+				},
+				"CA": {
+					"party": "R"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "D"
+				},
+				"FL": {
+					"party": "R"
+				},
+				"GA": {
+					"party": "D"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "D"
+				},
+				"IL": {
+					"party": "R"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "R"
+				},
+				"ME": {
+					"party": "R"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "D"
+				},
+				"MI": {
+					"party": "D"
+				},
+				"MN": {
+					"party": "D"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NM": {
+					"party": "R"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "D"
+				},
+				"OK": {
+					"party": "R"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "R"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "D"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WI": {
+					"party": "R"
+				},
+				"WY": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 17,
+				"D": 19
+			},
+			"officialBalance": {
+				"D": 26,
+				"R": 24
+			},
+			"seatsWon": {
+				"D": 19,
+				"R": 17
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1986_United_States_gubernatorial_elections&action=raw"
+		},
+		"1987": {
+			"year": "1987",
+			"token": "1987",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "D"
+				},
+				"MS": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 3
+			},
+			"officialBalance": {
+				"D": 26,
+				"R": 24
+			},
+			"seatsWon": {
+				"D": 3,
+				"R": 0
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1987_United_States_gubernatorial_elections&action=raw"
+		},
+		"1988": {
+			"year": "1988",
+			"token": "1988",
+			"races": {
+				"DE": {
+					"party": "R"
+				},
+				"IN": {
+					"party": "D"
+				},
+				"MO": {
+					"party": "R"
+				},
+				"MT": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NC": {
+					"party": "R"
+				},
+				"ND": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 7,
+				"D": 5
+			},
+			"officialBalance": {
+				"D": 28,
+				"R": 22
+			},
+			"seatsWon": {
+				"D": 5,
+				"R": 7
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1988_United_States_gubernatorial_elections&action=raw"
+		},
+		"1989": {
+			"year": "1989",
+			"token": "1989",
+			"races": {
+				"NJ": {
+					"party": "D"
+				},
+				"VA": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 2
+			},
+			"officialBalance": {
+				"D": 29,
+				"R": 21
+			},
+			"seatsWon": {
+				"D": 2,
+				"R": 0
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1989_United_States_gubernatorial_elections&action=raw"
+		},
+		"1990": {
+			"year": "1990",
+			"token": "1990",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AZ": {
+					"party": "R"
+				},
+				"AR": {
+					"party": "D"
+				},
+				"CA": {
+					"party": "R"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "I"
+				},
+				"FL": {
+					"party": "D"
+				},
+				"GA": {
+					"party": "D"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "D"
+				},
+				"IL": {
+					"party": "R"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "D"
+				},
+				"ME": {
+					"party": "R"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "R"
+				},
+				"MI": {
+					"party": "R"
+				},
+				"MN": {
+					"party": "R"
+				},
+				"NE": {
+					"party": "D"
+				},
+				"NV": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NM": {
+					"party": "D"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "D"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "D"
+				},
+				"TX": {
+					"party": "D"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WI": {
+					"party": "R"
+				},
+				"WY": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 15,
+				"D": 19,
+				"I": 1
+			},
+			"officialBalance": {
+				"D": 28,
+				"R": 20,
+				"I": 1,
+				"O": 1
+			},
+			"seatsWon": {
+				"D": 19,
+				"R": 15,
+				"I": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1990_United_States_gubernatorial_elections&action=raw"
+		},
+		"1991": {
+			"year": "1991",
+			"token": "1991",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "D"
+				},
+				"MS": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 2,
+				"R": 1
+			},
+			"officialBalance": {
+				"D": 28,
+				"R": 20,
+				"O": 2
+			},
+			"seatsWon": {
+				"D": 2,
+				"R": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1991_United_States_gubernatorial_elections&action=raw"
+		},
+		"1992": {
+			"year": "1992",
+			"token": "1992",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "D"
+				},
+				"MO": {
+					"party": "D"
+				},
+				"MT": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 8,
+				"R": 4
+			},
+			"officialBalance": {
+				"D": 30,
+				"R": 18,
+				"O": 2
+			},
+			"seatsWon": {
+				"D": 8,
+				"R": 4
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1992_United_States_gubernatorial_elections&action=raw"
+		},
+		"1993": {
+			"year": "1993",
+			"token": "1993",
+			"races": {
+				"NJ": {
+					"party": "R"
+				},
+				"VA": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 2
+			},
+			"officialBalance": {
+				"D": 29,
+				"R": 19,
+				"O": 2
+			},
+			"seatsWon": {
+				"D": 0,
+				"R": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1993_United_States_gubernatorial_elections&action=raw"
+		},
+		"1994": {
+			"year": "1994",
+			"token": "1994",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AK": {
+					"party": "D"
+				},
+				"AZ": {
+					"party": "R"
+				},
+				"AR": {
+					"party": "D"
+				},
+				"CA": {
+					"party": "R"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "R"
+				},
+				"FL": {
+					"party": "D"
+				},
+				"GA": {
+					"party": "D"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "R"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "R"
+				},
+				"ME": {
+					"party": "I"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "R"
+				},
+				"MI": {
+					"party": "R"
+				},
+				"MN": {
+					"party": "R"
+				},
+				"NE": {
+					"party": "D"
+				},
+				"NV": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NM": {
+					"party": "R"
+				},
+				"NY": {
+					"party": "R"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "R"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "R"
+				},
+				"RI": {
+					"party": "R"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "R"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WI": {
+					"party": "R"
+				},
+				"WY": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 24,
+				"D": 11,
+				"I": 1
+			},
+			"officialBalance": {
+				"R": 30,
+				"D": 19,
+				"I": 1
+			},
+			"seatsWon": {
+				"R": 24,
+				"D": 11,
+				"I": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1994_United_States_gubernatorial_elections&action=raw"
+		},
+		"1995": {
+			"year": "1995",
+			"token": "1995",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "R"
+				},
+				"MS": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 1,
+				"R": 2
+			},
+			"officialBalance": {
+				"R": 31,
+				"D": 18,
+				"O": 1
+			},
+			"seatsWon": {
+				"R": 2,
+				"D": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1995_United_States_gubernatorial_elections&action=raw"
+		},
+		"1996": {
+			"year": "1996",
+			"token": "1996",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "D"
+				},
+				"MO": {
+					"party": "D"
+				},
+				"MT": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 7,
+				"R": 4
+			},
+			"officialBalance": {
+				"R": 32,
+				"D": 17,
+				"O": 1
+			},
+			"seatsWon": {
+				"R": 4,
+				"D": 7
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1996_United_States_gubernatorial_elections&action=raw"
+		},
+		"1997": {
+			"year": "1997",
+			"token": "1997",
+			"races": {
+				"NJ": {
+					"party": "R"
+				},
+				"VA": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 2
+			},
+			"officialBalance": {
+				"R": 32,
+				"D": 17,
+				"O": 1
+			},
+			"seatsWon": {
+				"R": 2,
+				"D": 0
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1997_United_States_gubernatorial_elections&action=raw"
+		},
+		"1998": {
+			"year": "1998",
+			"token": "1998",
+			"races": {
+				"AL": {
+					"party": "D"
+				},
+				"AK": {
+					"party": "D"
+				},
+				"AZ": {
+					"party": "R"
+				},
+				"AR": {
+					"party": "R"
+				},
+				"CA": {
+					"party": "D"
+				},
+				"CO": {
+					"party": "R"
+				},
+				"CT": {
+					"party": "R"
+				},
+				"FL": {
+					"party": "R"
+				},
+				"GA": {
+					"party": "D"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "R"
+				},
+				"IA": {
+					"party": "D"
+				},
+				"KS": {
+					"party": "R"
+				},
+				"ME": {
+					"party": "I"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "R"
+				},
+				"MI": {
+					"party": "R"
+				},
+				"MN": {
+					"party": "O"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NM": {
+					"party": "R"
+				},
+				"NY": {
+					"party": "R"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "R"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "R"
+				},
+				"RI": {
+					"party": "R"
+				},
+				"SC": {
+					"party": "D"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "R"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WI": {
+					"party": "R"
+				},
+				"WY": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 11,
+				"R": 23,
+				"I": 1,
+				"O": 1
+			},
+			"officialBalance": {
+				"R": 31,
+				"D": 17,
+				"O": 1,
+				"I": 1
+			},
+			"seatsWon": {
+				"R": 23,
+				"D": 11,
+				"O": 1,
+				"I": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1998_United_States_gubernatorial_elections&action=raw"
+		},
+		"1999": {
+			"year": "1999",
+			"token": "1999",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "R"
+				},
+				"MS": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 2,
+				"R": 1
+			},
+			"officialBalance": {
+				"R": 30,
+				"D": 18,
+				"O": 2
+			},
+			"seatsWon": {
+				"R": 1,
+				"D": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=1999_United_States_gubernatorial_elections&action=raw"
+		},
+		"2000": {
+			"year": "2000",
+			"token": "2000",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "D"
+				},
+				"MO": {
+					"party": "D"
+				},
+				"MT": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 8,
+				"R": 3
+			},
+			"officialBalance": {
+				"R": 29,
+				"D": 19,
+				"O": 2
+			},
+			"seatsWon": {
+				"R": 3,
+				"D": 8
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2000_United_States_gubernatorial_elections&action=raw"
+		},
+		"2001": {
+			"year": "2001",
+			"token": "2001",
+			"races": {
+				"NJ": {
+					"party": "D"
+				},
+				"VA": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 2
+			},
+			"officialBalance": {
+				"R": 27,
+				"D": 21,
+				"O": 2
+			},
+			"seatsWon": {
+				"R": 0,
+				"D": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2001_United_States_gubernatorial_elections&action=raw"
+		},
+		"2002": {
+			"year": "2002",
+			"token": "2002",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AK": {
+					"party": "R"
+				},
+				"AZ": {
+					"party": "D"
+				},
+				"AR": {
+					"party": "R"
+				},
+				"CA": {
+					"party": "D"
+				},
+				"CO": {
+					"party": "R"
+				},
+				"CT": {
+					"party": "R"
+				},
+				"FL": {
+					"party": "R"
+				},
+				"GA": {
+					"party": "R"
+				},
+				"HI": {
+					"party": "R"
+				},
+				"ID": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "D"
+				},
+				"IA": {
+					"party": "D"
+				},
+				"KS": {
+					"party": "D"
+				},
+				"ME": {
+					"party": "D"
+				},
+				"MD": {
+					"party": "R"
+				},
+				"MA": {
+					"party": "R"
+				},
+				"MI": {
+					"party": "D"
+				},
+				"MN": {
+					"party": "R"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NM": {
+					"party": "D"
+				},
+				"NY": {
+					"party": "R"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "D"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "R"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "D"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WI": {
+					"party": "D"
+				},
+				"WY": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 22,
+				"D": 14
+			},
+			"officialBalance": {
+				"R": 26,
+				"D": 24,
+				"I": 0
+			},
+			"seatsWon": {
+				"R": 22,
+				"D": 14,
+				"I": 0
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2002_United_States_gubernatorial_elections&action=raw"
+		},
+		"2003": {
+			"year": "2003",
+			"token": "2003",
+			"races": {
+				"KY": {
+					"party": "R"
+				},
+				"LA": {
+					"party": "D"
+				},
+				"MS": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 2,
+				"D": 1
+			},
+			"officialBalance": {
+				"R": 28,
+				"D": 22
+			},
+			"seatsWon": {
+				"R": 3,
+				"D": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2003_United_States_gubernatorial_elections&action=raw"
+		},
+		"2004": {
+			"year": "2004",
+			"token": "2004",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "R"
+				},
+				"MT": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 6,
+				"R": 5
+			},
+			"officialBalance": {
+				"R": 28,
+				"D": 22
+			},
+			"seatsWon": {
+				"R": 5,
+				"D": 6
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2004_United_States_gubernatorial_elections&action=raw"
+		},
+		"2005": {
+			"year": "2005",
+			"token": "2005",
+			"races": {
+				"NJ": {
+					"party": "D"
+				},
+				"VA": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 2
+			},
+			"officialBalance": {
+				"R": 28,
+				"D": 22
+			},
+			"seatsWon": {
+				"R": 0,
+				"D": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2005_United_States_gubernatorial_elections&action=raw"
+		},
+		"2006": {
+			"year": "2006",
+			"token": "2006",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AK": {
+					"party": "R"
+				},
+				"AZ": {
+					"party": "D"
+				},
+				"AR": {
+					"party": "D"
+				},
+				"CA": {
+					"party": "R"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "R"
+				},
+				"FL": {
+					"party": "R"
+				},
+				"GA": {
+					"party": "R"
+				},
+				"HI": {
+					"party": "R"
+				},
+				"ID": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "D"
+				},
+				"IA": {
+					"party": "D"
+				},
+				"KS": {
+					"party": "D"
+				},
+				"ME": {
+					"party": "D"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "D"
+				},
+				"MI": {
+					"party": "D"
+				},
+				"MN": {
+					"party": "R"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NM": {
+					"party": "D"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "D"
+				},
+				"OK": {
+					"party": "D"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "R"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "D"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WI": {
+					"party": "D"
+				},
+				"WY": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 16,
+				"D": 20
+			},
+			"officialBalance": {
+				"D": 28,
+				"R": 22
+			},
+			"seatsWon": {
+				"D": 20,
+				"R": 16
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2006_United_States_gubernatorial_elections&action=raw"
+		},
+		"2007": {
+			"year": "2007",
+			"token": "2007",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "R"
+				},
+				"MS": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 1,
+				"R": 2
+			},
+			"officialBalance": {
+				"D": 28,
+				"R": 22
+			},
+			"seatsWon": {
+				"D": 1,
+				"R": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2007_United_States_gubernatorial_elections&action=raw"
+		},
+		"2008": {
+			"year": "2008",
+			"token": "2008",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "D"
+				},
+				"MT": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 7,
+				"R": 4
+			},
+			"officialBalance": {
+				"D": 29,
+				"R": 21
+			},
+			"seatsWon": {
+				"D": 7,
+				"R": 4
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2008_United_States_gubernatorial_elections&action=raw"
+		},
+		"2009": {
+			"year": "2009",
+			"token": "2009",
+			"races": {
+				"NJ": {
+					"party": "R"
+				},
+				"VA": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 2
+			},
+			"officialBalance": {
+				"D": 26,
+				"R": 24
+			},
+			"seatsWon": {
+				"D": 0,
+				"R": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2009_United_States_gubernatorial_elections&action=raw"
+		},
+		"2010": {
+			"year": "2010",
+			"token": "2010",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AK": {
+					"party": "R"
+				},
+				"AZ": {
+					"party": "R"
+				},
+				"AR": {
+					"party": "D"
+				},
+				"CA": {
+					"party": "D"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "D"
+				},
+				"FL": {
+					"party": "R"
+				},
+				"GA": {
+					"party": "R"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "D"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "R"
+				},
+				"ME": {
+					"party": "R"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "D"
+				},
+				"MI": {
+					"party": "R"
+				},
+				"MN": {
+					"party": "D"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NM": {
+					"party": "R"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "R"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "R"
+				},
+				"RI": {
+					"party": "I"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "R"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WI": {
+					"party": "R"
+				},
+				"WY": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 22,
+				"D": 13,
+				"I": 1
+			},
+			"officialBalance": {
+				"R": 29,
+				"D": 20,
+				"I": 1
+			},
+			"seatsWon": {
+				"R": 23,
+				"D": 13,
+				"I": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2010_United_States_gubernatorial_elections&action=raw"
+		},
+		"2011": {
+			"year": "2011",
+			"token": "2011",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "R"
+				},
+				"MS": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 1,
+				"R": 2
+			},
+			"officialBalance": {
+				"R": 29,
+				"D": 20,
+				"O": 1
+			},
+			"seatsWon": {
+				"R": 2,
+				"D": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2011_United_States_gubernatorial_elections&action=raw"
+		},
+		"2012": {
+			"year": "2012",
+			"token": "2012",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "D"
+				},
+				"MT": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NC": {
+					"party": "R"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 7,
+				"R": 4
+			},
+			"officialBalance": {
+				"R": 30,
+				"D": 19,
+				"O": 1
+			},
+			"seatsWon": {
+				"R": 5,
+				"D": 7
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2012_United_States_gubernatorial_elections&action=raw"
+		},
+		"2013": {
+			"year": "2013",
+			"token": "2013",
+			"races": {
+				"NJ": {
+					"party": "R"
+				},
+				"VA": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"R": 1,
+				"D": 1
+			},
+			"officialBalance": {
+				"R": 29,
+				"D": 21
+			},
+			"seatsWon": {
+				"R": 1,
+				"D": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2013_United_States_gubernatorial_elections&action=raw"
+		},
+		"2014": {
+			"year": "2014",
+			"token": "2014",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AK": {
+					"party": "I"
+				},
+				"AZ": {
+					"party": "R"
+				},
+				"AR": {
+					"party": "R"
+				},
+				"CA": {
+					"party": "D"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "D"
+				},
+				"FL": {
+					"party": "R"
+				},
+				"GA": {
+					"party": "R"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "R"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "R"
+				},
+				"ME": {
+					"party": "R"
+				},
+				"MD": {
+					"party": "R"
+				},
+				"MA": {
+					"party": "R"
+				},
+				"MI": {
+					"party": "R"
+				},
+				"MN": {
+					"party": "D"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "D"
+				},
+				"NM": {
+					"party": "R"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "R"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "R"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "D"
+				},
+				"WI": {
+					"party": "R"
+				},
+				"WY": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 24,
+				"I": 1,
+				"D": 11
+			},
+			"officialBalance": {
+				"R": 31,
+				"D": 18,
+				"I": 1
+			},
+			"seatsWon": {
+				"R": 24,
+				"D": 11,
+				"I": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2014_United_States_gubernatorial_elections&action=raw"
+		},
+		"2015": {
+			"year": "2015",
+			"token": "2015",
+			"races": {
+				"KY": {
+					"party": "R"
+				},
+				"LA": {
+					"party": "D"
+				},
+				"MS": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 2,
+				"D": 1
+			},
+			"officialBalance": {
+				"R": 31,
+				"D": 18,
+				"O": 1
+			},
+			"seatsWon": {
+				"R": 2,
+				"D": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2015_United_States_gubernatorial_elections&action=raw"
+		},
+		"2016": {
+			"year": "2016",
+			"token": "2016",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "R"
+				},
+				"MT": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 6,
+				"R": 6
+			},
+			"officialBalance": {
+				"R": 33,
+				"D": 16,
+				"O": 1
+			},
+			"seatsWon": {
+				"R": 6,
+				"D": 6
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2016_United_States_gubernatorial_elections&action=raw"
+		},
+		"2017": {
+			"year": "2017",
+			"token": "2017",
+			"races": {
+				"NJ": {
+					"party": "D"
+				},
+				"VA": {
+					"party": "D"
+				}
+			},
+			"raceCounts": {
+				"D": 2
+			},
+			"officialBalance": {
+				"R": 33,
+				"D": 16,
+				"O": 1
+			},
+			"seatsWon": {
+				"R": 0,
+				"D": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2017_United_States_gubernatorial_elections&action=raw"
+		},
+		"2018": {
+			"year": "2018",
+			"token": "2018",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AK": {
+					"party": "R"
+				},
+				"AZ": {
+					"party": "R"
+				},
+				"AR": {
+					"party": "R"
+				},
+				"CA": {
+					"party": "D"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "D"
+				},
+				"FL": {
+					"party": "R"
+				},
+				"GA": {
+					"party": "R"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "D"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "D"
+				},
+				"ME": {
+					"party": "D"
+				},
+				"MD": {
+					"party": "R"
+				},
+				"MA": {
+					"party": "R"
+				},
+				"MI": {
+					"party": "D"
+				},
+				"MN": {
+					"party": "D"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "D"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NM": {
+					"party": "D"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "R"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "R"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WI": {
+					"party": "D"
+				},
+				"WY": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 20,
+				"D": 16
+			},
+			"officialBalance": {
+				"R": 27,
+				"D": 23,
+				"I": 0
+			},
+			"seatsWon": {
+				"R": 20,
+				"D": 16,
+				"I": 0
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2018_United_States_gubernatorial_elections&action=raw"
+		},
+		"2019": {
+			"year": "2019",
+			"token": "2019",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "D"
+				},
+				"MS": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 2,
+				"R": 1
+			},
+			"officialBalance": {
+				"R": 26,
+				"D": 24
+			},
+			"seatsWon": {
+				"R": 1,
+				"D": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2019_United_States_gubernatorial_elections&action=raw"
+		},
+		"2020": {
+			"year": "2020",
+			"token": "2020",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "R"
+				},
+				"MT": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 3,
+				"R": 8
+			},
+			"officialBalance": {
+				"R": 27,
+				"D": 23
+			},
+			"seatsWon": {
+				"R": 8,
+				"D": 3
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2020_United_States_gubernatorial_elections&action=raw"
+		},
+		"2021": {
+			"year": "2021",
+			"token": "2021",
+			"races": {
+				"NJ": {
+					"party": "D"
+				},
+				"VA": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 1,
+				"R": 1
+			},
+			"officialBalance": {
+				"R": 28,
+				"D": 22
+			},
+			"seatsWon": {
+				"R": 1,
+				"D": 2
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2021_United_States_gubernatorial_elections&action=raw"
+		},
+		"2022": {
+			"year": "2022",
+			"token": "2022",
+			"races": {
+				"AL": {
+					"party": "R"
+				},
+				"AK": {
+					"party": "R"
+				},
+				"AZ": {
+					"party": "D"
+				},
+				"AR": {
+					"party": "R"
+				},
+				"CA": {
+					"party": "D"
+				},
+				"CO": {
+					"party": "D"
+				},
+				"CT": {
+					"party": "D"
+				},
+				"FL": {
+					"party": "R"
+				},
+				"GA": {
+					"party": "R"
+				},
+				"HI": {
+					"party": "D"
+				},
+				"ID": {
+					"party": "R"
+				},
+				"IL": {
+					"party": "D"
+				},
+				"IA": {
+					"party": "R"
+				},
+				"KS": {
+					"party": "D"
+				},
+				"ME": {
+					"party": "D"
+				},
+				"MD": {
+					"party": "D"
+				},
+				"MA": {
+					"party": "D"
+				},
+				"MI": {
+					"party": "D"
+				},
+				"MN": {
+					"party": "D"
+				},
+				"NE": {
+					"party": "R"
+				},
+				"NV": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NM": {
+					"party": "D"
+				},
+				"NY": {
+					"party": "D"
+				},
+				"OH": {
+					"party": "R"
+				},
+				"OK": {
+					"party": "R"
+				},
+				"OR": {
+					"party": "D"
+				},
+				"PA": {
+					"party": "D"
+				},
+				"RI": {
+					"party": "D"
+				},
+				"SC": {
+					"party": "R"
+				},
+				"SD": {
+					"party": "R"
+				},
+				"TN": {
+					"party": "R"
+				},
+				"TX": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WI": {
+					"party": "D"
+				},
+				"WY": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"R": 18,
+				"D": 18
+			},
+			"officialBalance": {
+				"R": 26,
+				"D": 24
+			},
+			"seatsWon": {
+				"R": 18,
+				"D": 18
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2022_United_States_gubernatorial_elections&action=raw"
+		},
+		"2023": {
+			"year": "2023",
+			"token": "2023",
+			"races": {
+				"KY": {
+					"party": "D"
+				},
+				"LA": {
+					"party": "R"
+				},
+				"MS": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 1,
+				"R": 2
+			},
+			"officialBalance": {
+				"R": 27,
+				"D": 23
+			},
+			"seatsWon": {
+				"R": 2,
+				"D": 1
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2023_United_States_gubernatorial_elections&action=raw"
+		},
+		"2024": {
+			"year": "2024",
+			"token": "2024",
+			"races": {
+				"DE": {
+					"party": "D"
+				},
+				"IN": {
+					"party": "R"
+				},
+				"MO": {
+					"party": "R"
+				},
+				"MT": {
+					"party": "R"
+				},
+				"NH": {
+					"party": "R"
+				},
+				"NC": {
+					"party": "D"
+				},
+				"ND": {
+					"party": "R"
+				},
+				"UT": {
+					"party": "R"
+				},
+				"VT": {
+					"party": "R"
+				},
+				"WA": {
+					"party": "D"
+				},
+				"WV": {
+					"party": "R"
+				}
+			},
+			"raceCounts": {
+				"D": 3,
+				"R": 8
+			},
+			"officialBalance": {
+				"R": 27,
+				"D": 23
+			},
+			"seatsWon": {
+				"R": 8,
+				"D": 3
+			},
+			"officialTotalSeats": 50,
+			"source": "https://en.wikipedia.org/w/index.php?title=2024_United_States_gubernatorial_elections&action=raw"
+		}
+	}
+}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '$lib/styles/global.css';
+	import { browser } from '$app/environment';
 	import ClearMapModal from '$lib/components/modals/clearmapmodal/ClearMapModal.svelte';
 	import SplitRegionModal from '$lib/components/modals/splitregionmodal/SplitRegionModal.svelte';
 	import EditRegionModal from '$lib/components/modals/editregionmodal/EditRegionModal.svelte';
@@ -9,9 +10,13 @@
 	import ShareModal from '$lib/components/modals/sharemodal/ShareModal.svelte';
 	import CandidateModal from '$lib/components/modals/candidatemodal/CandidateModal.svelte';
 	import { InteractionStore } from '$lib/stores/Interaction';
-	import { handleCandidateSelectionShortcut } from '$lib/stores/Candidates';
+	import {
+		CandidatesStore,
+		TossupCandidateStore,
+		handleCandidateSelectionShortcut
+	} from '$lib/stores/Candidates';
+	import { CandidateCounts } from '$lib/stores/regions/Regions';
 	import NavBar from '$lib/components/navbar/NavBar.svelte';
-	import SideBar from '$lib/components/sidebar/SideBar.svelte';
 	import { reapplyPanZoom } from '$lib/utils/applyPanZoom';
 	import MapChartContainer from '$lib/components/mapchartcontainer/MapChartContainer.svelte';
 	import EditCandidateModal from '$lib/components/modals/candidatemodal/EditCandidateModal.svelte';
@@ -20,8 +25,6 @@
 	import AddCustomColorModal from '$lib/components/modals/candidatemodal/customcolors/AddCustomColorModal.svelte';
 	import EditCustomColorModal from '$lib/components/modals/candidatemodal/customcolors/EditCustomColorModal.svelte';
 	import RegionTooltip from '$lib/components/tooltips/RegionTooltip.svelte';
-	import { browser } from '$app/environment';
-	import { SideBarStore } from '$lib/stores/SideBar';
 	import NavigateHomeModal from '$lib/components/modals/navigatehomemodal/NavigateHomeModal.svelte';
 	import { PresentationModeStore } from '$lib/stores/PresentationMode';
 	import PresentationNavBar from '$lib/components/navbar/PresentationNavBar.svelte';
@@ -63,11 +66,24 @@
 		$InteractionStore.clear();
 	}
 
-	if (browser) {
-		if (innerWidth > 768) {
-			$SideBarStore.open = true;
+	$effect(() => {
+		if (!browser || window.parent === window) {
+			return;
 		}
-	}
+
+		window.parent.postMessage(
+			{
+				type: 'yapms:candidate-counts',
+				tossup: $CandidateCounts.get($TossupCandidateStore.id) ?? 0,
+				candidates: $CandidatesStore.map((candidate) => ({
+					id: candidate.id,
+					name: candidate.name,
+					count: $CandidateCounts.get(candidate.id) ?? 0
+				}))
+			},
+			window.location.origin
+		);
+	});
 </script>
 
 <svelte:head>
@@ -93,7 +109,6 @@
 		<MapChartContainer>
 			{@render children()}
 		</MapChartContainer>
-		<SideBar />
 	</div>
 </div>
 

@@ -2,7 +2,7 @@ import type { PageServerLoad, EntryGenerator } from './$types';
 import { error } from '@sveltejs/kit';
 import { listElectionYears, getElection } from '$lib/server/historicalElections';
 
-export const prerender = true;
+export const prerender = false;
 
 export const entries: EntryGenerator = () => {
 	return listElectionYears().map(({ year }) => ({ year }));

@@ -4,7 +4,6 @@
 	import { PresentationModeStore } from '$lib/stores/PresentationMode';
 	import { onMount } from 'svelte';
 	import SavedMaps from './sections/savedmaps/SavedMaps.svelte';
-	import Sources from './sections/sources/Sources.svelte';
 	import SocialLinkGrid from '../links/SocialLinkGrid.svelte';
 	import RegionSearch from './sections/regionsearch/RegionSearch.svelte';
 
@@ -36,6 +35,5 @@
 		{#if $PocketBaseStore.authStore.isValid}
 			<SavedMaps />
 		{/if}
-		<Sources />
 	</div>
 </div>

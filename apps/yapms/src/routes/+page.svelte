@@ -1,46 +1,8 @@
 <script lang="ts">
-	import MapCardGrid from '$lib/components/mapcard/MapCardGrid.svelte';
-	import MoreMapsModal from '$lib/components/modals/moremapsmodal/MoreMapsModal.svelte';
-	import UsaMapCard from '$lib/components/mapcard/mapcards/USAMapCard.svelte';
-	import CanMapCard from '$lib/components/mapcard/mapcards/CANMapCard.svelte';
-	import BraMapCard from '$lib/components/mapcard/mapcards/BRAMapCard.svelte';
-	import MexMapCard from '$lib/components/mapcard/mapcards/MEXMapCard.svelte';
-	import DeuMapCard from '$lib/components/mapcard/mapcards/DEUMapCard.svelte';
-	import DnkMapCard from '$lib/components/mapcard/mapcards/DNKMapCard.svelte';
-	import FraMapCard from '$lib/components/mapcard/mapcards/FRAMapCard.svelte';
-	import GbrMapCard from '$lib/components/mapcard/mapcards/GBRMapCard.svelte';
-	import ItaMapCard from '$lib/components/mapcard/mapcards/ITAMapCard.svelte';
-	import NldMapCard from '$lib/components/mapcard/mapcards/NLDMapCard.svelte';
-	import NzlMapCard from '$lib/components/mapcard/mapcards/NZLMapCard.svelte';
-	import AusMapCard from '$lib/components/mapcard/mapcards/AUSMapCard.svelte';
-	import UsaCongressionalMapCard from '$lib/components/mapcard/mapcards/USACongressionalMapCard.svelte';
-	import UsaPresidentialMapCard from '$lib/components/mapcard/mapcards/USAPresidentialMapCard.svelte';
-	import UsaStateSenateMapCard from '$lib/components/mapcard/mapcards/USAStateSenateMapCard.svelte';
-	import UsaStateHouseMapCard from '$lib/components/mapcard/mapcards/USAStateHouseMapCard.svelte';
-	import CanProvincesMapCard from '$lib/components/mapcard/mapcards/CANProvincesMapCard.svelte';
-	import ZafMapCard from '$lib/components/mapcard/mapcards/ZAFMapCard.svelte';
-	import GlbMapCard from '$lib/components/mapcard/mapcards/GLBMapCard.svelte';
-	import KorMapCard from '$lib/components/mapcard/mapcards/KORMapCard.svelte';
-	import JpnMapCard from '$lib/components/mapcard/mapcards/JPNMapCard.svelte';
-	import CanHistoricalMapCard from '$lib/components/mapcard/mapcards/CANHistoricalMapCard.svelte';
-	import PrtMapCard from '$lib/components/mapcard/mapcards/PRTMapCard.svelte';
-	import IrlMapCard from '$lib/components/mapcard/mapcards/IRLMapCard.svelte';
-	import GrcMapCard from '$lib/components/mapcard/mapcards/GRCMapCard.svelte';
-	import NorMapCard from '$lib/components/mapcard/mapcards/NORMapCard.svelte';
-	import SvnMapCard from '$lib/components/mapcard/mapcards/SVNMapCard.svelte';
-	import IndMapCard from '$lib/components/mapcard/mapcards/INDMapCard.svelte';
-	import UsaCanMapCard from '$lib/components/mapcard/mapcards/USACANMapCard.svelte';
-	import EspMapCard from '$lib/components/mapcard/mapcards/ESPMapCard.svelte';
-	import PolMapCard from '$lib/components/mapcard/mapcards/POLMapCard.svelte';
-	import AusStatesMapCard from '$lib/components/mapcard/mapcards/AUSStatesMapCard.svelte';
-	import GbrHistoricalMapCard from '$lib/components/mapcard/mapcards/GBRHistoricalMapCard.svelte';
-	import YapMapCard from '$lib/components/mapcard/mapcards/YAPMapCard.svelte';
-	import AutMapCard from '$lib/components/mapcard/mapcards/AUTMapCard.svelte';
-	import YRCMapCard from '$lib/components/mapcard/mapcards/YRCMapCard.svelte';
-	import HUNMapCard from '$lib/components/mapcard/mapcards/HUNMapCard.svelte';
-	import SweMapCard from '$lib/components/mapcard/mapcards/SWEMapCard.svelte';
+	import { onMount } from 'svelte';
+	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
 
-	// --- 270towin-style home page content ---
+	// --- Path to Win home page content ---
 	const headlines = [
 		{
 			title: 'Live Results: Oklahoma and DC Primaries, Georgia and Alabama Primary Runoffs',
@@ -81,13 +43,46 @@
 	];
 
 	// Electoral vote counter (538 total, 270 to win)
-	const evDem = 226;
-	const evRep = 219;
-	const evTossup = 538 - evDem - evRep;
+	let evDem = $state(226);
+	let evRep = $state(219);
+	let evTossup = $state(93);
+
+	onMount(() => {
+		function updateElectoralCounter(event: MessageEvent) {
+			if (event.origin !== window.location.origin) {
+				return;
+			}
+
+			if (event.data?.type !== 'yapms:candidate-counts') {
+				return;
+			}
+
+			const candidates = event.data.candidates as
+				| Array<{ name: string; count: number }>
+				| undefined;
+			if (!Array.isArray(candidates)) {
+				return;
+			}
+
+			const democrat = candidates.find((candidate) =>
+				candidate.name.toLowerCase().includes('democrat')
+			);
+			const republican = candidates.find((candidate) =>
+				candidate.name.toLowerCase().includes('republican')
+			);
+
+			evDem = democrat?.count ?? evDem;
+			evRep = republican?.count ?? evRep;
+			evTossup = typeof event.data.tossup === 'number' ? event.data.tossup : 538 - evDem - evRep;
+		}
+
+		window.addEventListener('message', updateElectoralCounter);
+		return () => window.removeEventListener('message', updateElectoralCounter);
+	});
 </script>
 
 <svelte:head>
-	<title>270 to Win - 2028 Presidential Election Interactive Map</title>
+	<title>Path to Win - 2028 Presidential Election Interactive Map</title>
 	<meta
 		name="description"
 		content="2028 presidential election interactive map. Create your own 2028 election forecast with our interactive map."
@@ -155,7 +150,7 @@
 				></iframe>
 			</div>
 
-			<!-- Map controls (mirrors 270towin's palette + actions) -->
+			<!-- Map controls -->
 			<div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
 				<span class="font-semibold text-neutral-600 mr-1">Map Color Palette:</span>
 				<span class="px-2 py-1 rounded bg-[#001666] text-white">Safe</span>
@@ -170,7 +165,7 @@
 					>
 						Open Interactive Map
 					</a>
-					<a href="#maps" class="px-3 py-1 rounded border border-neutral-400 hover:bg-neutral-100">
+					<a href="/maps" class="px-3 py-1 rounded border border-neutral-400 hover:bg-neutral-100">
 						Map Library
 					</a>
 				</div>
@@ -210,72 +205,6 @@
 		</aside>
 	</main>
 
-	<!-- Explore interactive maps (YAPMS map library) -->
-	<section id="maps" class="bg-white border-t border-neutral-200">
-		<div class="max-w-6xl mx-auto px-4 py-8 flex flex-col gap-8">
-			<div>
-				<h2 class="text-xl font-bold text-[#001666] mb-4">Explore Interactive Maps</h2>
-				<MapCardGrid>
-					<UsaMapCard />
-					<GbrMapCard />
-					<AusMapCard />
-					<CanMapCard />
-
-					<AutMapCard />
-					<BraMapCard />
-					<DnkMapCard />
-					<FraMapCard />
-					<DeuMapCard />
-					<GrcMapCard />
-					<HUNMapCard />
-					<IndMapCard />
-					<IrlMapCard />
-					<ItaMapCard />
-					<JpnMapCard />
-					<MexMapCard />
-					<NldMapCard />
-					<NzlMapCard />
-					<NorMapCard />
-					<PolMapCard />
-					<PrtMapCard />
-					<SvnMapCard />
-					<ZafMapCard />
-					<KorMapCard />
-					<EspMapCard />
-					<SweMapCard />
-
-					<GlbMapCard />
-				</MapCardGrid>
-			</div>
-
-			<div id="state-maps">
-				<MapCardGrid title="State & Provincial Maps">
-					<UsaStateHouseMapCard />
-					<UsaStateSenateMapCard />
-					<CanProvincesMapCard />
-					<AusStatesMapCard />
-				</MapCardGrid>
-			</div>
-
-			<div id="historical">
-				<MapCardGrid title="Historical Maps">
-					<UsaCongressionalMapCard />
-					<UsaPresidentialMapCard />
-					<GbrHistoricalMapCard />
-					<CanHistoricalMapCard />
-				</MapCardGrid>
-			</div>
-
-			<div id="fantasy">
-				<MapCardGrid title="Fantasy">
-					<UsaCanMapCard />
-					<YapMapCard />
-					<YRCMapCard />
-				</MapCardGrid>
-			</div>
-		</div>
-	</section>
-
 	<!-- Headlines -->
 	<section id="headlines" class="bg-[#eef1f5] border-t border-neutral-200">
 		<div class="max-w-6xl mx-auto px-4 py-8">
@@ -292,19 +221,5 @@
 		</div>
 	</section>
 
-	<!-- Footer -->
-	<footer class="bg-[#001666] text-[#9db8e0] mt-auto">
-		<div class="max-w-6xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-			<div class="flex items-baseline gap-1">
-				<span class="text-xl font-extrabold text-white">270</span>
-				<span class="text-base font-semibold">toWin</span>
-			</div>
-			<p class="text-xs text-center">
-				It will take 270 electoral votes to win the 2028 presidential election.
-			</p>
-			<div class="text-xs">&copy; 2026 270toWin &middot; Powered by YAPMS</div>
-		</div>
-	</footer>
+	<SiteFooter />
 </div>
-
-<MoreMapsModal />

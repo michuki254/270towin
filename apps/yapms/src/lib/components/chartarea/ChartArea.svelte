@@ -21,8 +21,10 @@
 </script>
 
 <div
-	class="flex justify-center items-center m-3 gap-4 overflow-hidden"
+	class="flex justify-center items-center m-3 gap-4"
 	class:hidden={$ChartTypeStore === 'none'}
+	class:overflow-visible={$ChartTypeStore === 'battle'}
+	class:overflow-hidden={$ChartTypeStore !== 'battle'}
 	class:flex-row={$ChartPositionStore === 'bottom'}
 	class:flex-col={$ChartPositionStore === 'left'}
 	class:w-32={$ChartPositionStore === 'left' && $ChartTypeStore === 'battle'}

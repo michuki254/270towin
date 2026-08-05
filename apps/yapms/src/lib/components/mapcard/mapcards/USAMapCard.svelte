@@ -25,12 +25,12 @@
 			routes: [
 				{
 					label: 'Senate 2026',
-					route: '/app/usa/senate/2026/blank'
+					route: '/2026-senate-interactive-map'
 				},
 				{
 					label: '2024 Results',
 					modalLabel: '2024 Senate Results',
-					route: '/app/usa/senate/2024310/results'
+					route: '/2024-senate-election-results'
 				}
 			]
 		},
@@ -41,7 +41,12 @@
 			routes: [
 				{
 					label: 'House 2026',
-					route: '/app/usa/house/2026/blank'
+					route: '/2026-house-interactive-map'
+				},
+				{
+					label: 'Historical House',
+					modalLabel: 'Historical House Elections',
+					route: '/historical-house-elections'
 				},
 				{
 					label: 'MO Not Redistricted',
@@ -57,12 +62,17 @@
 			routes: [
 				{
 					label: 'Governors 2026',
-					route: '/app/usa/governors/2026/blank'
+					route: '/2026-governor-interactive-map'
 				},
 				{
 					label: '2022 Results',
 					modalLabel: '2022 Gubernatorial Results',
 					route: '/app/usa/governors/2022/results'
+				},
+				{
+					label: 'Historical Governors',
+					modalLabel: 'Historical Governor Elections',
+					route: '/historical-governor-elections'
 				}
 			]
 		},
@@ -159,7 +169,7 @@
 				},
 				{
 					label: '2024 Gubernatorial Results',
-					route: '/app/usa/governors/2024310/results'
+					route: '/2024-governor-election-results'
 				},
 				{
 					label: 'Counties 2020',

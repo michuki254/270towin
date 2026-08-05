@@ -1,10 +1,12 @@
-export function entries() {
-	const maps = import.meta.glob('$lib/assets/maps/**/*.svg');
+import type { PageServerLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
+import { getMapBasenames } from '$lib/server/mapSvgFiles';
 
+export function entries() {
 	const result = [];
-	for (const key in maps) {
-		const params = key.split('/').pop()?.split('.').at(0)?.split('-');
-		if (params === undefined || params.length !== 4) {
+	for (const map of getMapBasenames()) {
+		const params = map.split('-');
+		if (params.length !== 4) {
 			continue;
 		}
 		result.push({
@@ -17,4 +19,16 @@ export function entries() {
 	return result;
 }
 
-export const prerender = true;
+export const load: PageServerLoad = ({ params, url }) => {
+	if (
+		params.country === 'usa' &&
+		params.map === 'presidential' &&
+		params.variant === 'results' &&
+		url.searchParams.has('embed') === false &&
+		url.searchParams.has('interactive') === false
+	) {
+		throw redirect(308, `/historical-presidential-elections/${params.year}`);
+	}
+};
+
+export const prerender = false;

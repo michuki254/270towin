@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { listElectionYears, getElection } from '$lib/server/historicalElections';
 
-export const prerender = true;
+export const prerender = false;
 
 export const load: PageServerLoad = () => {
 	const elections = listElectionYears()

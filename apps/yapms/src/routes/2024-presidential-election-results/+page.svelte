@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
 	import type { PageData } from './$types';
 	export let data: PageData;
 
@@ -44,6 +45,7 @@
 	const relatedMaps = [
 		{ label: '2028 Presidential Interactive Map', href: '/2028-presidential-election-interactive-map' },
 		{ label: '2026 Senate Interactive Map', href: '/2026-senate-interactive-map' },
+		{ label: '2024 Senate Election Results', href: '/2024-senate-election-results' },
 		{ label: '2026 House Interactive Map', href: '/2026-house-interactive-map' },
 		{ label: 'All Historical Elections', href: '/historical-presidential-elections' }
 	];
@@ -246,4 +248,5 @@
 			</a>.
 		</footer>
 	</article>
+	<SiteFooter />
 </div>

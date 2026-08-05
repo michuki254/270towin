@@ -5,7 +5,6 @@
 	import { PresentationModeStore } from '$lib/stores/PresentationMode';
 	import type { Snippet } from 'svelte';
 	import { reapplyPanZoom } from '$lib/utils/applyPanZoom';
-	import { SideBarStore } from '$lib/stores/SideBar';
 
 	const { children }: { children: Snippet } = $props();
 
@@ -13,7 +12,6 @@
 		/* eslint-disable @typescript-eslint/no-unused-expressions */
 		$ChartTypeStore;
 		$ChartPositionStore;
-		$SideBarStore;
 		reapplyPanZoom();
 	});
 </script>

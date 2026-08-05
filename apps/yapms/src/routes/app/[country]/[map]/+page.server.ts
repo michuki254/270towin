@@ -1,10 +1,10 @@
-export function entries() {
-	const maps = import.meta.glob('$lib/assets/maps/**/*.svg');
+import { getMapBasenames } from '$lib/server/mapSvgFiles';
 
+export function entries() {
 	const result = [];
-	for (const key in maps) {
-		const params = key.split('/').pop()?.split('.').at(0)?.split('-');
-		if (params === undefined || params.length !== 2) {
+	for (const map of getMapBasenames()) {
+		const params = map.split('-');
+		if (params.length !== 2) {
 			continue;
 		}
 		result.push({
@@ -15,4 +15,4 @@ export function entries() {
 	return result;
 }
 
-export const prerender = true;
+export const prerender = false;

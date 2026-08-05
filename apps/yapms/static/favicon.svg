@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-labelledby="title desc">
+	<title id="title">Path to Win favicon</title>
+	<desc id="desc">A flag-themed route marker for Path to Win.</desc>
+	<defs>
+		<linearGradient id="navy" x1="0" x2="1" y1="0" y2="1">
+			<stop offset="0" stop-color="#061a55" />
+			<stop offset="1" stop-color="#2e5aac" />
+		</linearGradient>
+		<linearGradient id="red" x1="0" x2="1" y1="0" y2="1">
+			<stop offset="0" stop-color="#d83a45" />
+			<stop offset="1" stop-color="#a91f2b" />
+		</linearGradient>
+		<clipPath id="clip">
+			<rect x="16" y="16" width="160" height="160" rx="32" />
+		</clipPath>
+	</defs>
+	<rect x="8" y="8" width="176" height="176" rx="38" fill="#fff" />
+	<rect x="8" y="8" width="176" height="176" rx="38" fill="none" stroke="#d7dce8" stroke-width="4" />
+	<g clip-path="url(#clip)">
+		<rect x="16" y="16" width="160" height="160" fill="#fff" />
+		<rect x="16" y="16" width="160" height="27" fill="#d83a45" />
+		<rect x="16" y="70" width="160" height="27" fill="#d83a45" />
+		<rect x="16" y="124" width="160" height="27" fill="#d83a45" />
+		<rect x="16" y="16" width="88" height="82" fill="#061a55" />
+		<g fill="#fff">
+			<path d="M38 36l4.2 8.5h9.4l-7.6 5.9 2.9 9.2-8.9-5.7-8.9 5.7 2.9-9.2-7.6-5.9h9.4L38 36Z" />
+			<path d="M73 36l4.2 8.5h9.4l-7.6 5.9 2.9 9.2-8.9-5.7-8.9 5.7 2.9-9.2-7.6-5.9h9.4L73 36Z" />
+			<path d="M38 70l4.2 8.5h9.4l-7.6 5.9 2.9 9.2-8.9-5.7-8.9 5.7 2.9-9.2-7.6-5.9h9.4L38 70Z" />
+			<path d="M73 70l4.2 8.5h9.4l-7.6 5.9 2.9 9.2-8.9-5.7-8.9 5.7 2.9-9.2-7.6-5.9h9.4L73 70Z" />
+		</g>
+		<path d="M48 148c27-40 66-37 84-80" fill="none" stroke="#fff" stroke-width="21" stroke-linecap="round" />
+		<path d="M48 148c27-40 66-37 84-80" fill="none" stroke="url(#navy)" stroke-width="11" stroke-linecap="round" />
+		<circle cx="48" cy="148" r="13" fill="url(#red)" stroke="#fff" stroke-width="6" />
+		<path d="M132 46l24 24-24 24-24-24 24-24Z" fill="url(#red)" stroke="#fff" stroke-width="7" />
+	</g>
+</svg>

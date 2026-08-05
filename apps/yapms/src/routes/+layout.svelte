@@ -7,27 +7,28 @@
 	import ThemeModal from '$lib/components/modals/thememodal/ThemeModal.svelte';
 	import AuthModal from '$lib/components/modals/authmodal/AuthModal.svelte';
 	import { page } from '$app/stores';
-	import type { LayoutData } from './$types';
-
-	export let data: LayoutData;
+	import { browser } from '$app/environment';
 
 	// Hide the site nav when a page is loaded in embed mode (e.g. the home page hero iframe).
-	$: embed = $page.url.searchParams.has('embed');
+	$: embed = browser && $page.url.searchParams.has('embed');
+	$: isHomePage = $page.url.pathname === '/';
 </script>
 
 <svelte:head>
 	<script async src={PUBLIC_UMAMI_URI} data-website-id={PUBLIC_UMAMI_DATA_WEBSITE_ID}></script>
-	<script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
-	<script
-		async
-		src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1660456925957249"
-		crossorigin="anonymous"
-	></script>
+	{#if !isHomePage}
+		<script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+		<script
+			async
+			src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1660456925957249"
+			crossorigin="anonymous"
+		></script>
+	{/if}
 </svelte:head>
 
 <div class="flex flex-col h-full">
 	{#if !embed}
-		<SiteNav searchData={data.post.search} />
+		<SiteNav />
 	{/if}
 	<div class="flex-1 min-h-0">
 		<slot />

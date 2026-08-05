@@ -8,6 +8,10 @@ const config = {
 		adapter: adapter(),
 		env: {
 			dir: '../../'
+		},
+		prerender: {
+			entries: [],
+			concurrency: 1
 		}
 	}
 };

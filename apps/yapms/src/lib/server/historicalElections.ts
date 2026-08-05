@@ -25,7 +25,110 @@ export type ElectionData = {
 	candidates: CandidateResult[]; // sorted by electoral votes, descending
 	totalEV: number;
 	winner: CandidateResult | null;
+	details: ElectionDetails | null;
 };
+
+export type ElectionDetails = {
+	overview: string;
+	date?: string;
+	popularVote?: {
+		winner: string;
+		runnerUp: string;
+		total: string;
+	};
+	runningMates?: {
+		winner: string;
+		runnerUp: string;
+	};
+	keyPoints: string[];
+	sources: {
+		label: string;
+		href: string;
+	}[];
+};
+
+const electionDetailsByYear: Record<string, ElectionDetails> = {
+	'1956': {
+		overview:
+			'The 1956 presidential election was a rematch of 1952. Incumbent Republican Dwight D. Eisenhower defeated Democrat Adlai Stevenson II in a larger landslide while the country weighed Cold War crises, civil rights, and Eisenhower\'s first-term health.',
+		date: 'November 6, 1956',
+		popularVote: {
+			winner: 'Dwight D. Eisenhower: 35,590,472 votes, 57.4%',
+			runnerUp: 'Adlai Stevenson II: 26,022,752 votes, 42.0%',
+			total: '62,026,908 votes reported'
+		},
+		runningMates: {
+			winner: 'Richard M. Nixon',
+			runnerUp: 'Estes Kefauver'
+		},
+		keyPoints: [
+			'Eisenhower carried 41 states and won 457 electoral votes, while Stevenson won 73.',
+			'The campaign took place during the Suez Crisis and the Hungarian Revolution, two major Cold War-era foreign policy events shortly before Election Day.',
+			'Stevenson pushed a domestic program he called a New America, while Eisenhower campaigned from a position of broad personal popularity and a strong economy.',
+			'One Alabama elector who was pledged to Stevenson cast an electoral vote for Walter B. Jones for president and Herman Talmadge for vice president.',
+			'This was the second consecutive Eisenhower-Stevenson race and one of the rare presidential rematches won by the incumbent.'
+		],
+		sources: [
+			{
+				label: 'American Presidency Project',
+				href: 'https://www.presidency.ucsb.edu/statistics/elections/1956'
+			},
+			{
+				label: 'National Archives',
+				href: 'https://www.archives.gov/electoral-college/1956'
+			},
+			{
+				label: 'Britannica',
+				href: 'https://www.britannica.com/event/United-States-presidential-election-of-1956'
+			}
+		]
+	}
+};
+
+function archivesYear(year: string): string {
+	return year === '1788' ? '1789' : year;
+}
+
+function defaultDetailsForElection(election: Omit<ElectionData, 'details'>): ElectionDetails {
+	const runnerUp = election.candidates[1];
+	const margin =
+		runnerUp !== undefined && election.winner !== null
+			? election.winner.ev - runnerUp.ev
+			: election.winner?.ev ?? 0;
+	const neededToWin = Math.floor(election.totalEV / 2) + 1;
+	const candidateText =
+		election.candidates.length === 1
+			? '1 candidate with electoral votes'
+			: `${election.candidates.length} candidates with electoral votes`;
+	const outcome =
+		election.winner !== null
+			? `${election.winner.name} won the ${election.year} presidential election with ${election.winner.ev} electoral votes.`
+			: `The ${election.year} presidential election results are available in the historical map.`;
+	const runnerUpText =
+		runnerUp !== undefined
+			? ` ${runnerUp.name} finished second with ${runnerUp.ev} electoral votes.`
+			: '';
+
+	return {
+		overview: `${outcome}${runnerUpText} This page combines the interactive historical electoral map with a compact election summary.`,
+		keyPoints: [
+			`The map records ${election.totalEV} total electoral votes and ${candidateText}.`,
+			`${neededToWin} electoral votes were needed for a majority in this election.`,
+			`The electoral vote margin between the top two candidates was ${margin}.`,
+			'Use the interactive map above to inspect the state-by-state electoral result and explore alternate outcomes.'
+		],
+		sources: [
+			{
+				label: 'National Archives',
+				href: `https://www.archives.gov/electoral-college/${archivesYear(election.year)}`
+			},
+			{
+				label: 'American Presidency Project',
+				href: `https://www.presidency.ucsb.edu/statistics/elections/${election.year}`
+			}
+		]
+	};
+}
 
 function fileForToken(token: string): string {
 	return `./src/lib/assets/maps/usa/usa-presidential-${token}-results.svg`;
@@ -96,12 +199,17 @@ export function getElection(year: string): ElectionData | null {
 	const totalEV = sorted.reduce((sum, c) => sum + c.ev, 0);
 	const winner = sorted.find((c) => c.ev > 0) ?? null;
 
-	return {
+	const election = {
 		year: entry.year,
 		token: entry.token,
 		mapRoute: `/app/usa/presidential/${entry.token}/results`,
 		candidates: sorted.filter((c) => c.ev > 0),
 		totalEV,
 		winner
+	};
+
+	return {
+		...election,
+		details: electionDetailsByYear[entry.year] ?? defaultDetailsForElection(election)
 	};
 }
