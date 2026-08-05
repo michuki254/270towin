@@ -116,3 +116,126 @@ export const SLUGS = {
 	senate2026: 'which-party-will-win-the-senate-in-2026',
 	house2026: 'which-party-will-win-the-house-in-2026'
 } as const;
+
+/* ------------------------------------------------------------------ *
+ * Candidate-level markets                                            *
+ * ------------------------------------------------------------------ */
+
+export type CandidateOdds = {
+	name: string;
+	/** Probability as a percentage, one decimal. */
+	pct: number;
+	/** Derived by comparing the two nominee markets; null when in neither. */
+	party: 'Democratic' | 'Republican' | null;
+};
+
+export type CandidateBoard = {
+	candidates: CandidateOdds[];
+	fetchedAt: string;
+	ok: boolean;
+};
+
+export const CANDIDATE_SLUGS = {
+	/** Who takes office — both parties in one market. */
+	presidentialWinner2028: 'presidential-election-winner-2028',
+	democraticNominee2028: 'democratic-presidential-nominee-2028',
+	republicanNominee2028: 'republican-presidential-nominee-2028'
+} as const;
+
+/** Collapse the renderings of one person to a single key.
+ *
+ *  The winner market writes "JD Vance", the Republican nominee market writes
+ *  "J.D. Vance". Without dropping the periods the two never join and the
+ *  candidate loses the party we derive from that join. */
+function nameKey(name: string): string {
+	return name.toLowerCase().replace(/\./g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+/** name -> probability (0-1) for every priced sub-market of one event. */
+async function readYesPrices(slug: string, timeoutMs: number): Promise<Map<string, number>> {
+	const out = new Map<string, number>();
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), timeoutMs);
+	try {
+		const res = await fetch(`${GAMMA}/events?slug=${encodeURIComponent(slug)}`, {
+			signal: controller.signal,
+			headers: { Accept: 'application/json' }
+		});
+		if (!res.ok) return out;
+		const events = (await res.json()) as Array<{ markets?: GammaMarket[] }>;
+		for (const m of events?.[0]?.markets ?? []) {
+			if (m.closed) continue;
+			const label = (m.groupItemTitle ?? m.question ?? '').trim();
+			if (!label) continue;
+			let outcomes: string[] = [];
+			let prices: string[] = [];
+			try {
+				outcomes = JSON.parse(m.outcomes ?? '[]');
+				prices = JSON.parse(m.outcomePrices ?? '[]');
+			} catch {
+				continue;
+			}
+			// These events carry dozens of unpriced placeholder rows
+			// ("Party A", empty outcome lists). Skip anything without a
+			// price rather than reading a stale or absent index.
+			const yesAt = outcomes.findIndex((o) => o.toLowerCase() === 'yes');
+			if (yesAt < 0 || prices.length !== outcomes.length) continue;
+			const v = parseFloat(prices[yesAt]);
+			if (!Number.isFinite(v)) continue;
+			out.set(label, v);
+		}
+		return out;
+	} catch {
+		return out;
+	} finally {
+		clearTimeout(timer);
+	}
+}
+
+/**
+ * The 2028 field as the market prices it, strongest first.
+ *
+ * Party is not stated anywhere on the winner market, so it is derived: a name
+ * is assigned to whichever nominee market prices it higher. That is data
+ * rather than a hand-maintained roster, so a contender who enters the market
+ * later still lands in the right column without a code change.
+ */
+export async function fetchCandidateBoard(
+	opts: { limit?: number; minPct?: number; timeoutMs?: number } = {}
+): Promise<CandidateBoard> {
+	const { limit = 12, minPct = 1, timeoutMs = 6000 } = opts;
+	const now = new Date().toISOString();
+
+	const [winner, dem, gop] = await Promise.all([
+		readYesPrices(CANDIDATE_SLUGS.presidentialWinner2028, timeoutMs),
+		readYesPrices(CANDIDATE_SLUGS.democraticNominee2028, timeoutMs),
+		readYesPrices(CANDIDATE_SLUGS.republicanNominee2028, timeoutMs)
+	]);
+
+	if (!winner.size) return { candidates: [], fetchedAt: now, ok: false };
+
+	const byKey = (m: Map<string, number>) => {
+		const k = new Map<string, number>();
+		for (const [n, v] of m) k.set(nameKey(n), v);
+		return k;
+	};
+	const demKeys = byKey(dem);
+	const gopKeys = byKey(gop);
+
+	const candidates: CandidateOdds[] = [];
+	for (const [name, v] of winner) {
+		const pct = Math.round(v * 1000) / 10;
+		if (pct < minPct) continue;
+		const k = nameKey(name);
+		const d = demKeys.get(k);
+		const r = gopKeys.get(k);
+		let party: CandidateOdds['party'] = null;
+		if (d !== undefined || r !== undefined) {
+			party = (d ?? -1) >= (r ?? -1) ? 'Democratic' : 'Republican';
+		}
+		candidates.push({ name, pct, party });
+	}
+
+	candidates.sort((a, b) => b.pct - a.pct);
+	return { candidates: candidates.slice(0, limit), fetchedAt: now, ok: candidates.length > 0 };
+}

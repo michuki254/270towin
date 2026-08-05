@@ -1,308 +1,111 @@
 <script lang="ts">
+	/* Everything below the map used to be invented.
+	 *
+	 * The page shipped a "Prediction Market Forecast" of 52.1% GOP, a 226/81/231
+	 * electoral college "projection", and a ten-row contender table whose
+	 * probabilities were written by hand — then hedged with "market-style",
+	 * "Live-style model" and "modeled dashboard indicators" so none of it was
+	 * quite a claim. The numbers were not merely unsourced, they were wrong
+	 * about the shape of the race: the real market has the Democrats favoured,
+	 * not the Republicans, has Harris fourth among Democrats rather than first,
+	 * and prices Ossoff and Ocasio-Cortez in the top five while the table
+	 * omitted both.
+	 *
+	 * There is a real source for all of it, and the site already talks to it for
+	 * the Senate page, so every number here now comes from Polymarket via the
+	 * server load, carries the time it was read, and disappears rather than
+	 * degrading to a placeholder when the API is down.
+	 *
+	 * Three columns are gone rather than re-sourced. "Since" and "Term" were
+	 * borrowed from a governor table and were false for most of the field —
+	 * Haley's "2011" was her governorship, Ramaswamy has never held office. The
+	 * "Consensus" column rated people Safe/Likely/Lean/Tilt/Toss-Up, which is
+	 * the scale for how reliably a *state* votes; it means nothing applied to a
+	 * person, and the filter buttons built on it meant nothing either.
+	 *
+	 * The map itself is untouched.
+	 */
 	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 
 	let startMode = $state<'2024map' | 'blank'>('2024map');
 	const mapEmbedUrl = $derived(`/app/usa/presidential/2028/${startMode}?embed=1`);
 	const mapFullUrl = $derived(`/app/usa/presidential/2028/${startMode}`);
 
-	type Party = 'Democratic' | 'Republican';
-	type Rating = 'Safe' | 'Likely' | 'Lean' | 'Tilt' | 'Toss-Up';
-	type PresidentialCandidate = {
-		state: string;
-		candidate: string;
-		party: Party;
-		since: number;
-		term: number;
-		rating: Rating;
-		market: number;
-		photo: string;
-		initials: string;
-	};
-
-	const partyStyles: Record<Party, { color: string; bg: string; text: string; logo: string }> = {
+	// Text colour is applied inline from `color` so the badge cannot drift out of
+	// step with the bar next to it.
+	const partyStyles = {
 		Democratic: {
 			color: '#2E5AAC',
 			bg: 'bg-[#eaf0fb]',
-			text: 'text-[#2E5AAC]',
 			logo: '/party-logos/democrats.png'
 		},
 		Republican: {
 			color: '#D83A45',
 			bg: 'bg-[#fdebed]',
-			text: 'text-[#D83A45]',
 			logo: '/party-logos/republicans.png'
 		}
-	};
+	} as const;
 
-	const ratingStyles: Record<Rating, string> = {
-		Safe: 'bg-[#e8eef8] text-[#244999] border-[#b6c7e8]',
-		Likely: 'bg-[#eef3fb] text-[#2E5AAC] border-[#c9d6ef]',
-		Lean: 'bg-[#f6f2e3] text-[#7a6e43] border-[#d9d0ab]',
-		Tilt: 'bg-[#fff3d8] text-[#8a6500] border-[#ead394]',
-		'Toss-Up': 'bg-[#f0ead8] text-[#655c3f] border-[#C8BE9A]'
-	};
+	function styleFor(party: 'Democratic' | 'Republican' | null) {
+		return party ? partyStyles[party] : null;
+	}
 
-	const summaryCards = [
-		{
-			label: 'Electoral Votes Needed',
-			value: '270',
-			detail: 'Majority of 538 electoral votes',
-			accent: '#2E5AAC'
-		},
-		{
-			label: 'Consensus Forecast',
-			value: 'Toss-Up',
-			detail: 'Early cycle model shows no clear favorite',
-			accent: '#C8BE9A'
-		},
-		{
-			label: 'Prediction Market Forecast',
-			value: '52.1% GOP',
-			detail: 'Market-style edge in the early field',
-			accent: '#1f9d55'
-		},
-		{
-			label: 'Interactive Map Projection',
-			value: '538 EV',
-			detail: 'Build your own path to 270',
-			accent: '#D83A45'
-		}
-	];
+	/** "2026-08-06T11:20:31.000Z" -> "6 Aug 2026, 11:20 UTC" */
+	function readAt(iso: string): string {
+		const d = new Date(iso);
+		if (Number.isNaN(d.getTime())) return 'unknown';
+		const month = [
+			'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+			'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+		][d.getUTCMonth()];
+		const hh = String(d.getUTCHours()).padStart(2, '0');
+		const mm = String(d.getUTCMinutes()).padStart(2, '0');
+		return `${d.getUTCDate()} ${month} ${d.getUTCFullYear()}, ${hh}:${mm} UTC`;
+	}
 
-	const forecastBlocks = [
-		{ label: 'Democrats', value: 226, color: '#2E5AAC' },
-		{ label: 'Toss-up', value: 81, color: '#C8BE9A' },
-		{ label: 'Republicans', value: 231, color: '#D83A45' }
-	];
+	const partyLeader = $derived(data.party.ok ? data.party.odds[0] : null);
+	const fieldLeader = $derived(data.board.ok ? data.board.candidates[0] : null);
 
-	const candidatesByYear: Record<number, PresidentialCandidate[]> = {
-		2028: [
-			{
-				state: 'CA',
-				candidate: 'Kamala Harris',
-				party: 'Democratic',
-				since: 2021,
-				term: 1,
-				rating: 'Toss-Up',
-				market: 18,
-				photo: '/candidate-headshots/presidential/kamala-harris.jpg',
-				initials: 'KH'
-			},
-			{
-				state: 'CA',
-				candidate: 'Gavin Newsom',
-				party: 'Democratic',
-				since: 2019,
-				term: 2,
-				rating: 'Lean',
-				market: 17,
-				photo: '/candidate-headshots/presidential/gavin-newsom.jpg',
-				initials: 'GN'
-			},
-			{
-				state: 'MI',
-				candidate: 'Gretchen Whitmer',
-				party: 'Democratic',
-				since: 2019,
-				term: 2,
-				rating: 'Lean',
-				market: 11,
-				photo: '/candidate-headshots/presidential/gretchen-whitmer.jpg',
-				initials: 'GW'
-			},
-			{
-				state: 'PA',
-				candidate: 'Josh Shapiro',
-				party: 'Democratic',
-				since: 2023,
-				term: 1,
-				rating: 'Tilt',
-				market: 9,
-				photo: '/candidate-headshots/presidential/josh-shapiro.jpg',
-				initials: 'JS'
-			},
-			{
-				state: 'IN',
-				candidate: 'Pete Buttigieg',
-				party: 'Democratic',
-				since: 2021,
-				term: 1,
-				rating: 'Tilt',
-				market: 7,
-				photo: '/candidate-headshots/presidential/pete-buttigieg.jpg',
-				initials: 'PB'
-			},
-			{
-				state: 'OH',
-				candidate: 'JD Vance',
-				party: 'Republican',
-				since: 2025,
-				term: 1,
-				rating: 'Likely',
-				market: 24,
-				photo: '/candidate-headshots/presidential/jd-vance.jpg',
-				initials: 'JV'
-			},
-			{
-				state: 'FL',
-				candidate: 'Marco Rubio',
-				party: 'Republican',
-				since: 2025,
-				term: 1,
-				rating: 'Lean',
-				market: 16,
-				photo: '/candidate-headshots/presidential/marco-rubio.jpg',
-				initials: 'MR'
-			},
-			{
-				state: 'FL',
-				candidate: 'Ron DeSantis',
-				party: 'Republican',
-				since: 2019,
-				term: 2,
-				rating: 'Lean',
-				market: 10,
-				photo: '/candidate-headshots/presidential/ron-desantis.jpg',
-				initials: 'RD'
-			},
-			{
-				state: 'SC',
-				candidate: 'Nikki Haley',
-				party: 'Republican',
-				since: 2011,
-				term: 2,
-				rating: 'Tilt',
-				market: 6,
-				photo: '/candidate-headshots/presidential/nikki-haley.jpg',
-				initials: 'NH'
-			},
-			{
-				state: 'OH',
-				candidate: 'Vivek Ramaswamy',
-				party: 'Republican',
-				since: 2025,
-				term: 1,
-				rating: 'Tilt',
-				market: 5,
-				photo: '/candidate-headshots/presidential/vivek-ramaswamy.jpg',
-				initials: 'VR'
-			}
-		],
-		2032: [
-			{
-				state: 'MD',
-				candidate: 'Wes Moore',
-				party: 'Democratic',
-				since: 2023,
-				term: 1,
-				rating: 'Lean',
-				market: 12,
-				photo: '/candidate-headshots/presidential/wes-moore.jpg',
-				initials: 'WM'
-			},
-			{
-				state: 'IL',
-				candidate: 'JB Pritzker',
-				party: 'Democratic',
-				since: 2019,
-				term: 2,
-				rating: 'Lean',
-				market: 10,
-				photo: '/candidate-headshots/presidential/jb-pritzker.jpg',
-				initials: 'JP'
-			},
-			{
-				state: 'NY',
-				candidate: 'Alexandria Ocasio-Cortez',
-				party: 'Democratic',
-				since: 2019,
-				term: 7,
-				rating: 'Tilt',
-				market: 8,
-				photo: '/candidate-headshots/presidential/alexandria-ocasio-cortez.jpg',
-				initials: 'AOC'
-			},
-			{
-				state: 'PA',
-				candidate: 'Josh Shapiro',
-				party: 'Democratic',
-				since: 2023,
-				term: 1,
-				rating: 'Tilt',
-				market: 7,
-				photo: '/candidate-headshots/presidential/josh-shapiro.jpg',
-				initials: 'JS'
-			},
-			{
-				state: 'VA',
-				candidate: 'Glenn Youngkin',
-				party: 'Republican',
-				since: 2022,
-				term: 1,
-				rating: 'Lean',
-				market: 11,
-				photo: '/candidate-headshots/presidential/glenn-youngkin.jpg',
-				initials: 'GY'
-			},
-			{
-				state: 'FL',
-				candidate: 'Ron DeSantis',
-				party: 'Republican',
-				since: 2019,
-				term: 2,
-				rating: 'Lean',
-				market: 10,
-				photo: '/candidate-headshots/presidential/ron-desantis.jpg',
-				initials: 'RD'
-			},
-			{
-				state: 'SC',
-				candidate: 'Nikki Haley',
-				party: 'Republican',
-				since: 2011,
-				term: 2,
-				rating: 'Tilt',
-				market: 8,
-				photo: '/candidate-headshots/presidential/nikki-haley.jpg',
-				initials: 'NH'
-			},
-			{
-				state: 'OH',
-				candidate: 'Vivek Ramaswamy',
-				party: 'Republican',
-				since: 2025,
-				term: 1,
-				rating: 'Tilt',
-				market: 6,
-				photo: '/candidate-headshots/presidential/vivek-ramaswamy.jpg',
-				initials: 'VR'
-			}
-		]
-	};
-
-	const yearTabs = [2028, 2032] as const;
-	const ratingFilters = ['All', 'Safe', 'Likely', 'Lean', 'Tilt', 'Toss-Up'];
-	let selectedYear = $state<(typeof yearTabs)[number]>(2028);
-	let selectedRating = $state('All');
-
-	const filteredCandidates = $derived(
-		selectedRating === 'All'
-			? candidatesByYear[selectedYear]
-			: candidatesByYear[selectedYear].filter((candidate) => candidate.rating === selectedRating)
+	// Filter by party, which the data actually carries, instead of by the
+	// state-rating scale the old buttons used.
+	const partyFilters = ['All', 'Democratic', 'Republican'] as const;
+	let selectedParty = $state<(typeof partyFilters)[number]>('All');
+	const shownCandidates = $derived(
+		selectedParty === 'All'
+			? data.board.candidates
+			: data.board.candidates.filter((c) => c.party === selectedParty)
 	);
+
+	/* The certified 2024 result — a real baseline, and literally what the map's
+	   "2024 Result" mode loads. It replaces the invented 2028 projection. */
+	const result2024 = [
+		{ label: 'Trump (R)', value: 312, color: '#D83A45' },
+		{ label: 'Harris (D)', value: 226, color: '#2E5AAC' }
+	];
 
 	const faqs = [
 		{
-			q: 'How many electoral votes are needed to win?',
-			a: 'A presidential candidate needs at least 270 of the 538 electoral votes to win.'
+			q: 'How many electoral votes does it take to win?',
+			a: '270 of the 538 available. If nobody reaches 270 — including a 269-269 tie — the election goes to the House of Representatives, where each state delegation casts a single vote.'
 		},
 		{
-			q: 'Are these official presidential candidates?',
-			a: 'No. This dashboard is an early forecasting interface using modeled contenders and probabilities until the official field is settled.'
+			q: 'Is this the official 2028 field?',
+			a: 'No, and it cannot be yet: no party has nominated anyone and the first primaries are still years out. The names listed are the contenders who have a tradeable market on Polymarket, ordered by price. People enter and leave that list as traders take an interest in them.'
 		},
 		{
-			q: 'Can I share my 2028 forecast?',
-			a: 'Yes. Open the full interactive map and use the Share button to generate a link or embed code.'
+			q: 'Where do the percentages come from?',
+			a: "They are live prices from Polymarket's 2028 presidential markets, not a forecast produced by this site. A contract pays out if the candidate wins, so its price reads directly as the market's implied probability. Party is worked out by checking which of the two nomination markets prices a candidate higher."
+		},
+		{
+			q: 'Why do the two party percentages not add up to 100?',
+			a: 'Each party is a separate contract rather than a share of one pool, so the prices are quoted independently and the total drifts a little either side of 100. The gap is the spread traders are leaving, not a rounding mistake.'
+		},
+		{
+			q: 'Can I share a map I have built?',
+			a: 'Yes. Open the full interactive map and use the Share button for a link or embed code. Your changes stay in the link, so anyone opening it sees your map rather than the default.'
 		}
 	];
 
@@ -325,17 +128,17 @@
 </script>
 
 <svelte:head>
-	<title>2028 Presidential Election Forecast | Interactive Electoral College Map</title>
+	<title>2028 Presidential Election Interactive Map | Electoral College &amp; Market Odds</title>
 	<meta
 		name="description"
-		content="Forecast the 2028 presidential election with an interactive electoral college map, contender table, party logos, headshots, ratings and prediction-market style probabilities."
+		content="Build a 2028 electoral college map from the 2024 result or a blank slate, and see live Polymarket prices for both parties and the individual contenders."
 	/>
 	<link rel="canonical" href="/2028-presidential-election-interactive-map" />
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content="2028 Presidential Election Forecast" />
+	<meta property="og:title" content="2028 Presidential Election Interactive Map" />
 	<meta
 		property="og:description"
-		content="Build your own path to 270 with a presidential forecast dashboard and interactive electoral map."
+		content="Build your own path to 270, alongside live market prices for the 2028 field."
 	/>
 	<meta name="twitter:card" content="summary_large_image" />
 	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd)}</` + `script>`}
@@ -347,28 +150,19 @@
 			<nav class="mb-2 text-xs text-neutral-500" aria-label="Breadcrumb">
 				<a href="/" class="hover:underline">Home</a>
 				<span class="mx-1">/</span>
-				<span>2028 Presidential Forecast</span>
+				<span>2028 Presidential Election</span>
 			</nav>
-			<div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-				<div>
-					<p class="text-xs font-bold uppercase tracking-[0.18em] text-[#2E5AAC]">
-						U.S. Presidential Election
-					</p>
-					<h1 class="mt-1 text-3xl font-black tracking-tight text-[#061a55] md:text-4xl">
-						2028 Presidential Election Forecast
-					</h1>
-					<p class="mt-2 max-w-3xl text-sm leading-relaxed text-neutral-600">
-						An electoral college forecasting dashboard with map controls, contender headshots,
-						party logos, ratings and market-style probabilities for the road to 270.
-					</p>
-				</div>
-				<a
-					href={mapFullUrl}
-					class="inline-flex items-center justify-center rounded-md bg-[#D83A45] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#b92f39]"
-				>
-					Open Full Interactive Map
-				</a>
-			</div>
+			<p class="text-xs font-bold uppercase tracking-[0.18em] text-[#2E5AAC]">
+				U.S. Presidential Election
+			</p>
+			<h1 class="mt-1 text-3xl font-black tracking-tight text-[#061a55] md:text-4xl">
+				2028 Presidential Election Interactive Map
+			</h1>
+			<p class="mt-2 max-w-3xl text-sm leading-relaxed text-neutral-600">
+				Colour in the states yourself and watch the electoral college total move, starting either
+				from the 2024 result or an empty map. Below it, what the betting markets currently make of
+				the field.
+			</p>
 		</header>
 
 		<section class="mt-5">
@@ -428,219 +222,243 @@
 			</div>
 		</section>
 
-		<section class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Forecast summary">
-			{#each summaryCards as card}
-				<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-					<div class="mb-3 h-1.5 w-12 rounded-full" style={`background:${card.accent}`}></div>
-					<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">{card.label}</div>
-					<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">{card.value}</div>
-					<div class="mt-1 text-xs leading-relaxed text-neutral-500">{card.detail}</div>
-				</div>
-			{/each}
-		</section>
+		<section class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Key numbers">
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#061a55"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">To win</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">270</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">of 538 electoral votes</div>
+			</div>
 
-		<section class="mt-5 rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-			<div class="mb-3 flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
-				<div>
-					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-						Electoral College Projection
-					</h2>
-					<p class="text-xs text-neutral-500">Modeled baseline with competitive states held as toss-ups.</p>
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#7a6e43"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">Election day</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">Nov 7, 2028</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					{data.daysToElection.toLocaleString()} days away
 				</div>
-				<div class="text-xs font-semibold text-neutral-500">270 electoral votes needed to win</div>
 			</div>
-			<div class="grid grid-cols-3 overflow-hidden rounded border border-neutral-200 text-center text-white">
-				{#each forecastBlocks as block}
-					<div class="py-3" style={`background:${block.color}`}>
-						<div class="text-2xl font-black leading-none">{block.value}</div>
-						<div class="mt-1 text-[11px] font-bold uppercase tracking-wide opacity-90">{block.label}</div>
+
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div
+					class="mb-3 h-1.5 w-12 rounded-full"
+					style={`background:${partyLeader?.color ?? '#c9ccd4'}`}
+				></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">
+					Market favours
+				</div>
+				{#if partyLeader}
+					<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">
+						{partyLeader.party} {partyLeader.pct}%
 					</div>
-				{/each}
+					<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+						Polymarket, read {readAt(data.party.fetchedAt)}
+					</div>
+				{:else}
+					<div class="mt-1 text-2xl font-black tracking-tight text-neutral-400">—</div>
+					<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+						Market data unavailable right now
+					</div>
+				{/if}
 			</div>
-			<div class="mt-3 grid grid-cols-5 gap-px overflow-hidden rounded border border-neutral-200 bg-neutral-200 text-center text-[11px] font-bold uppercase">
-				<div class="bg-[#e8eef8] px-2 py-2 text-[#244999]">Safe</div>
-				<div class="bg-[#eef3fb] px-2 py-2 text-[#2E5AAC]">Likely</div>
-				<div class="bg-[#f6f2e3] px-2 py-2 text-[#7a6e43]">Lean</div>
-				<div class="bg-[#fff3d8] px-2 py-2 text-[#8a6500]">Tilt</div>
-				<div class="bg-[#f0ead8] px-2 py-2 text-[#655c3f]">Toss-Up</div>
+
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div
+					class="mb-3 h-1.5 w-12 rounded-full"
+					style={`background:${styleFor(fieldLeader?.party ?? null)?.color ?? '#c9ccd4'}`}
+				></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">
+					Shortest odds
+				</div>
+				{#if fieldLeader}
+					<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">
+						{fieldLeader.name}
+					</div>
+					<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+						{fieldLeader.pct}% to take office
+					</div>
+				{:else}
+					<div class="mt-1 text-2xl font-black tracking-tight text-neutral-400">—</div>
+					<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+						Market data unavailable right now
+					</div>
+				{/if}
 			</div>
 		</section>
 
 		<div class="mt-5 grid gap-5 xl:grid-cols-[1.55fr_1fr]">
 			<section class="rounded-md border border-neutral-200 bg-white shadow-sm">
-				<div class="border-b border-neutral-200 px-4 py-3">
-					<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-						<div>
-							<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-								Presidential Forecast Workspace
-							</h2>
-							<p class="text-xs text-neutral-500">
-								Choose a presidential cycle. Each tab uses the same forecast table format.
-							</p>
-						</div>
-						<div class="inline-flex rounded-md border border-neutral-200 bg-[#f7f8fb] p-1">
-							{#each yearTabs as year}
+				<div
+					class="flex flex-col gap-3 border-b border-neutral-200 px-4 py-3 lg:flex-row lg:items-center lg:justify-between"
+				>
+					<div>
+						<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+							The 2028 field, by market price
+						</h2>
+						<p class="text-xs text-neutral-500">
+							{#if data.board.ok}
+								Chance of taking office, from Polymarket. Read {readAt(data.board.fetchedAt)}.
+							{:else}
+								Live prices are unavailable right now.
+							{/if}
+						</p>
+					</div>
+					{#if data.board.ok}
+						<div class="flex flex-wrap gap-2">
+							{#each partyFilters as p}
 								<button
 									type="button"
-									onclick={() => {
-										selectedYear = year;
-										selectedRating = 'All';
-									}}
-									class={`rounded px-3 py-1.5 text-xs font-black ${
-										selectedYear === year
-											? 'bg-[#061a55] text-white shadow-sm'
-											: 'text-neutral-600 hover:bg-white'
+									onclick={() => (selectedParty = p)}
+									class={`rounded border px-3 py-1.5 text-xs font-black ${
+										selectedParty === p
+											? 'border-[#061a55] bg-[#061a55] text-white'
+											: 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
 									}`}
 								>
-									{year}
+									{p}
 								</button>
 							{/each}
 						</div>
-					</div>
+					{/if}
 				</div>
 
-				<div class="flex flex-col gap-3 border-b border-neutral-200 px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
-					<div>
-						<h3 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-							{selectedYear} Presidential Contender Table
-						</h3>
-						<p class="text-xs text-neutral-500">
-							Filter by rating category. Probability shows modeled nomination/general-election strength.
-						</p>
-					</div>
-					<div class="flex flex-wrap gap-2">
-						{#each ratingFilters as rating}
-							<button
-								type="button"
-								onclick={() => (selectedRating = rating)}
-								class={`rounded border px-3 py-1.5 text-xs font-black ${
-									selectedRating === rating
-										? 'border-[#061a55] bg-[#061a55] text-white'
-										: 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
-								}`}
+				{#if data.board.ok}
+					<div class="overflow-x-auto">
+						<table class="w-full min-w-[560px] border-collapse text-sm">
+							<thead
+								class="bg-[#f7f8fb] text-left text-[11px] uppercase tracking-wide text-neutral-500"
 							>
-								{rating}
-							</button>
+								<tr class="border-b border-neutral-200">
+									<th class="px-4 py-3" scope="col">Contender</th>
+									<th class="px-4 py-3" scope="col">Party</th>
+									<th class="px-4 py-3" scope="col">Chance of winning</th>
+								</tr>
+							</thead>
+							<tbody class="divide-y divide-neutral-100">
+								{#each shownCandidates as c (c.name)}
+									<tr class="hover:bg-[#f9fafc]">
+										<td class="px-4 py-3">
+											<div class="flex items-center gap-3">
+												{#if c.photo}
+													<img
+														src={c.photo}
+														alt=""
+														class="h-10 w-10 shrink-0 rounded-full border border-neutral-200 object-cover object-top"
+														loading="lazy"
+													/>
+												{:else}
+													<div
+														class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-[#eef1f5] text-xs font-black text-[#061a55]"
+														aria-hidden="true"
+													>
+														{c.initials}
+													</div>
+												{/if}
+												<span class="font-bold text-neutral-900">{c.name}</span>
+											</div>
+										</td>
+										<td class="px-4 py-3">
+											{#if c.party}
+												{@const s = partyStyles[c.party]}
+												<span
+													class={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-black ${s.bg}`}
+													style={`color:${s.color}`}
+												>
+													<img
+														src={s.logo}
+														alt=""
+														class="h-5 w-5 rounded-full object-contain"
+														loading="lazy"
+													/>
+													{c.party}
+												</span>
+											{:else}
+												<span class="text-xs text-neutral-400">Not in either primary market</span>
+											{/if}
+										</td>
+										<td class="px-4 py-3">
+											<div class="flex items-center gap-3">
+												<div class="h-2 w-28 shrink-0 rounded-full bg-neutral-100">
+													<div
+														class="h-2 rounded-full"
+														style={`width:${c.pct}%;background:${styleFor(c.party)?.color ?? '#7a6e43'}`}
+													></div>
+												</div>
+												<span class="w-14 text-right font-black text-[#061a55]">{c.pct}%</span>
+											</div>
+										</td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					</div>
+					<p class="border-t border-neutral-100 px-4 py-3 text-xs leading-relaxed text-neutral-500">
+						Contenders priced under 1% are left out. Prices are quoted per candidate rather than
+						carved out of a single pool, so the column does not total 100%.
+					</p>
+				{:else}
+					<p class="px-4 py-8 text-center text-sm text-neutral-500">
+						Polymarket could not be reached. The map above is unaffected.
+					</p>
+				{/if}
+			</section>
+
+			<div class="flex flex-col gap-5">
+				<section class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+						Which party wins
+					</h2>
+					{#if data.party.ok}
+						<p class="text-xs text-neutral-500">
+							Polymarket, read {readAt(data.party.fetchedAt)}.
+						</p>
+						<div class="mt-4 space-y-3">
+							{#each data.party.odds as o (o.party)}
+								<div>
+									<div class="mb-1 flex justify-between text-xs font-bold">
+										<span style={`color:${o.color}`}>{o.party}</span><span>{o.pct}%</span>
+									</div>
+									<div class="h-2 rounded-full bg-neutral-100">
+										<div
+											class="h-2 rounded-full"
+											style={`width:${o.pct}%;background:${o.color}`}
+										></div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					{:else}
+						<p class="mt-3 text-sm text-neutral-500">
+							Polymarket could not be reached, so no prices are shown rather than stale ones.
+						</p>
+					{/if}
+				</section>
+
+				<section class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+						Where the map starts
+					</h2>
+					<p class="text-xs text-neutral-500">
+						The certified 2024 result, which the map above loads in "2024 Result" mode.
+					</p>
+					<div
+						class="mt-4 grid grid-cols-2 overflow-hidden rounded border border-neutral-200 text-center text-white"
+					>
+						{#each result2024 as block}
+							<div class="py-3" style={`background:${block.color}`}>
+								<div class="text-2xl font-black leading-none">{block.value}</div>
+								<div class="mt-1 text-[11px] font-bold uppercase tracking-wide opacity-90">
+									{block.label}
+								</div>
+							</div>
 						{/each}
 					</div>
-				</div>
-
-				<div class="overflow-x-auto">
-					<table class="w-full min-w-[920px] border-collapse text-sm">
-						<thead class="bg-[#f7f8fb] text-left text-[11px] uppercase tracking-wide text-neutral-500">
-							<tr class="border-b border-neutral-200">
-								<th class="px-4 py-3">Base</th>
-								<th class="px-4 py-3">Photo</th>
-								<th class="px-4 py-3">Candidate</th>
-								<th class="px-4 py-3">Party</th>
-								<th class="px-4 py-3 text-right">Since</th>
-								<th class="px-4 py-3 text-right">Term</th>
-								<th class="px-4 py-3">Consensus</th>
-								<th class="px-4 py-3">Prediction market</th>
-							</tr>
-						</thead>
-						<tbody class="divide-y divide-neutral-100">
-							{#each filteredCandidates as candidate}
-								<tr class="hover:bg-[#f9fafc]">
-									<td class="px-4 py-3">
-										<span class="inline-flex h-8 w-10 items-center justify-center rounded bg-[#eef1f5] font-black text-[#061a55]">
-											{candidate.state}
-										</span>
-									</td>
-									<td class="px-4 py-3">
-										{#if candidate.photo}
-											<img
-												src={candidate.photo}
-												alt={`${candidate.candidate} headshot`}
-												class="h-11 w-11 rounded-full border border-neutral-200 object-cover"
-												loading="lazy"
-											/>
-										{:else}
-											<div
-												class="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-xs font-black text-white"
-												style={`background:${partyStyles[candidate.party].color}`}
-												aria-label={`${candidate.candidate} avatar`}
-											>
-												{candidate.initials}
-											</div>
-										{/if}
-									</td>
-									<td class="px-4 py-3 font-bold text-neutral-900">{candidate.candidate}</td>
-									<td class="px-4 py-3">
-										<span
-											class={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-black ${partyStyles[candidate.party].bg} ${partyStyles[candidate.party].text}`}
-										>
-											<img
-												src={partyStyles[candidate.party].logo}
-												alt={`${candidate.party} Party logo`}
-												class="h-5 w-5 rounded-full object-contain"
-												loading="lazy"
-											/>
-											{candidate.party}
-										</span>
-									</td>
-									<td class="px-4 py-3 text-right font-semibold">{candidate.since}</td>
-									<td class="px-4 py-3 text-right font-semibold">{candidate.term}</td>
-									<td class="px-4 py-3">
-										<span class={`inline-flex rounded border px-2.5 py-1 text-xs font-black ${ratingStyles[candidate.rating]}`}>
-											{candidate.rating}
-										</span>
-									</td>
-									<td class="px-4 py-3">
-										<div class="flex items-center gap-3">
-											<div class="h-2 w-28 rounded-full bg-neutral-100">
-												<div
-													class="h-2 rounded-full bg-[#1f9d55]"
-													style={`width:${candidate.market}%`}
-												></div>
-											</div>
-											<span class="w-12 text-right font-black text-[#157347]">{candidate.market}%</span>
-										</div>
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-			</section>
-
-			<section class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-				<div class="mb-4 flex items-center justify-between">
-					<div>
-						<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">Market Signal</h2>
-						<p class="text-xs text-neutral-500">Modeled probability bands for the White House.</p>
-					</div>
-					<span class="rounded-full bg-[#e7f7ee] px-3 py-1 text-xs font-black text-[#157347]">
-						Live-style model
-					</span>
-				</div>
-				<div class="space-y-3">
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#D83A45]">Republican win</span><span>52.1%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#1f9d55]" style="width:52.1%"></div>
-						</div>
-					</div>
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#2E5AAC]">Democratic win</span><span>45.2%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#1f9d55]" style="width:45.2%"></div>
-						</div>
-					</div>
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#655c3f]">Contested/no clear path</span><span>2.7%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#C8BE9A]" style="width:2.7%"></div>
-						</div>
-					</div>
-				</div>
-			</section>
+					<p class="mt-3 text-xs leading-relaxed text-neutral-500">
+						A Republican hold in 2028 means defending 312; the Democrats need to flip 44 electoral
+						votes' worth of states to reach 270.
+					</p>
+				</section>
+			</div>
 		</div>
 
 		<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -664,7 +482,10 @@
 					<ul class="divide-y divide-neutral-100">
 						{#each relatedMaps as m}
 							<li>
-								<a href={m.href} class="block px-3 py-2 text-sm font-semibold text-[#2E5AAC] hover:bg-[#f7f8fb]">
+								<a
+									href={m.href}
+									class="block px-3 py-2 text-sm font-semibold text-[#2E5AAC] hover:bg-[#f7f8fb]"
+								>
 									{m.label}
 								</a>
 							</li>
@@ -672,21 +493,24 @@
 					</ul>
 				</div>
 
-				<div class="rounded-md border border-neutral-200 bg-white p-3 text-sm text-neutral-700 shadow-sm">
+				<div
+					class="rounded-md border border-neutral-200 bg-white p-3 text-sm text-neutral-700 shadow-sm"
+				>
 					<h2 class="mb-1 text-base font-black text-[#061a55]">Key Facts</h2>
 					<ul class="flex list-inside list-disc flex-col gap-1">
-						<li><strong>538</strong> total electoral votes</li>
-						<li><strong>270</strong> needed to win</li>
-						<li><strong>269-269</strong> tie decided by the House</li>
+						<li><strong>538</strong> electoral votes, <strong>270</strong> to win</li>
+						<li>A <strong>269-269</strong> tie goes to the House</li>
 						<li>Election Day: <strong>November 7, 2028</strong></li>
+						<li>Incumbent party: <strong>Republican</strong></li>
 					</ul>
 				</div>
 			</aside>
 		</div>
 
-		<footer class="mt-10 border-t border-neutral-200 pt-4 text-xs text-neutral-500">
-			Forecast ratings and probabilities are presented as modeled dashboard indicators for the
-			interactive presidential map.
+		<footer class="mt-10 border-t border-neutral-200 pt-4 text-xs leading-relaxed text-neutral-500">
+			Percentages on this page are live prices from Polymarket, carrying the time they were read.
+			They are what traders are paying, not a forecast produced by this site, and they change
+			throughout the day. Electoral vote totals for 2024 are the certified result.
 		</footer>
 	</article>
 	<SiteFooter />
