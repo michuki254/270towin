@@ -37,10 +37,19 @@
 
 	const latestHeadline = headlines[0].title;
 
-	const predictionMarkets = [
-		{ party: 'Republicans', pct: 54, color: '#d22532' },
-		{ party: 'Democrats', pct: 46, color: '#244999' }
-	];
+	// Live from Polymarket via +page.server.ts. Falls back to nothing rather
+	// than to stale numbers: an empty panel is honest, a frozen one is not.
+	let { data } = $props();
+	const predictionMarkets = $derived(data?.presidential?.odds ?? []);
+	const marketsAsOf = $derived(
+		data?.presidential?.ok
+			? new Date(data.presidential.fetchedAt).toLocaleString('en-US', {
+					dateStyle: 'medium',
+					timeStyle: 'short',
+					timeZone: 'UTC'
+				}) + ' UTC'
+			: null
+	);
 
 	// Electoral vote counter (538 total, 270 to win)
 	let evDem = $state(226);
@@ -196,10 +205,17 @@
 							</div>
 						{/each}
 					</div>
-					<p class="mt-3 text-[11px] text-neutral-500">
-						Probability based on the most recent &lsquo;yes&rsquo; trade for each party as of June 16,
-						2026. May not total 100%.
-					</p>
+					{#if marketsAsOf}
+						<p class="mt-3 text-[11px] text-neutral-500">
+							Live Polymarket prices — the most recent &lsquo;yes&rsquo; trade for each party, read
+							{marketsAsOf}. Each party is a separate binary market, so these may not total
+							100%.
+						</p>
+					{:else}
+						<p class="mt-3 text-[11px] text-neutral-500">
+							Market prices are temporarily unavailable.
+						</p>
+					{/if}
 				</div>
 			</div>
 		</aside>

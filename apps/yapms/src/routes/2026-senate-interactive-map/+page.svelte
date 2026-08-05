@@ -1,6 +1,19 @@
 <script lang="ts">
 	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
 
+	// Live Polymarket Senate-control prices from +page.server.ts.
+	let { data } = $props();
+	const senateOdds = $derived(data?.senate?.odds ?? []);
+	const senateAsOf = $derived(
+		data?.senate?.ok
+			? new Date(data.senate.fetchedAt).toLocaleString('en-US', {
+					dateStyle: 'medium',
+					timeStyle: 'short',
+					timeZone: 'UTC'
+				}) + ' UTC'
+			: null
+	);
+
 	const mapEmbedUrl = '/app/usa/senate/2026/blank?embed=1';
 	const mapFullUrl = '/app/usa/senate/2026/blank';
 
@@ -601,6 +614,33 @@
 				</div>
 				<div class="text-xs font-semibold text-neutral-500">51 seats needed for control</div>
 			</div>
+
+			{#if senateAsOf && senateOdds.length}
+				<div class="mb-4 rounded border border-neutral-200 bg-[#f8fafc] p-3">
+					<div class="flex items-baseline justify-between gap-3">
+						<span class="text-xs font-black uppercase tracking-wide text-[#061a55]">
+							Market odds for Senate control
+						</span>
+						<span class="text-[11px] text-neutral-500">Polymarket · read {senateAsOf}</span>
+					</div>
+					<div class="mt-3 flex flex-col gap-2">
+						{#each senateOdds as o}
+							<div>
+								<div class="flex justify-between text-xs font-semibold text-neutral-700">
+									<span>{o.party}</span>
+									<span>{o.pct}%</span>
+								</div>
+								<div class="mt-1 h-2.5 overflow-hidden rounded bg-neutral-200">
+									<div class="h-full rounded" style={`width:${o.pct}%;background:${o.color}`}></div>
+								</div>
+							</div>
+						{/each}
+					</div>
+					<p class="mt-2 text-[11px] text-neutral-500">
+						Each party trades as its own binary market, so these need not total 100%.
+					</p>
+				</div>
+			{/if}
 			<div class="grid grid-cols-3 overflow-hidden rounded border border-neutral-200 text-center text-white">
 				{#each forecastBlocks as block}
 					<div class="py-3" style={`background:${block.color}`}>
