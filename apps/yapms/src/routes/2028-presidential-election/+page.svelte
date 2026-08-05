@@ -331,7 +331,9 @@
 										>
 											{c.party ?? 'No primary market'}
 										</div>
-										<h3 class="truncate font-black text-[#061a55]">{c.name}</h3>
+										<!-- Wraps rather than truncating: "Alexandria Ocasio-Cortez" does not
+										     fit one line in this card and read as "Alexandria Ocasi…". -->
+										<h3 class="font-black leading-tight text-[#061a55]">{c.name}</h3>
 										<div class="mt-0.5 text-sm font-bold text-neutral-700">{c.pct}%</div>
 									</div>
 								</article>
