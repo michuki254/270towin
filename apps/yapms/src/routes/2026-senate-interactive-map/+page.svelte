@@ -160,15 +160,20 @@
 				initials: 'JT'
 			},
 			{
+				// Democratic nominee as of the 4 Aug 2026 primary: El-Sayed beat
+				// Haley Stevens. He has held no federal office, so `since`/`term`
+				// describe the seat being contested, not an incumbency. Photo left
+				// empty deliberately — the table falls back to party-coloured
+				// initials rather than a broken image.
 				state: 'MI',
-				candidate: 'Haley Stevens',
+				candidate: 'Abdul El-Sayed',
 				party: 'Democratic',
-				since: 2019,
-				term: 4,
+				since: 2027,
+				term: 1,
 				rating: 'Toss-Up',
 				market: 51,
-				photo: '/candidate-headshots/senate/haley-stevens.jpg',
-				initials: 'HS'
+				photo: '',
+				initials: 'AE'
 			},
 			{
 				state: 'MI',
