@@ -10,7 +10,6 @@
 		name="description"
 		content="Browse historical U.S. gubernatorial election result maps. Explore governor party control, state races, and post-election balance totals."
 	/>
-	<link rel="canonical" href="/historical-governor-elections" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="Historical Governor Elections" />
 </svelte:head>

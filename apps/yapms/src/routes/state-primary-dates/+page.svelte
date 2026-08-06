@@ -87,7 +87,6 @@
 		name="description"
 		content="Every 2026 primary date: all 50 states plus DC and the territories, grouped by date, with runoff dates, Senate races and House seats up in each."
 	/>
-	<link rel="canonical" href="/state-primary-dates" />
 	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd)}</` + `script>`}
 </svelte:head>
 

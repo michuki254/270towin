@@ -96,7 +96,6 @@
 		name="description"
 		content="Embed a branded Path to Win election countdown clock for upcoming elections and campaign pages."
 	/>
-	<link rel="canonical" href="/election-countdown-clock" />
 </svelte:head>
 
 <div class={compact ? 'h-full bg-[#001666]' : 'h-full overflow-y-auto bg-[#eef1f5]'}>

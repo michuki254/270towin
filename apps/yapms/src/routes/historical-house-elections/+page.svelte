@@ -10,7 +10,6 @@
 		name="description"
 		content="Browse historical U.S. House election result maps. Explore House control, seat totals, and district-by-district results for completed elections."
 	/>
-	<link rel="canonical" href="/historical-house-elections" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="Historical House Elections" />
 </svelte:head>

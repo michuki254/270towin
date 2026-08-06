@@ -151,6 +151,7 @@
 		},
 		{
 			label: 'States',
+			href: '/elected-officials',
 			kicker: 'Elected Officials',
 			description: 'State-by-state dashboards for federal officials, governors, legislatures, and partisan composition.',
 			image: '/favicon.svg',
@@ -162,7 +163,7 @@
 					image: '/favicon.svg'
 				},
 				{
-					label: 'Arkansas Officials',
+					label: 'All State Dashboards',
 					href: '/states',
 					description: 'Browse all state elected officials dashboards.',
 					image: '/favicon.svg'
@@ -189,6 +190,7 @@
 		},
 		{
 			label: 'More',
+			href: '/site-map',
 			// Kicker and description used to advertise the Map Library, which is no
 			// longer linked from the navigation, so both describe what is actually
 			// in this menu now.

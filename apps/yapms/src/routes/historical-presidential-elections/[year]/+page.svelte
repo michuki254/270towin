@@ -15,7 +15,6 @@
 		name="description"
 		content={`Results of the ${election.year} U.S. presidential election: ${election.winner?.name} won with ${election.winner?.ev} electoral votes. Explore the interactive electoral college map.`}
 	/>
-	<link rel="canonical" href={`/historical-presidential-elections/${election.year}`} />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content={`${election.year} Presidential Election Results`} />
 </svelte:head>

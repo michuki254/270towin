@@ -22,7 +22,6 @@
 <svelte:head>
 	<title>{election.year} Senate Election {resultLabel}</title>
 	<meta name="description" content={metaDescription} />
-	<link rel="canonical" href={`/historical-senate-elections/${election.year}`} />
 	<meta property="og:type" content="article" />
 	<meta
 		property="og:title"

@@ -111,7 +111,6 @@
 		name="description"
 		content="All 36 governor races in 2026: an interactive map you can fill in yourself, and live Polymarket prices for each state, sorted by how close the race is."
 	/>
-	<link rel="canonical" href="/2026-governor-interactive-map" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="2026 Governor Elections | Interactive Map" />
 	<meta

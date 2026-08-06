@@ -13,7 +13,6 @@
 <svelte:head>
 	<title>{election.year} House Election Results | Interactive U.S. House Map</title>
 	<meta name="description" content={metaDescription} />
-	<link rel="canonical" href={`/historical-house-elections/${election.year}`} />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content={`${election.year} House Election Results`} />
 </svelte:head>

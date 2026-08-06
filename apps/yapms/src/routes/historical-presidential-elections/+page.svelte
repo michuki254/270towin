@@ -10,7 +10,6 @@
 		name="description"
 		content="Browse the results of every U.S. presidential election from 1788 to 2024. Explore interactive electoral college maps, winners and electoral vote totals year by year."
 	/>
-	<link rel="canonical" href="/historical-presidential-elections" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="Historical Presidential Elections" />
 </svelte:head>

@@ -31,7 +31,6 @@
 		name="description"
 		content="Click any U.S. state on the 2024 presidential result map to open its elected officials dashboard."
 	/>
-	<link rel="canonical" href="/elected-officials" />
 </svelte:head>
 
 <div class="h-full overflow-y-auto bg-[#eef1f5] text-neutral-900">

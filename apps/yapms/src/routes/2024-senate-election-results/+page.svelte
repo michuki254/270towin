@@ -51,7 +51,6 @@
 		name="description"
 		content="Full results of the 2024 U.S. Senate elections. Republicans won Senate control with 53 seats. Explore the interactive state-by-state Senate map."
 	/>
-	<link rel="canonical" href="/2024-senate-election-results" />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content="2024 Senate Election Results" />
 	<meta

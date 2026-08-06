@@ -54,6 +54,11 @@
 		name="description"
 		content="Which 2026 and 2028 races the prediction markets repriced, biggest move first. Generated from live Polymarket prices, updated continuously."
 	/>
+	<meta property="og:title" content="Election News — Where the Markets Moved" />
+	<meta
+		property="og:description"
+		content="Which 2026 and 2028 races the prediction markets repriced, biggest move first."
+	/>
 </svelte:head>
 
 <div class="flex h-full flex-col overflow-y-auto bg-[#eef1f5] text-neutral-900">

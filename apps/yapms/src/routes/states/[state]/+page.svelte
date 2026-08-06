@@ -91,7 +91,6 @@
 		name="description"
 		content={`Find ${state.name} elected officials, partisan composition, Congress members, governor details, legislature data, and election ratings.`}
 	/>
-	<link rel="canonical" href={`/states/${state.slug}`} />
 	{@html `<script type="application/ld+json">${JSON.stringify(schema)}</` + `script>`}
 </svelte:head>
 

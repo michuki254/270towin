@@ -133,7 +133,6 @@
 		name="description"
 		content="Build a 2028 electoral college map from the 2024 result or a blank slate, and see live Polymarket prices for both parties and the individual contenders."
 	/>
-	<link rel="canonical" href="/2028-presidential-election-interactive-map" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="2028 Presidential Election Interactive Map" />
 	<meta

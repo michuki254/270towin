@@ -13,7 +13,6 @@
 <svelte:head>
 	<title>{election.year} Governor Election Results | Interactive U.S. Governor Map</title>
 	<meta name="description" content={metaDescription} />
-	<link rel="canonical" href={`/historical-governor-elections/${election.year}`} />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content={`${election.year} Governor Election Results`} />
 </svelte:head>

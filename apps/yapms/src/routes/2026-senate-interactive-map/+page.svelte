@@ -303,7 +303,6 @@
 		name="description"
 		content="The 2026 fight for the Senate: an interactive map you can fill in yourself, the competitive races with Crystal Ball ratings, and live Polymarket odds on which party takes control."
 	/>
-	<link rel="canonical" href="/2026-senate-interactive-map" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="2026 Senate Elections | Interactive Map" />
 	<meta

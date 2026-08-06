@@ -51,7 +51,6 @@
 		name="description"
 		content="Full results of the 2024 U.S. gubernatorial elections. Republicans held 27 governorships after the cycle. Explore the interactive state-by-state governor map."
 	/>
-	<link rel="canonical" href="/2024-governor-election-results" />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content="2024 Governor Election Results" />
 	<meta

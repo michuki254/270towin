@@ -96,6 +96,11 @@
 		name="description"
 		content="2028 presidential election interactive map. Create your own 2028 election forecast with our interactive map."
 	/>
+	<meta property="og:title" content="Path to Win — 2028 Presidential Election Interactive Map" />
+	<meta
+		property="og:description"
+		content="Build your own path to 270 electoral votes, with live prediction-market odds."
+	/>
 </svelte:head>
 
 <div class="flex flex-col h-full overflow-y-auto bg-[#eef1f5] text-neutral-900">

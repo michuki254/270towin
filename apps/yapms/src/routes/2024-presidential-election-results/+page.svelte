@@ -57,7 +57,6 @@
 		name="description"
 		content="Full results of the 2024 U.S. presidential election: Donald Trump defeated Kamala Harris with 312 electoral votes to 226. Explore the interactive electoral college map state by state."
 	/>
-	<link rel="canonical" href="/2024-presidential-election-results" />
 	<meta property="og:type" content="article" />
 	<meta property="og:title" content="2024 Presidential Election Results" />
 	<meta

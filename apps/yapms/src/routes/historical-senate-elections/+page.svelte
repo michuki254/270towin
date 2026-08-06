@@ -10,7 +10,6 @@
 		name="description"
 		content="Browse historical U.S. Senate election result maps. Explore Senate control, seat totals, and state-by-state results for completed elections."
 	/>
-	<link rel="canonical" href="/historical-senate-elections" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="Historical Senate Elections" />
 </svelte:head>

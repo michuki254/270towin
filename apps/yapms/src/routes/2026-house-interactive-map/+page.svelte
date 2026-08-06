@@ -225,7 +225,6 @@
 		name="description"
 		content="The 2026 fight for the House: an interactive district map you can fill in yourself, the most competitive seats and who holds them, and live Polymarket odds on which party wins control."
 	/>
-	<link rel="canonical" href="/2026-house-interactive-map" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="2026 House Elections | Interactive District Map" />
 	<meta

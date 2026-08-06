@@ -15,7 +15,25 @@
 </script>
 
 <svelte:head>
-	<script async src={PUBLIC_UMAMI_URI} data-website-id={PUBLIC_UMAMI_DATA_WEBSITE_ID}></script>
+	<!-- Site-wide canonical + social defaults, derived from the request origin
+	     so a future domain move is DNS-only. Pages add their own og:title /
+	     og:description; anything they don't set falls back to these. The home
+	     page renders the same interactive map as the 2028 page, so it
+	     canonicalises there; every other route canonicalises to itself. -->
+	<link
+		rel="canonical"
+		href={$page.url.origin +
+			($page.url.pathname === '/' ? '/2028-presidential-election-interactive-map' : $page.url.pathname)}
+	/>
+	<meta property="og:site_name" content="Path to Win" />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content={$page.url.origin + $page.url.pathname} />
+	<meta property="og:image" content={$page.url.origin + '/og-image.png'} />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	{#if PUBLIC_UMAMI_URI}
+		<script async src={PUBLIC_UMAMI_URI} data-website-id={PUBLIC_UMAMI_DATA_WEBSITE_ID}></script>
+	{/if}
 	{#if !isHomePage}
 		<script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
 		<script
