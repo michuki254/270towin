@@ -174,6 +174,11 @@
 
 	const gopHeld = districts.filter((d) => d.party === 'Republican').length;
 
+	/** The cushion is currently one seat, so "1 seats" needs guarding. */
+	const CUSHION = GOP_NOW - FOR_MAJORITY;
+	const FLIPS_CHAMBER = CUSHION + 1;
+	const seats = (n: number) => `${n} seat${n === 1 ? '' : 's'}`;
+
 	const faqs = [
 		{
 			q: 'How many seats are needed to control the House?',
@@ -248,8 +253,7 @@
 						2026 House Elections
 					</h1>
 					<p class="mt-2 max-w-3xl text-sm leading-relaxed text-neutral-600">
-						All {TOTAL_SEATS} seats are on the ballot and the Republicans are defending a majority of
-						{GOP_NOW - FOR_MAJORITY + 1} seats. Assign districts in the map to see who reaches {FOR_MAJORITY}.
+						All {TOTAL_SEATS} seats are on the ballot and the Republicans are defending a majority of {seats(CUSHION)}. Assign districts in the map to see who reaches {FOR_MAJORITY}.
 					</p>
 				</div>
 				<a
@@ -313,10 +317,10 @@
 					Republican cushion
 				</div>
 				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">
-					{GOP_NOW - FOR_MAJORITY} seats
+					{seats(CUSHION)}
 				</div>
 				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
-					A net loss of {GOP_NOW - FOR_MAJORITY + 1} flips the chamber
+					A net loss of {FLIPS_CHAMBER} flips the chamber
 				</div>
 			</div>
 			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
@@ -447,10 +451,10 @@
 						How little has to move
 					</h2>
 					<p class="mt-3 text-sm leading-relaxed text-neutral-600">
-						With {GOP_NOW} seats against {DEM_NOW}, the Republican majority is {GOP_NOW -
-							FOR_MAJORITY} seats deep. A net loss of {GOP_NOW - FOR_MAJORITY + 1} hands the
-						chamber over — fewer than the {gopHeld} Republican-held competitive districts listed here,
-						which is why the whole chamber turns on a couple of dozen seats out of {TOTAL_SEATS}.
+						With {GOP_NOW} seats against {DEM_NOW}, the Republican majority is {seats(CUSHION)} deep.
+						A net loss of {FLIPS_CHAMBER} hands the chamber over — fewer than the {gopHeld}
+						Republican-held competitive districts listed here, which is why the whole chamber turns
+						on a couple of dozen seats out of {TOTAL_SEATS}.
 					</p>
 				</section>
 			</div>
