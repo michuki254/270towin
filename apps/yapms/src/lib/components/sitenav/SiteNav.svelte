@@ -189,16 +189,13 @@
 		},
 		{
 			label: 'More',
-			kicker: 'Map Library',
-			description: 'Find additional tools, archived maps, and specialty election map experiences.',
+			// Kicker and description used to advertise the Map Library, which is no
+			// longer linked from the navigation, so both describe what is actually
+			// in this menu now.
+			kicker: 'Tools & Reference',
+			description: 'Simulators, countdown clocks, reference tables, and the full site index.',
 			image: '/path-to-win-logo.svg',
 			items: [
-				{
-					label: 'Map Library',
-					href: '/maps',
-					description: 'All current national, state, and specialty map tools.',
-					image: '/favicon.svg'
-				},
 				{
 					label: 'Election Simulator',
 					href: '/simulator',

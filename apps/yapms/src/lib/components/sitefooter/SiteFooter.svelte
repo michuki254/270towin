@@ -34,7 +34,6 @@
 				{ href: '/2024-election-results', label: '2024' },
 				{ href: '/2022-senate-election-results', label: '2022' },
 				{ href: '/2020-presidential-election-results', label: '2020' },
-				{ href: '/maps', label: 'Map library' },
 				{ href: '/states', label: 'By state' }
 			]
 		},
