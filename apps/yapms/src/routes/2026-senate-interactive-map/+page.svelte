@@ -1,18 +1,38 @@
 <script lang="ts">
+	/* The race roster on this page is researched and stays. The numbers around it
+	 * were invented and go.
+	 *
+	 * What was fabricated: a "Prediction Market Forecast" card reading 56.4% GOP,
+	 * a "Market Signal" panel of 56.4/40.1/3.5 badged "Live-style model", a
+	 * 48/1/51 seat "projection", a "Consensus Forecast" of 52 R - 48 D credited
+	 * to no one, and a per-race "Prediction market" percentage for eleven of the
+	 * seventeen candidates. Polymarket carries no per-state 2026 Senate markets —
+	 * re-checked, and the only state-level Senate market is a Florida nominee
+	 * question — so that column had no possible source and is gone. Six rows had
+	 * already been left blank for exactly that reason, which is what made the
+	 * other eleven obvious.
+	 *
+	 * Two of the invented figures disagreed with each other: the card said the
+	 * Republicans would hold 52 seats while the strip below it said 51.
+	 *
+	 * The real Senate-control market was already loaded and rendered further down
+	 * the same page, so the fake panel sat a few hundred pixels from live prices
+	 * that contradicted it.
+	 *
+	 * Since/Term is replaced by incumbency. It read as service in the seat being
+	 * contested but often described something else entirely — Ashley Hinson's
+	 * "2021, term 3" is her House service, and four challengers were given a
+	 * "since 2027", a year that has not happened. Whether a seat is open is now
+	 * derived: if neither candidate in a state holds the seat, it is an open
+	 * seat, which is a fact about the data rather than a label to maintain.
+	 *
+	 * The map is untouched.
+	 */
 	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
+	import ChamberOdds from '$lib/components/marketodds/ChamberOdds.svelte';
+	import type { PageData } from './$types';
 
-	// Live Polymarket Senate-control prices from +page.server.ts.
-	let { data } = $props();
-	const senateOdds = $derived(data?.senate?.odds ?? []);
-	const senateAsOf = $derived(
-		data?.senate?.ok
-			? new Date(data.senate.fetchedAt).toLocaleString('en-US', {
-					dateStyle: 'medium',
-					timeStyle: 'short',
-					timeZone: 'UTC'
-				}) + ' UTC'
-			: null
-	);
+	let { data }: { data: PageData } = $props();
 
 	const mapEmbedUrl = '/app/usa/senate/2026/blank?embed=1';
 	const mapFullUrl = '/app/usa/senate/2026/blank';
@@ -23,33 +43,19 @@
 		state: string;
 		candidate: string;
 		party: Party;
-		since: number;
-		term: number;
+		/** Year they took THIS seat. Absent means they do not hold it. */
+		incumbentSince?: number;
+		/** Office they currently hold, for candidates who are not the incumbent. */
+		currently?: string;
 		rating: Rating;
-		market?: number;
 		photo: string;
 		initials: string;
 	};
 
-	const partyStyles: Record<Party, { color: string; bg: string; text: string; logo: string }> = {
-		Democratic: {
-			color: '#2E5AAC',
-			bg: 'bg-[#eaf0fb]',
-			text: 'text-[#2E5AAC]',
-			logo: '/party-logos/democrats.png'
-		},
-		Republican: {
-			color: '#D83A45',
-			bg: 'bg-[#fdebed]',
-			text: 'text-[#D83A45]',
-			logo: '/party-logos/republicans.png'
-		},
-		Independent: {
-			color: '#7a6e43',
-			bg: 'bg-[#f3f0e4]',
-			text: 'text-[#655c3f]',
-			logo: '/party-logos/independents.png'
-		}
+	const partyStyles: Record<Party, { color: string; bg: string; logo: string }> = {
+		Democratic: { color: '#2E5AAC', bg: 'bg-[#eaf0fb]', logo: '/party-logos/democrats.png' },
+		Republican: { color: '#D83A45', bg: 'bg-[#fdebed]', logo: '/party-logos/republicans.png' },
+		Independent: { color: '#7a6e43', bg: 'bg-[#f3f0e4]', logo: '/party-logos/independents.png' }
 	};
 
 	const ratingStyles: Record<Rating, string> = {
@@ -60,442 +66,216 @@
 		'Toss-Up': 'bg-[#f0ead8] text-[#655c3f] border-[#C8BE9A]'
 	};
 
-	const summaryCards = [
+	/* 2026 map: 33 regular Class 2 seats plus special elections in Florida
+	   (Rubio's seat) and Ohio (Vance's), so 35 in all. Republicans defend 22 of
+	   them and the Democrats 13. */
+	const SEATS_UP = 35;
+	const GOP_DEFENDING = 22;
+	const DEM_DEFENDING = 13;
+
+	const races: SenateRace[] = [
 		{
-			label: 'Current Senate Count',
-			value: '53 R - 47 D',
-			detail: 'Republicans hold Senate control after 2024',
-			accent: '#D83A45'
+			state: 'GA',
+			candidate: 'Jon Ossoff',
+			party: 'Democratic',
+			incumbentSince: 2021,
+			// Sabato moved GA to Likely Democratic on 30 Jul 2026.
+			rating: 'Likely',
+			photo: '/candidate-headshots/senate/jon-ossoff.jpg',
+			initials: 'JO'
 		},
 		{
-			label: 'Consensus Forecast',
-			value: '52 R - 48 D',
-			detail: 'Republicans retain a narrow projected edge',
-			accent: '#D83A45'
+			state: 'GA',
+			candidate: 'Mike Collins',
+			party: 'Republican',
+			currently: 'U.S. Representative',
+			rating: 'Likely',
+			photo: '/candidate-headshots/senate/mike-collins.jpg',
+			initials: 'MC'
 		},
 		{
-			label: 'Prediction Market Forecast',
-			value: '56.4% GOP',
-			detail: 'Market-style probability of GOP control',
-			accent: '#1f9d55'
+			state: 'ME',
+			candidate: 'Susan Collins',
+			party: 'Republican',
+			incumbentSince: 1997,
+			rating: 'Toss-Up',
+			photo: '/candidate-headshots/senate/susan-collins.jpg',
+			initials: 'SC'
 		},
 		{
-			label: 'Interactive Map Projection',
-			value: '51 Needed',
-			detail: 'Build your own Senate control path',
-			accent: '#2E5AAC'
+			state: 'NC',
+			candidate: 'Roy Cooper',
+			party: 'Democratic',
+			currently: 'Former governor',
+			rating: 'Lean',
+			photo: '/candidate-headshots/senate/roy-cooper.jpg',
+			initials: 'RC'
+		},
+		{
+			state: 'NC',
+			candidate: 'Michael Whatley',
+			party: 'Republican',
+			currently: 'Former RNC chair',
+			rating: 'Lean',
+			photo: '/candidate-headshots/senate/michael-whatley.jpg',
+			initials: 'MW'
+		},
+		{
+			state: 'IA',
+			candidate: 'Ashley Hinson',
+			party: 'Republican',
+			currently: 'U.S. Representative',
+			rating: 'Toss-Up',
+			photo: '/candidate-headshots/senate/ashley-hinson.jpg',
+			initials: 'AH'
+		},
+		{
+			state: 'IA',
+			candidate: 'Josh Turek',
+			party: 'Democratic',
+			currently: 'State representative',
+			rating: 'Toss-Up',
+			photo: '/candidate-headshots/senate/josh-turek.jpg',
+			initials: 'JT'
+		},
+		{
+			// Democratic nominee from the 4 Aug 2026 primary: El-Sayed beat Haley
+			// Stevens. Photo left empty deliberately — the table falls back to
+			// party-coloured initials rather than a broken image.
+			state: 'MI',
+			candidate: 'Abdul El-Sayed',
+			party: 'Democratic',
+			currently: 'Former Detroit health director',
+			rating: 'Toss-Up',
+			photo: '',
+			initials: 'AE'
+		},
+		{
+			state: 'MI',
+			candidate: 'Mike Rogers',
+			party: 'Republican',
+			currently: 'Former U.S. Representative',
+			rating: 'Toss-Up',
+			photo: '/candidate-headshots/senate/mike-rogers.jpg',
+			initials: 'MR'
+		},
+		{
+			state: 'NH',
+			candidate: 'Chris Pappas',
+			party: 'Democratic',
+			currently: 'U.S. Representative',
+			rating: 'Lean',
+			photo: '/candidate-headshots/senate/chris-pappas.jpg',
+			initials: 'CP'
+		},
+		{
+			state: 'NH',
+			candidate: 'John E. Sununu',
+			party: 'Republican',
+			currently: 'Former U.S. Senator',
+			rating: 'Lean',
+			photo: '/candidate-headshots/senate/john-sununu.jpg',
+			initials: 'JS'
+		},
+		// Ohio special: Husted was appointed to JD Vance's seat and must stand in
+		// 2026 for the remainder of the term through 2028. Sherrod Brown won the
+		// Democratic primary. Sabato rates it Toss-up.
+		{
+			state: 'OH',
+			candidate: 'Jon Husted',
+			party: 'Republican',
+			incumbentSince: 2025,
+			rating: 'Toss-Up',
+			photo: '',
+			initials: 'JH'
+		},
+		{
+			state: 'OH',
+			candidate: 'Sherrod Brown',
+			party: 'Democratic',
+			currently: 'Former U.S. Senator',
+			rating: 'Toss-Up',
+			photo: '',
+			initials: 'SB'
+		},
+		// Alaska is a Toss-up: Peltola out-raised Sullivan more than three to one
+		// in the most recent quarter.
+		{
+			state: 'AK',
+			candidate: 'Dan Sullivan',
+			party: 'Republican',
+			incumbentSince: 2015,
+			rating: 'Toss-Up',
+			photo: '',
+			initials: 'DS'
+		},
+		{
+			state: 'AK',
+			candidate: 'Mary Peltola',
+			party: 'Democratic',
+			currently: 'Former U.S. Representative',
+			rating: 'Toss-Up',
+			photo: '',
+			initials: 'MP'
+		},
+		// Kansas: Sabato shifted Safe -> Likely Republican on 5 Aug 2026 after
+		// Rev. Adam Hamilton won the Democratic primary, having out-raised
+		// Marshall by $3.09m last quarter.
+		{
+			state: 'KS',
+			candidate: 'Roger Marshall',
+			party: 'Republican',
+			incumbentSince: 2021,
+			rating: 'Likely',
+			photo: '',
+			initials: 'RM'
+		},
+		{
+			state: 'KS',
+			candidate: 'Adam Hamilton',
+			party: 'Democratic',
+			currently: 'Pastor',
+			rating: 'Likely',
+			photo: '',
+			initials: 'AH'
 		}
 	];
 
-	const forecastBlocks = [
-		{ label: 'Democrats', value: 48, color: '#2E5AAC' },
-		{ label: 'Toss-ups', value: 1, color: '#C8BE9A' },
-		{ label: 'Republicans', value: 51, color: '#D83A45' }
-	];
+	/** A seat is open when neither of its candidates currently holds it. */
+	const openStates = $derived(
+		new Set(
+			[...new Set(races.map((r) => r.state))].filter(
+				(s) => !races.some((r) => r.state === s && r.incumbentSince !== undefined)
+			)
+		)
+	);
 
-	const racesByYear: Record<number, SenateRace[]> = {
-		2026: [
-			{
-				state: 'GA',
-				candidate: 'Jon Ossoff',
-				party: 'Democratic',
-				since: 2021,
-				term: 1,
-				// Sabato moved GA to Likely Democratic on 30 Jul 2026.
-				rating: 'Likely',
-				market: 50,
-				photo: '/candidate-headshots/senate/jon-ossoff.jpg',
-				initials: 'JO'
-			},
-			{
-				state: 'GA',
-				candidate: 'Mike Collins',
-				party: 'Republican',
-				since: 2023,
-				term: 1,
-				rating: 'Likely',
-				market: 49,
-				photo: '/candidate-headshots/senate/mike-collins.jpg',
-				initials: 'MC'
-			},
-			{
-				state: 'ME',
-				candidate: 'Susan Collins',
-				party: 'Republican',
-				since: 1997,
-				term: 5,
-				rating: 'Toss-Up',
-				market: 54,
-				photo: '/candidate-headshots/senate/susan-collins.jpg',
-				initials: 'SC'
-			},
-			{
-				state: 'NC',
-				candidate: 'Roy Cooper',
-				party: 'Democratic',
-				since: 2017,
-				term: 2,
-				rating: 'Lean',
-				market: 56,
-				photo: '/candidate-headshots/senate/roy-cooper.jpg',
-				initials: 'RC'
-			},
-			{
-				state: 'NC',
-				candidate: 'Michael Whatley',
-				party: 'Republican',
-				since: 2024,
-				term: 1,
-				rating: 'Lean',
-				market: 44,
-				photo: '/candidate-headshots/senate/michael-whatley.jpg',
-				initials: 'MW'
-			},
-			{
-				state: 'IA',
-				candidate: 'Ashley Hinson',
-				party: 'Republican',
-				since: 2021,
-				term: 3,
-				rating: 'Toss-Up',
-				market: 53,
-				photo: '/candidate-headshots/senate/ashley-hinson.jpg',
-				initials: 'AH'
-			},
-			{
-				state: 'IA',
-				candidate: 'Josh Turek',
-				party: 'Democratic',
-				since: 2023,
-				term: 1,
-				rating: 'Toss-Up',
-				market: 47,
-				photo: '/candidate-headshots/senate/josh-turek.jpg',
-				initials: 'JT'
-			},
-			{
-				// Democratic nominee as of the 4 Aug 2026 primary: El-Sayed beat
-				// Haley Stevens. He has held no federal office, so `since`/`term`
-				// describe the seat being contested, not an incumbency. Photo left
-				// empty deliberately — the table falls back to party-coloured
-				// initials rather than a broken image.
-				state: 'MI',
-				candidate: 'Abdul El-Sayed',
-				party: 'Democratic',
-				since: 2027,
-				term: 1,
-				rating: 'Toss-Up',
-				market: 51,
-				photo: '',
-				initials: 'AE'
-			},
-			{
-				state: 'MI',
-				candidate: 'Mike Rogers',
-				party: 'Republican',
-				since: 2001,
-				term: 7,
-				rating: 'Toss-Up',
-				market: 48,
-				photo: '/candidate-headshots/senate/mike-rogers.jpg',
-				initials: 'MR'
-			},
-			{
-				state: 'NH',
-				candidate: 'Chris Pappas',
-				party: 'Democratic',
-				since: 2019,
-				term: 4,
-				rating: 'Lean',
-				market: 58,
-				photo: '/candidate-headshots/senate/chris-pappas.jpg',
-				initials: 'CP'
-			},
-			{
-				state: 'NH',
-				candidate: 'John E. Sununu',
-				party: 'Republican',
-				since: 2003,
-				term: 1,
-				rating: 'Lean',
-				market: 42,
-				photo: '/candidate-headshots/senate/john-sununu.jpg',
-				initials: 'JS'
-			},
-			// Ohio special: Husted was appointed to JD Vance's seat and must stand
-			// in 2026 for the remainder of the term through 2028. Sherrod Brown won
-			// the Democratic primary. Sabato rates it Toss-up.
-			{
-				state: 'OH',
-				candidate: 'Jon Husted',
-				party: 'Republican',
-				since: 2025,
-				term: 1,
-				rating: 'Toss-Up',
-				photo: '',
-				initials: 'JH'
-			},
-			{
-				state: 'OH',
-				candidate: 'Sherrod Brown',
-				party: 'Democratic',
-				since: 2027,
-				term: 1,
-				rating: 'Toss-Up',
-				photo: '',
-				initials: 'SB'
-			},
-			// Alaska is a Toss-up: Peltola out-raised Sullivan more than three to
-			// one in the most recent quarter.
-			{
-				state: 'AK',
-				candidate: 'Dan Sullivan',
-				party: 'Republican',
-				since: 2015,
-				term: 3,
-				rating: 'Toss-Up',
-				photo: '',
-				initials: 'DS'
-			},
-			{
-				state: 'AK',
-				candidate: 'Mary Peltola',
-				party: 'Democratic',
-				since: 2027,
-				term: 1,
-				rating: 'Toss-Up',
-				photo: '',
-				initials: 'MP'
-			},
-			// Kansas: Sabato shifted Safe -> Likely Republican on 5 Aug 2026 after
-			// Rev. Adam Hamilton won the Democratic primary, having out-raised
-			// Marshall by $3.09m last quarter.
-			{
-				state: 'KS',
-				candidate: 'Roger Marshall',
-				party: 'Republican',
-				since: 2021,
-				term: 1,
-				rating: 'Likely',
-				photo: '',
-				initials: 'RM'
-			},
-			{
-				state: 'KS',
-				candidate: 'Adam Hamilton',
-				party: 'Democratic',
-				since: 2027,
-				term: 1,
-				rating: 'Likely',
-				photo: '',
-				initials: 'AH'
-			}
-		],
-		2028: [
-			{
-				state: 'AZ',
-				candidate: 'Mark Kelly',
-				party: 'Democratic',
-				since: 2020,
-				term: 2,
-				rating: 'Lean',
-				market: 57,
-				photo: '/candidate-headshots/senate/mark-kelly.jpg',
-				initials: 'MK'
-			},
-			{
-				state: 'GA',
-				candidate: 'Raphael Warnock',
-				party: 'Democratic',
-				since: 2021,
-				term: 2,
-				rating: 'Lean',
-				market: 56,
-				photo: '/candidate-headshots/senate/raphael-warnock.jpg',
-				initials: 'RW'
-			},
-			{
-				state: 'NC',
-				candidate: 'Ted Budd',
-				party: 'Republican',
-				since: 2023,
-				term: 1,
-				rating: 'Lean',
-				market: 55,
-				photo: '/candidate-headshots/senate/ted-budd.jpg',
-				initials: 'TB'
-			},
-			{
-				state: 'PA',
-				candidate: 'John Fetterman',
-				party: 'Democratic',
-				since: 2023,
-				term: 1,
-				rating: 'Tilt',
-				market: 52,
-				photo: '/candidate-headshots/senate/john-fetterman.jpg',
-				initials: 'JF'
-			},
-			{
-				state: 'NV',
-				candidate: 'Catherine Cortez Masto',
-				party: 'Democratic',
-				since: 2017,
-				term: 2,
-				rating: 'Lean',
-				market: 56,
-				photo: '/candidate-headshots/senate/catherine-cortez-masto.jpg',
-				initials: 'CCM'
-			},
-			{
-				state: 'NH',
-				candidate: 'Maggie Hassan',
-				party: 'Democratic',
-				since: 2017,
-				term: 2,
-				rating: 'Likely',
-				market: 64,
-				photo: '/candidate-headshots/senate/maggie-hassan.jpg',
-				initials: 'MH'
-			},
-			{
-				state: 'WI',
-				candidate: 'Ron Johnson',
-				party: 'Republican',
-				since: 2011,
-				term: 3,
-				rating: 'Tilt',
-				market: 53,
-				photo: '/candidate-headshots/senate/ron-johnson.jpg',
-				initials: 'RJ'
-			}
-		],
-		2030: [
-			{
-				state: 'AZ',
-				candidate: 'Ruben Gallego',
-				party: 'Democratic',
-				since: 2025,
-				term: 1,
-				rating: 'Lean',
-				market: 57,
-				photo: '/candidate-headshots/senate/ruben-gallego.jpg',
-				initials: 'RG'
-			},
-			{
-				state: 'CA',
-				candidate: 'Adam Schiff',
-				party: 'Democratic',
-				since: 2024,
-				term: 1,
-				rating: 'Safe',
-				market: 82,
-				photo: '',
-				initials: 'AS'
-			},
-			{
-				state: 'CT',
-				candidate: 'Chris Murphy',
-				party: 'Democratic',
-				since: 2013,
-				term: 3,
-				rating: 'Safe',
-				market: 79,
-				photo: '',
-				initials: 'CM'
-			},
-			{
-				state: 'FL',
-				candidate: 'Rick Scott',
-				party: 'Republican',
-				since: 2019,
-				term: 2,
-				rating: 'Likely',
-				market: 66,
-				photo: '',
-				initials: 'RS'
-			},
-			{
-				state: 'HI',
-				candidate: 'Mazie Hirono',
-				party: 'Democratic',
-				since: 2013,
-				term: 3,
-				rating: 'Safe',
-				market: 86,
-				photo: '/candidate-headshots/senate/mazie-hirono.jpg',
-				initials: 'MH'
-			},
-			{
-				state: 'IN',
-				candidate: 'Jim Banks',
-				party: 'Republican',
-				since: 2025,
-				term: 1,
-				rating: 'Safe',
-				market: 81,
-				photo: '',
-				initials: 'JB'
-			},
-			{
-				state: 'ME',
-				candidate: 'Angus King',
-				party: 'Independent',
-				since: 2013,
-				term: 3,
-				rating: 'Likely',
-				market: 67,
-				photo: '/candidate-headshots/senate/angus-king.jpg',
-				initials: 'AK'
-			},
-			{
-				state: 'MA',
-				candidate: 'Elizabeth Warren',
-				party: 'Democratic',
-				since: 2013,
-				term: 3,
-				rating: 'Safe',
-				market: 84,
-				photo: '',
-				initials: 'EW'
-			},
-			{
-				state: 'MO',
-				candidate: 'Josh Hawley',
-				party: 'Republican',
-				since: 2019,
-				term: 2,
-				rating: 'Safe',
-				market: 78,
-				photo: '',
-				initials: 'JH'
-			}
-		]
-	};
-
-	const yearTabs = [2026, 2028, 2030] as const;
-	const ratingFilters = ['All', 'Safe', 'Likely', 'Lean', 'Tilt', 'Toss-Up'];
-	let selectedYear = $state<(typeof yearTabs)[number]>(2026);
-	let selectedRating = $state('All');
-
-	const filteredRaces = $derived(
-		selectedRating === 'All'
-			? racesByYear[selectedYear]
-			: racesByYear[selectedYear].filter((race) => race.rating === selectedRating)
+	const ratingFilters = ['All', 'Safe', 'Likely', 'Lean', 'Tilt', 'Toss-Up'] as const;
+	let selectedRating = $state<(typeof ratingFilters)[number]>('All');
+	const shownRaces = $derived(
+		selectedRating === 'All' ? races : races.filter((r) => r.rating === selectedRating)
 	);
 
 	const faqs = [
 		{
 			q: 'How many seats are needed to control the Senate?',
-			a: 'A party needs 51 seats for an outright Senate majority. A 50-50 Senate is controlled by the party of the Vice President.'
+			a: '51 of 100. A 50-50 Senate is controlled by the party of the Vice President, who breaks tied votes.'
 		},
 		{
 			q: 'How many Senate seats are up in 2026?',
-			a: 'The 2026 cycle includes the regular Class 2 seats plus any special elections.'
+			a: `${SEATS_UP}: the ${SEATS_UP - 2} regular Class 2 seats last contested in 2020, plus special elections in Florida and Ohio for the seats Marco Rubio and JD Vance left to join the administration. Republicans are defending ${GOP_DEFENDING} of the ${SEATS_UP} and the Democrats ${DEM_DEFENDING}, which is why the Republicans have more ways to lose ground than to gain it.`
 		},
 		{
-			q: 'Can I change the Senate forecast?',
-			a: 'Yes. Open the full interactive map and use the map controls to assign seats and build a custom path to Senate control.'
+			q: 'What do the ratings mean, and who makes them?',
+			a: 'They describe how safe a seat looks, from Safe through Likely, Lean and Tilt to Toss-Up, and they follow Sabato’s Crystal Ball rather than being produced here. They are a judgement about a race, not a probability, which is why no percentage is attached to them.'
+		},
+		{
+			q: 'Why is there no market percentage for each race?',
+			a: 'Because none exists to quote. Polymarket runs a market on which party controls the Senate, shown above, but no markets on the individual 2026 Senate races. Rather than fill the gap with a number of our own, the page leaves it out.'
+		},
+		{
+			q: 'Can I build my own Senate map?',
+			a: 'Yes. Open the full interactive map, assign each seat, and use the Share button for a link or embed code.'
 		}
 	];
 
@@ -518,17 +298,17 @@
 </script>
 
 <svelte:head>
-	<title>2026 Senate Election Forecast | Interactive U.S. Senate Map</title>
+	<title>2026 Senate Elections | Interactive Map, Race Ratings &amp; Market Odds</title>
 	<meta
 		name="description"
-		content="Forecast U.S. Senate elections with year tabs, race ratings, prediction-market style probabilities, candidate headshots, party logos and an interactive Senate map."
+		content="The 2026 fight for the Senate: an interactive map you can fill in yourself, the competitive races with Crystal Ball ratings, and live Polymarket odds on which party takes control."
 	/>
 	<link rel="canonical" href="/2026-senate-interactive-map" />
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content="2026 Senate Election Forecast" />
+	<meta property="og:title" content="2026 Senate Elections | Interactive Map" />
 	<meta
 		property="og:description"
-		content="Track Senate control with candidate tables, race ratings and an interactive state-by-state map."
+		content="Build your own path to 51 seats, with the competitive races and live market odds on Senate control."
 	/>
 	<meta name="twitter:card" content="summary_large_image" />
 	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd)}</` + `script>`}
@@ -540,7 +320,7 @@
 			<nav class="mb-2 text-xs text-neutral-500" aria-label="Breadcrumb">
 				<a href="/" class="hover:underline">Home</a>
 				<span class="mx-1">/</span>
-				<span>2026 Senate Forecast</span>
+				<span>2026 Senate</span>
 			</nav>
 			<div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
 				<div>
@@ -548,11 +328,11 @@
 						U.S. Senate Elections
 					</p>
 					<h1 class="mt-1 text-3xl font-black tracking-tight text-[#061a55] md:text-4xl">
-						2026 Senate Election Forecast
+						2026 Senate Elections
 					</h1>
 					<p class="mt-2 max-w-3xl text-sm leading-relaxed text-neutral-600">
-						A Senate control dashboard with an interactive map, year-tab race tables, candidate
-						headshots, party logos, consensus ratings and market-style probabilities.
+						{SEATS_UP} seats are on the ballot and the Republicans are defending {GOP_DEFENDING} of
+						them. Assign each one in the map to see who reaches 51.
 					</p>
 				</div>
 				<a
@@ -565,15 +345,13 @@
 		</header>
 
 		<section class="mt-5">
-			<div class="mb-3 flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
-				<div>
-					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-						Interactive Map Projection
-					</h2>
-					<p class="text-xs text-neutral-500">
-						Click into the full map to assign seats and build a custom Senate control forecast.
-					</p>
-				</div>
+			<div class="mb-3">
+				<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+					Interactive Map Projection
+				</h2>
+				<p class="text-xs text-neutral-500">
+					Click into the full map to assign seats and build your own Senate.
+				</p>
 			</div>
 			<div class="overflow-hidden rounded-md border border-neutral-200 bg-white shadow-sm">
 				<iframe
@@ -593,252 +371,198 @@
 			</div>
 		</section>
 
-		<section class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Forecast summary">
-			{#each summaryCards as card}
-				<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-					<div class="mb-3 h-1.5 w-12 rounded-full" style={`background:${card.accent}`}></div>
-					<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">{card.label}</div>
-					<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">{card.value}</div>
-					<div class="mt-1 text-xs leading-relaxed text-neutral-500">{card.detail}</div>
+		<section class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Key numbers">
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#D83A45"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">Senate now</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">53 R &ndash; 47 D</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					Two independents caucus with the Democrats
 				</div>
-			{/each}
-		</section>
-
-		<section class="mt-5 rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-			<div class="mb-3 flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
-				<div>
-					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-						National Senate Control Projection
-					</h2>
-					<p class="text-xs text-neutral-500">Consensus forecast with the narrowest races marked in beige.</p>
-				</div>
-				<div class="text-xs font-semibold text-neutral-500">51 seats needed for control</div>
 			</div>
-
-			{#if senateAsOf && senateOdds.length}
-				<div class="mb-4 rounded border border-neutral-200 bg-[#f8fafc] p-3">
-					<div class="flex items-baseline justify-between gap-3">
-						<span class="text-xs font-black uppercase tracking-wide text-[#061a55]">
-							Market odds for Senate control
-						</span>
-						<span class="text-[11px] text-neutral-500">Polymarket · read {senateAsOf}</span>
-					</div>
-					<div class="mt-3 flex flex-col gap-2">
-						{#each senateOdds as o}
-							<div>
-								<div class="flex justify-between text-xs font-semibold text-neutral-700">
-									<span>{o.party}</span>
-									<span>{o.pct}%</span>
-								</div>
-								<div class="mt-1 h-2.5 overflow-hidden rounded bg-neutral-200">
-									<div class="h-full rounded" style={`width:${o.pct}%;background:${o.color}`}></div>
-								</div>
-							</div>
-						{/each}
-					</div>
-					<p class="mt-2 text-[11px] text-neutral-500">
-						Each party trades as its own binary market, so these need not total 100%.
-					</p>
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#061a55"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">For control</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">51</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					At 50-50 the Vice President breaks ties
 				</div>
-			{/if}
-			<div class="grid grid-cols-3 overflow-hidden rounded border border-neutral-200 text-center text-white">
-				{#each forecastBlocks as block}
-					<div class="py-3" style={`background:${block.color}`}>
-						<div class="text-2xl font-black leading-none">{block.value}</div>
-						<div class="mt-1 text-[11px] font-bold uppercase tracking-wide opacity-90">{block.label}</div>
-					</div>
-				{/each}
 			</div>
-			<div class="mt-3 grid grid-cols-5 gap-px overflow-hidden rounded border border-neutral-200 bg-neutral-200 text-center text-[11px] font-bold uppercase">
-				<div class="bg-[#e8eef8] px-2 py-2 text-[#244999]">Safe</div>
-				<div class="bg-[#eef3fb] px-2 py-2 text-[#2E5AAC]">Likely</div>
-				<div class="bg-[#f6f2e3] px-2 py-2 text-[#7a6e43]">Lean</div>
-				<div class="bg-[#fff3d8] px-2 py-2 text-[#8a6500]">Tilt</div>
-				<div class="bg-[#f0ead8] px-2 py-2 text-[#655c3f]">Toss-Up</div>
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#7a6e43"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">Seats up</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">{SEATS_UP}</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					{SEATS_UP - 2} Class 2 seats, plus Florida and Ohio specials
+				</div>
+			</div>
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#D83A45"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">
+					Republicans defending
+				</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">
+					{GOP_DEFENDING} of {SEATS_UP}
+				</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					The Democrats defend the other {DEM_DEFENDING}
+				</div>
 			</div>
 		</section>
 
 		<div class="mt-5 grid gap-5 xl:grid-cols-[1.55fr_1fr]">
 			<section class="rounded-md border border-neutral-200 bg-white shadow-sm">
-				<div class="border-b border-neutral-200 px-4 py-3">
-					<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-						<div>
-							<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-								Senate Forecast Workspace
-							</h2>
-							<p class="text-xs text-neutral-500">
-								Choose a Senate election year. Each tab uses the same forecast table format.
-							</p>
-						</div>
-						<div class="inline-flex rounded-md border border-neutral-200 bg-[#f7f8fb] p-1">
-							{#each yearTabs as year}
-								<button
-									type="button"
-									onclick={() => {
-										selectedYear = year;
-										selectedRating = 'All';
-									}}
-									class={`rounded px-3 py-1.5 text-xs font-black ${
-										selectedYear === year
-											? 'bg-[#061a55] text-white shadow-sm'
-											: 'text-neutral-600 hover:bg-white'
-									}`}
-								>
-									{year}
-								</button>
-							{/each}
-						</div>
-					</div>
-				</div>
-
-				<div class="flex flex-col gap-3 border-b border-neutral-200 px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
+				<div
+					class="flex flex-col gap-3 border-b border-neutral-200 px-4 py-3 lg:flex-row lg:items-center lg:justify-between"
+				>
 					<div>
-						<h3 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-							{selectedYear} Senate Race Table
-						</h3>
+						<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+							The competitive 2026 races
+						</h2>
 						<p class="text-xs text-neutral-500">
-							Filter by rating category. Probability shows the candidate or incumbent party's modeled edge.
+							Ratings follow Sabato&rsquo;s Crystal Ball. Safe seats are left out.
 						</p>
 					</div>
 					<div class="flex flex-wrap gap-2">
-						{#each ratingFilters as rating}
+						{#each ratingFilters as r}
 							<button
 								type="button"
-								onclick={() => (selectedRating = rating)}
+								onclick={() => (selectedRating = r)}
 								class={`rounded border px-3 py-1.5 text-xs font-black ${
-									selectedRating === rating
+									selectedRating === r
 										? 'border-[#061a55] bg-[#061a55] text-white'
 										: 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
 								}`}
 							>
-								{rating}
+								{r}
 							</button>
 						{/each}
 					</div>
 				</div>
 
 				<div class="overflow-x-auto">
-					<table class="w-full min-w-[920px] border-collapse text-sm">
-						<thead class="bg-[#f7f8fb] text-left text-[11px] uppercase tracking-wide text-neutral-500">
+					<table class="w-full min-w-[720px] border-collapse text-sm">
+						<thead
+							class="bg-[#f7f8fb] text-left text-[11px] uppercase tracking-wide text-neutral-500"
+						>
 							<tr class="border-b border-neutral-200">
-								<th class="px-4 py-3">State</th>
-								<th class="px-4 py-3">Photo</th>
-								<th class="px-4 py-3">Candidate</th>
-								<th class="px-4 py-3">Party</th>
-								<th class="px-4 py-3 text-right">Since</th>
-								<th class="px-4 py-3 text-right">Term</th>
-								<th class="px-4 py-3">Consensus</th>
-								<th class="px-4 py-3">Prediction market</th>
+								<th class="px-4 py-3" scope="col">Seat</th>
+								<th class="px-4 py-3" scope="col">Candidate</th>
+								<th class="px-4 py-3" scope="col">Party</th>
+								<th class="px-4 py-3" scope="col">Standing</th>
+								<th class="px-4 py-3" scope="col">Rating</th>
 							</tr>
 						</thead>
 						<tbody class="divide-y divide-neutral-100">
-							{#each filteredRaces as race}
+							{#each shownRaces as race (race.state + race.candidate)}
 								<tr class="hover:bg-[#f9fafc]">
 									<td class="px-4 py-3">
-										<span class="inline-flex h-8 w-10 items-center justify-center rounded bg-[#eef1f5] font-black text-[#061a55]">
+										<span
+											class="inline-flex h-8 w-10 items-center justify-center rounded bg-[#eef1f5] font-black text-[#061a55]"
+										>
 											{race.state}
 										</span>
-									</td>
-									<td class="px-4 py-3">
-										{#if race.photo}
-											<img
-												src={race.photo}
-												alt={`${race.candidate} headshot`}
-												class="h-11 w-11 rounded-full border border-neutral-200 object-cover"
-												loading="lazy"
-											/>
-										{:else}
-											<div
-												class="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-xs font-black text-white"
-												style={`background:${partyStyles[race.party].color}`}
-												aria-label={`${race.candidate} avatar`}
-											>
-												{race.initials}
-											</div>
+										{#if openStates.has(race.state)}
+											<span class="mt-1 block text-[10px] font-bold uppercase text-neutral-400">
+												Open
+											</span>
 										{/if}
 									</td>
-									<td class="px-4 py-3 font-bold text-neutral-900">{race.candidate}</td>
+									<td class="px-4 py-3">
+										<div class="flex items-center gap-3">
+											{#if race.photo}
+												<img
+													src={race.photo}
+													alt=""
+													class="h-10 w-10 shrink-0 rounded-full border border-neutral-200 object-cover object-top"
+													loading="lazy"
+												/>
+											{:else}
+												<div
+													class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-neutral-200 text-xs font-black text-white"
+													style={`background:${partyStyles[race.party].color}`}
+													aria-hidden="true"
+												>
+													{race.initials}
+												</div>
+											{/if}
+											<span class="font-bold text-neutral-900">{race.candidate}</span>
+										</div>
+									</td>
 									<td class="px-4 py-3">
 										<span
-											class={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-black ${partyStyles[race.party].bg} ${partyStyles[race.party].text}`}
+											class={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-black ${partyStyles[race.party].bg}`}
+											style={`color:${partyStyles[race.party].color}`}
 										>
 											<img
 												src={partyStyles[race.party].logo}
-												alt={`${race.party} Party logo`}
+												alt=""
 												class="h-5 w-5 rounded-full object-contain"
 												loading="lazy"
 											/>
 											{race.party}
 										</span>
 									</td>
-									<td class="px-4 py-3 text-right font-semibold">{race.since}</td>
-									<td class="px-4 py-3 text-right font-semibold">{race.term}</td>
-									<td class="px-4 py-3">
-										<span class={`inline-flex rounded border px-2.5 py-1 text-xs font-black ${ratingStyles[race.rating]}`}>
-											{race.rating}
-										</span>
+									<td class="px-4 py-3 text-xs text-neutral-600">
+										{#if race.incumbentSince}
+											<span class="font-bold text-neutral-800">Incumbent</span>
+											<span class="block text-neutral-500">holds the seat since {race.incumbentSince}</span>
+										{:else}
+											<span class="font-bold text-neutral-800">Challenger</span>
+											{#if race.currently}
+												<span class="block text-neutral-500">{race.currently}</span>
+											{/if}
+										{/if}
 									</td>
 									<td class="px-4 py-3">
-										{#if race.market != null}
-											<div class="flex items-center gap-3">
-												<div class="h-2 w-28 rounded-full bg-neutral-100">
-													<div
-														class="h-2 rounded-full bg-[#1f9d55]"
-														style={`width:${race.market}%`}
-													></div>
-												</div>
-												<span class="w-12 text-right font-black text-[#157347]">{race.market}%</span>
-											</div>
-										{:else}
-											<!-- No sourced market figure for this race; a dash is honest,
-											     an invented percentage would not be. -->
-											<span class="text-xs font-semibold text-neutral-400">—</span>
-										{/if}
+										<span
+											class={`inline-flex rounded border px-2.5 py-1 text-xs font-black ${ratingStyles[race.rating]}`}
+										>
+											{race.rating}
+										</span>
 									</td>
 								</tr>
 							{/each}
 						</tbody>
 					</table>
 				</div>
+
+				<div
+					class="grid grid-cols-5 gap-px border-t border-neutral-200 bg-neutral-200 text-center text-[11px] font-bold uppercase"
+				>
+					<div class="bg-[#e8eef8] px-2 py-2 text-[#244999]">Safe</div>
+					<div class="bg-[#eef3fb] px-2 py-2 text-[#2E5AAC]">Likely</div>
+					<div class="bg-[#f6f2e3] px-2 py-2 text-[#7a6e43]">Lean</div>
+					<div class="bg-[#fff3d8] px-2 py-2 text-[#8a6500]">Tilt</div>
+					<div class="bg-[#f0ead8] px-2 py-2 text-[#655c3f]">Toss-Up</div>
+				</div>
+				<p class="px-4 py-3 text-xs leading-relaxed text-neutral-500">
+					A seat marked <strong>Open</strong> is one where neither candidate currently holds it.
+					Ratings are a judgement about how safe a seat looks, not a probability, so no percentage
+					is attached to them.
+				</p>
 			</section>
 
-			<section class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-				<div class="mb-4 flex items-center justify-between">
-					<div>
-						<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">Market Signal</h2>
-						<p class="text-xs text-neutral-500">Modeled probability bands for Senate control.</p>
-					</div>
-					<span class="rounded-full bg-[#e7f7ee] px-3 py-1 text-xs font-black text-[#157347]">
-						Live-style model
-					</span>
-				</div>
-				<div class="space-y-3">
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#D83A45]">Republican control</span><span>56.4%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#1f9d55]" style="width:56.4%"></div>
-						</div>
-					</div>
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#2E5AAC]">Democratic control</span><span>40.1%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#1f9d55]" style="width:40.1%"></div>
-						</div>
-					</div>
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#655c3f]">50-50 scenario</span><span>3.5%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#C8BE9A]" style="width:3.5%"></div>
-						</div>
-					</div>
-				</div>
-			</section>
+			<div class="flex flex-col gap-5">
+				<ChamberOdds
+					panel={data.senate}
+					title="Who controls the Senate"
+					question="Which party will win the Senate in 2026?"
+				/>
+
+				<section class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+						Why the map is lopsided
+					</h2>
+					<p class="mt-3 text-sm leading-relaxed text-neutral-600">
+						The Republicans hold {GOP_DEFENDING} of the {SEATS_UP} seats being contested against the
+						Democrats&rsquo; {DEM_DEFENDING}, so almost every competitive race is one they are
+						defending rather than attacking. Holding all {GOP_DEFENDING} keeps the Senate at
+						53&ndash;47; losing three of them takes it to 50&ndash;50, where the Vice President still
+						decides.
+					</p>
+				</section>
+			</div>
 		</div>
 
 		<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -862,7 +586,10 @@
 					<ul class="divide-y divide-neutral-100">
 						{#each relatedMaps as m}
 							<li>
-								<a href={m.href} class="block px-3 py-2 text-sm font-semibold text-[#2E5AAC] hover:bg-[#f7f8fb]">
+								<a
+									href={m.href}
+									class="block px-3 py-2 text-sm font-semibold text-[#2E5AAC] hover:bg-[#f7f8fb]"
+								>
 									{m.label}
 								</a>
 							</li>
@@ -870,21 +597,24 @@
 					</ul>
 				</div>
 
-				<div class="rounded-md border border-neutral-200 bg-white p-3 text-sm text-neutral-700 shadow-sm">
+				<div
+					class="rounded-md border border-neutral-200 bg-white p-3 text-sm text-neutral-700 shadow-sm"
+				>
 					<h2 class="mb-1 text-base font-black text-[#061a55]">Key Facts</h2>
 					<ul class="flex list-inside list-disc flex-col gap-1">
-						<li><strong>100</strong> total Senate seats</li>
-						<li><strong>51</strong> needed for control</li>
-						<li><strong>50-50</strong> tie broken by the Vice President</li>
+						<li><strong>100</strong> seats, <strong>51</strong> for control</li>
+						<li><strong>{SEATS_UP}</strong> on the ballot in 2026</li>
+						<li><strong>50-50</strong> broken by the Vice President</li>
 						<li>Election Day: <strong>November 3, 2026</strong></li>
 					</ul>
 				</div>
 			</aside>
 		</div>
 
-		<footer class="mt-10 border-t border-neutral-200 pt-4 text-xs text-neutral-500">
-			Forecast ratings and probabilities are presented as modeled dashboard indicators for the
-			interactive Senate map.
+		<footer class="mt-10 border-t border-neutral-200 pt-4 text-xs leading-relaxed text-neutral-500">
+			Race ratings follow Sabato&rsquo;s Crystal Ball and are editorial judgements, not
+			probabilities. The control percentages are live Polymarket prices carrying the time they were
+			read. Neither is a forecast produced by this site.
 		</footer>
 	</article>
 	<SiteFooter />

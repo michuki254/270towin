@@ -1,305 +1,195 @@
 <script lang="ts">
+	/* Nothing quantitative on this page was sourced, and the invented figures
+	 * pointed the wrong way.
+	 *
+	 * It published a "Prediction Market Forecast" of 51.6% GOP and a "Market
+	 * Signal" panel of 51.6/47.2/1.2 badged "Live-style model". Polymarket's
+	 * actual House-control market has the Democrats as heavy favourites, so the
+	 * page was not merely unsourced but close to the opposite of the market it
+	 * claimed to be quoting. That market is now loaded in +page.server.ts.
+	 *
+	 * The two invented seat figures also contradicted each other on screen: a
+	 * card read "Consensus Forecast 218 R - 217 D" while the strip immediately
+	 * below it gave the Republicans 208. Neither was attributed. Both are gone;
+	 * the real current standing is 219 R - 212 D with four vacancies.
+	 *
+	 * Every row carried a "Prediction market" percentage between 49 and 57.
+	 * There are no per-district markets to quote — re-checked against the open
+	 * Polymarket catalogue — so the column is gone rather than invented.
+	 *
+	 * The rating column is gone too, for a different reason: the ratings were
+	 * unattributed and undated, and the sources that publish them (Crystal Ball,
+	 * and 270toWin's own table) both refuse automated fetches, so there was no
+	 * way to verify or refresh them. Sabato's public summary of this cycle is
+	 * that the Democrats are favoured on a small battlefield, which is stated
+	 * and linked instead of dressed up as twelve per-district calls.
+	 *
+	 * Since/Term went the same way as on the Senate page: it mixed up service in
+	 * different offices, and the 2028 tab listed Yadira Caraveo as a sitting
+	 * member two years after she lost the seat. What remains is verifiable —
+	 * which districts are competitive, and who holds each one now.
+	 *
+	 * The map is untouched.
+	 */
 	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
+	import ChamberOdds from '$lib/components/marketodds/ChamberOdds.svelte';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
 
 	const mapEmbedUrl = '/app/usa/house/2026/blank?embed=1';
 	const mapFullUrl = '/app/usa/house/2026/blank';
 
 	type Party = 'Democratic' | 'Republican';
-	type Rating = 'Lean' | 'Tilt' | 'Toss-Up';
-	type HouseRace = {
+	type District = {
 		district: string;
-		candidate: string;
+		holder: string;
 		party: Party;
+		/** Year they first took this seat. */
 		since: number;
-		term: number;
-		rating: Rating;
-		market: number;
 		photo: string;
 		initials: string;
 	};
 
-	const partyStyles: Record<Party, { color: string; bg: string; text: string; logo: string }> = {
-		Democratic: {
-			color: '#2E5AAC',
-			bg: 'bg-[#eaf0fb]',
-			text: 'text-[#2E5AAC]',
-			logo: '/party-logos/democrats.png'
-		},
-		Republican: {
-			color: '#D83A45',
-			bg: 'bg-[#fdebed]',
-			text: 'text-[#D83A45]',
-			logo: '/party-logos/republicans.png'
-		}
+	const partyStyles: Record<Party, { color: string; bg: string; logo: string }> = {
+		Democratic: { color: '#2E5AAC', bg: 'bg-[#eaf0fb]', logo: '/party-logos/democrats.png' },
+		Republican: { color: '#D83A45', bg: 'bg-[#fdebed]', logo: '/party-logos/republicans.png' }
 	};
 
-	const ratingStyles: Record<Rating, string> = {
-		Lean: 'bg-[#f6f2e3] text-[#7a6e43] border-[#d9d0ab]',
-		Tilt: 'bg-[#fff3d8] text-[#8a6500] border-[#ead394]',
-		'Toss-Up': 'bg-[#f0ead8] text-[#655c3f] border-[#C8BE9A]'
-	};
+	/* Current standing, 431 voting members with 4 vacancies. */
+	const GOP_NOW = 219;
+	const DEM_NOW = 212;
+	const VACANT = 4;
+	const TOTAL_SEATS = 435;
+	const FOR_MAJORITY = 218;
 
-	const summaryCards = [
+	/* The most competitive districts and who holds each one today. This is a list
+	   of seats, not of 2026 nominees — most primaries are still to come. */
+	const districts: District[] = [
 		{
-			label: 'Current House Count',
-			value: '220 R - 215 D',
-			detail: 'Republicans hold a narrow House majority',
-			accent: '#D83A45'
+			district: 'CA-22',
+			holder: 'David Valadao',
+			party: 'Republican',
+			since: 2021,
+			photo: '/candidate-headshots/house/david-valadao.jpg',
+			initials: 'DV'
 		},
 		{
-			label: 'Consensus Forecast',
-			value: '218 R - 217 D',
-			detail: 'Control is inside the margin of a few seats',
-			accent: '#C8BE9A'
+			district: 'NY-17',
+			holder: 'Mike Lawler',
+			party: 'Republican',
+			since: 2023,
+			photo: '/candidate-headshots/house/mike-lawler.jpg',
+			initials: 'ML'
 		},
 		{
-			label: 'Prediction Market Forecast',
-			value: '51.6% GOP',
-			detail: 'Market-style edge for House control',
-			accent: '#1f9d55'
+			district: 'WA-03',
+			holder: 'Marie Gluesenkamp Perez',
+			party: 'Democratic',
+			since: 2023,
+			photo: '/candidate-headshots/house/marie-gluesenkamp-perez.jpg',
+			initials: 'MGP'
 		},
 		{
-			label: 'Interactive Map Projection',
-			value: '218 Needed',
-			detail: 'Build your own district-by-district map',
-			accent: '#2E5AAC'
+			district: 'NE-02',
+			holder: 'Don Bacon',
+			party: 'Republican',
+			since: 2017,
+			photo: '',
+			initials: 'DB'
+		},
+		{
+			district: 'VA-02',
+			holder: 'Jen Kiggans',
+			party: 'Republican',
+			since: 2023,
+			photo: '',
+			initials: 'JK'
+		},
+		{
+			district: 'PA-01',
+			holder: 'Brian Fitzpatrick',
+			party: 'Republican',
+			since: 2017,
+			photo: '/candidate-headshots/house/brian-fitzpatrick.jpg',
+			initials: 'BF'
+		},
+		{
+			district: 'PA-07',
+			holder: 'Ryan Mackenzie',
+			party: 'Republican',
+			since: 2025,
+			photo: '',
+			initials: 'RM'
+		},
+		{
+			district: 'PA-10',
+			holder: 'Scott Perry',
+			party: 'Republican',
+			since: 2013,
+			photo: '',
+			initials: 'SP'
+		},
+		{
+			district: 'IA-01',
+			holder: 'Mariannette Miller-Meeks',
+			party: 'Republican',
+			since: 2021,
+			photo: '',
+			initials: 'MMM'
+		},
+		{
+			district: 'CO-08',
+			holder: 'Gabe Evans',
+			party: 'Republican',
+			since: 2025,
+			photo: '',
+			initials: 'GE'
+		},
+		{
+			district: 'NY-04',
+			holder: 'Laura Gillen',
+			party: 'Democratic',
+			since: 2025,
+			photo: '/candidate-headshots/house/laura-gillen.jpg',
+			initials: 'LG'
+		},
+		{
+			district: 'ME-02',
+			holder: 'Jared Golden',
+			party: 'Democratic',
+			since: 2019,
+			photo: '',
+			initials: 'JG'
 		}
 	];
 
-	const forecastBlocks = [
-		{ label: 'Democrats', value: 215, color: '#2E5AAC' },
-		{ label: 'Toss-ups', value: 12, color: '#C8BE9A' },
-		{ label: 'Republicans', value: 208, color: '#D83A45' }
-	];
-
-	const racesByYear: Record<number, HouseRace[]> = {
-		2026: [
-			{
-				district: 'CA-22',
-				candidate: 'David Valadao',
-				party: 'Republican',
-				since: 2021,
-				term: 3,
-				rating: 'Toss-Up',
-				market: 50,
-				photo: '/candidate-headshots/house/david-valadao.jpg',
-				initials: 'DV'
-			},
-			{
-				district: 'NY-17',
-				candidate: 'Mike Lawler',
-				party: 'Republican',
-				since: 2023,
-				term: 2,
-				rating: 'Toss-Up',
-				market: 51,
-				photo: '/candidate-headshots/house/mike-lawler.jpg',
-				initials: 'ML'
-			},
-			{
-				district: 'WA-03',
-				candidate: 'Marie Gluesenkamp Perez',
-				party: 'Democratic',
-				since: 2023,
-				term: 2,
-				rating: 'Toss-Up',
-				market: 50,
-				photo: '/candidate-headshots/house/marie-gluesenkamp-perez.jpg',
-				initials: 'MGP'
-			},
-			{
-				district: 'NE-02',
-				candidate: 'Don Bacon',
-				party: 'Republican',
-				since: 2017,
-				term: 5,
-				rating: 'Toss-Up',
-				market: 49,
-				photo: '',
-				initials: 'DB'
-			},
-			{
-				district: 'VA-02',
-				candidate: 'Jen Kiggans',
-				party: 'Republican',
-				since: 2023,
-				term: 2,
-				rating: 'Lean',
-				market: 54,
-				photo: '',
-				initials: 'JK'
-			},
-			{
-				district: 'PA-01',
-				candidate: 'Brian Fitzpatrick',
-				party: 'Republican',
-				since: 2017,
-				term: 5,
-				rating: 'Lean',
-				market: 57,
-				photo: '/candidate-headshots/house/brian-fitzpatrick.jpg',
-				initials: 'BF'
-			},
-			{
-				district: 'PA-10',
-				candidate: 'Scott Perry',
-				party: 'Republican',
-				since: 2013,
-				term: 7,
-				rating: 'Tilt',
-				market: 53,
-				photo: '',
-				initials: 'SP'
-			},
-			{
-				district: 'PA-07',
-				candidate: 'Ryan Mackenzie',
-				party: 'Republican',
-				since: 2025,
-				term: 1,
-				rating: 'Toss-Up',
-				market: 50,
-				photo: '',
-				initials: 'RM'
-			},
-			{
-				district: 'IA-01',
-				candidate: 'Mariannette Miller-Meeks',
-				party: 'Republican',
-				since: 2021,
-				term: 3,
-				rating: 'Tilt',
-				market: 52,
-				photo: '',
-				initials: 'MMM'
-			},
-			{
-				district: 'CO-08',
-				candidate: 'Gabe Evans',
-				party: 'Republican',
-				since: 2025,
-				term: 1,
-				rating: 'Toss-Up',
-				market: 50,
-				photo: '',
-				initials: 'GE'
-			},
-			{
-				district: 'NY-04',
-				candidate: 'Laura Gillen',
-				party: 'Democratic',
-				since: 2025,
-				term: 1,
-				rating: 'Lean',
-				market: 56,
-				photo: '/candidate-headshots/house/laura-gillen.jpg',
-				initials: 'LG'
-			},
-			{
-				district: 'ME-02',
-				candidate: 'Jared Golden',
-				party: 'Democratic',
-				since: 2019,
-				term: 4,
-				rating: 'Toss-Up',
-				market: 51,
-				photo: '',
-				initials: 'JG'
-			}
-		],
-		2028: [
-			{
-				district: 'AZ-06',
-				candidate: 'Juan Ciscomani',
-				party: 'Republican',
-				since: 2023,
-				term: 3,
-				rating: 'Toss-Up',
-				market: 50,
-				photo: '',
-				initials: 'JC'
-			},
-			{
-				district: 'CO-08',
-				candidate: 'Yadira Caraveo',
-				party: 'Democratic',
-				since: 2023,
-				term: 2,
-				rating: 'Toss-Up',
-				market: 50,
-				photo: '',
-				initials: 'YC'
-			},
-			{
-				district: 'NJ-07',
-				candidate: 'Tom Kean Jr.',
-				party: 'Republican',
-				since: 2023,
-				term: 3,
-				rating: 'Lean',
-				market: 55,
-				photo: '',
-				initials: 'TK'
-			},
-			{
-				district: 'NY-18',
-				candidate: 'Pat Ryan',
-				party: 'Democratic',
-				since: 2022,
-				term: 4,
-				rating: 'Lean',
-				market: 57,
-				photo: '',
-				initials: 'PR'
-			},
-			{
-				district: 'TX-28',
-				candidate: 'Henry Cuellar',
-				party: 'Democratic',
-				since: 2005,
-				term: 12,
-				rating: 'Tilt',
-				market: 53,
-				photo: '',
-				initials: 'HC'
-			},
-			{
-				district: 'TX-37',
-				candidate: 'Greg Casar',
-				party: 'Democratic',
-				since: 2023,
-				term: 3,
-				rating: 'Lean',
-				market: 56,
-				photo: '',
-				initials: 'GC'
-			}
-		]
-	};
-
-	const yearTabs = [2026, 2028] as const;
-	const ratingFilters = ['All', 'Lean', 'Tilt', 'Toss-Up'];
-	let selectedYear = $state<(typeof yearTabs)[number]>(2026);
-	let selectedRating = $state('All');
-
-	const filteredRaces = $derived(
-		selectedRating === 'All'
-			? racesByYear[selectedYear]
-			: racesByYear[selectedYear].filter((race) => race.rating === selectedRating)
+	const partyFilters = ['All', 'Republican-held', 'Democratic-held'] as const;
+	let selectedFilter = $state<(typeof partyFilters)[number]>('All');
+	const shown = $derived(
+		selectedFilter === 'All'
+			? districts
+			: districts.filter((d) => `${d.party}-held` === selectedFilter)
 	);
+
+	const gopHeld = districts.filter((d) => d.party === 'Republican').length;
 
 	const faqs = [
 		{
 			q: 'How many seats are needed to control the House?',
-			a: 'The House has 435 voting seats, so a party needs 218 seats for a majority.'
+			a: `${FOR_MAJORITY} of ${TOTAL_SEATS}. The Republicans currently hold ${GOP_NOW} and the Democrats ${DEM_NOW}, with ${VACANT} seats vacant, so the working majority is a handful of seats either way.`
 		},
 		{
 			q: 'Are all House seats up in 2026?',
-			a: 'Yes. Every voting House seat is elected every two years.'
+			a: `Yes. All ${TOTAL_SEATS} voting seats are elected every two years, which is why the House can change hands in a single night while the Senate turns over a third at a time.`
 		},
 		{
-			q: 'Can I share my House forecast?',
-			a: 'Yes. Open the full interactive map and use the Share button to generate a link or embed code.'
+			q: 'Why are there no ratings or percentages next to each district?',
+			a: 'Because we do not produce them and cannot verify a borrowed set here. Polymarket runs a market on House control, shown above, but none on individual districts. Sabato’s Crystal Ball rates the districts and its assessment of this cycle is linked below; rather than reproduce twelve of its calls without a date on them, the table sticks to which seats are competitive and who holds them.'
+		},
+		{
+			q: 'Can I share a map I have built?',
+			a: 'Yes. Open the full interactive map, assign the districts, and use the Share button for a link or embed code.'
 		}
 	];
 
@@ -314,7 +204,10 @@
 	};
 
 	const relatedMaps = [
-		{ label: '2028 Presidential Interactive Map', href: '/2028-presidential-election-interactive-map' },
+		{
+			label: '2028 Presidential Interactive Map',
+			href: '/2028-presidential-election-interactive-map'
+		},
 		{ label: '2026 Senate Interactive Map', href: '/2026-senate-interactive-map' },
 		{ label: '2026 Governor Interactive Map', href: '/2026-governor-interactive-map' },
 		{ label: 'Historical House Elections', href: '/historical-house-elections' }
@@ -322,17 +215,17 @@
 </script>
 
 <svelte:head>
-	<title>2026 House Election Forecast | Interactive U.S. House Map</title>
+	<title>2026 House Elections | Interactive District Map &amp; Market Odds</title>
 	<meta
 		name="description"
-		content="Forecast the 2026 U.S. House elections with an interactive district map, competitive race table, candidate headshots, party logos, ratings and prediction-market style probabilities."
+		content="The 2026 fight for the House: an interactive district map you can fill in yourself, the most competitive seats and who holds them, and live Polymarket odds on which party wins control."
 	/>
 	<link rel="canonical" href="/2026-house-interactive-map" />
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content="2026 House Election Forecast" />
+	<meta property="og:title" content="2026 House Elections | Interactive District Map" />
 	<meta
 		property="og:description"
-		content="Build a 2026 House control forecast with a district map, year tabs and competitive race table."
+		content="Build your own path to 218 seats, with the competitive districts and live market odds on House control."
 	/>
 	<meta name="twitter:card" content="summary_large_image" />
 	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd)}</` + `script>`}
@@ -344,7 +237,7 @@
 			<nav class="mb-2 text-xs text-neutral-500" aria-label="Breadcrumb">
 				<a href="/" class="hover:underline">Home</a>
 				<span class="mx-1">/</span>
-				<span>2026 House Forecast</span>
+				<span>2026 House</span>
 			</nav>
 			<div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
 				<div>
@@ -352,11 +245,11 @@
 						U.S. House Elections
 					</p>
 					<h1 class="mt-1 text-3xl font-black tracking-tight text-[#061a55] md:text-4xl">
-						2026 House Election Forecast
+						2026 House Elections
 					</h1>
 					<p class="mt-2 max-w-3xl text-sm leading-relaxed text-neutral-600">
-						A House control dashboard with a district map, competitive race table, candidate
-						headshots, party logos, consensus ratings and market-style probabilities.
+						All {TOTAL_SEATS} seats are on the ballot and the Republicans are defending a majority of
+						{GOP_NOW - FOR_MAJORITY + 1} seats. Assign districts in the map to see who reaches {FOR_MAJORITY}.
 					</p>
 				</div>
 				<a
@@ -369,15 +262,13 @@
 		</header>
 
 		<section class="mt-5">
-			<div class="mb-3 flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
-				<div>
-					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-						Interactive Map Projection
-					</h2>
-					<p class="text-xs text-neutral-500">
-						Click into the full map to assign districts and build a custom House control forecast.
-					</p>
-				</div>
+			<div class="mb-3">
+				<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+					Interactive Map Projection
+				</h2>
+				<p class="text-xs text-neutral-500">
+					Click into the full map to assign districts and build your own House.
+				</p>
 			</div>
 			<div class="overflow-hidden rounded-md border border-neutral-200 bg-white shadow-sm">
 				<iframe
@@ -397,217 +288,172 @@
 			</div>
 		</section>
 
-		<section class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Forecast summary">
-			{#each summaryCards as card}
-				<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-					<div class="mb-3 h-1.5 w-12 rounded-full" style={`background:${card.accent}`}></div>
-					<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">{card.label}</div>
-					<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">{card.value}</div>
-					<div class="mt-1 text-xs leading-relaxed text-neutral-500">{card.detail}</div>
+		<section class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Key numbers">
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#D83A45"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">House now</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">
+					{GOP_NOW} R &ndash; {DEM_NOW} D
 				</div>
-			{/each}
-		</section>
-
-		<section class="mt-5 rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-			<div class="mb-3 flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
-				<div>
-					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-						National House Control Projection
-					</h2>
-					<p class="text-xs text-neutral-500">Modeled seat balance with the closest races held as toss-ups.</p>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					{VACANT} seats vacant of {TOTAL_SEATS}
 				</div>
-				<div class="text-xs font-semibold text-neutral-500">218 seats needed for control</div>
 			</div>
-			<div class="grid grid-cols-3 overflow-hidden rounded border border-neutral-200 text-center text-white">
-				{#each forecastBlocks as block}
-					<div class="py-3" style={`background:${block.color}`}>
-						<div class="text-2xl font-black leading-none">{block.value}</div>
-						<div class="mt-1 text-[11px] font-bold uppercase tracking-wide opacity-90">{block.label}</div>
-					</div>
-				{/each}
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#061a55"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">For control</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">{FOR_MAJORITY}</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					A majority of the {TOTAL_SEATS} voting seats
+				</div>
 			</div>
-			<div class="mt-3 grid grid-cols-3 gap-px overflow-hidden rounded border border-neutral-200 bg-neutral-200 text-center text-[11px] font-bold uppercase">
-				<div class="bg-[#f6f2e3] px-2 py-2 text-[#7a6e43]">Lean</div>
-				<div class="bg-[#fff3d8] px-2 py-2 text-[#8a6500]">Tilt</div>
-				<div class="bg-[#f0ead8] px-2 py-2 text-[#655c3f]">Toss-Up</div>
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#7a6e43"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">
+					Republican cushion
+				</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">
+					{GOP_NOW - FOR_MAJORITY} seats
+				</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					A net loss of {GOP_NOW - FOR_MAJORITY + 1} flips the chamber
+				</div>
+			</div>
+			<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+				<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#2E5AAC"></div>
+				<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">Seats up</div>
+				<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">All {TOTAL_SEATS}</div>
+				<div class="mt-1 text-xs leading-relaxed text-neutral-500">
+					Every voting seat, every two years
+				</div>
 			</div>
 		</section>
 
 		<div class="mt-5 grid gap-5 xl:grid-cols-[1.55fr_1fr]">
 			<section class="rounded-md border border-neutral-200 bg-white shadow-sm">
-				<div class="border-b border-neutral-200 px-4 py-3">
-					<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-						<div>
-							<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-								House Forecast Workspace
-							</h2>
-							<p class="text-xs text-neutral-500">
-								Choose a House election year. Each tab uses the same forecast table format.
-							</p>
-						</div>
-						<div class="inline-flex rounded-md border border-neutral-200 bg-[#f7f8fb] p-1">
-							{#each yearTabs as year}
-								<button
-									type="button"
-									onclick={() => {
-										selectedYear = year;
-										selectedRating = 'All';
-									}}
-									class={`rounded px-3 py-1.5 text-xs font-black ${
-										selectedYear === year
-											? 'bg-[#061a55] text-white shadow-sm'
-											: 'text-neutral-600 hover:bg-white'
-									}`}
-								>
-									{year}
-								</button>
-							{/each}
-						</div>
-					</div>
-				</div>
-
-				<div class="flex flex-col gap-3 border-b border-neutral-200 px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
+				<div
+					class="flex flex-col gap-3 border-b border-neutral-200 px-4 py-3 lg:flex-row lg:items-center lg:justify-between"
+				>
 					<div>
-						<h3 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-							{selectedYear} House Race Table
-						</h3>
+						<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+							The competitive districts
+						</h2>
 						<p class="text-xs text-neutral-500">
-							Filter by rating category. Probability shows the candidate or incumbent party's modeled edge.
+							Who holds each seat today. {gopHeld} of these {districts.length} are Republican-held.
 						</p>
 					</div>
 					<div class="flex flex-wrap gap-2">
-						{#each ratingFilters as rating}
+						{#each partyFilters as f}
 							<button
 								type="button"
-								onclick={() => (selectedRating = rating)}
+								onclick={() => (selectedFilter = f)}
 								class={`rounded border px-3 py-1.5 text-xs font-black ${
-									selectedRating === rating
+									selectedFilter === f
 										? 'border-[#061a55] bg-[#061a55] text-white'
 										: 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
 								}`}
 							>
-								{rating}
+								{f}
 							</button>
 						{/each}
 					</div>
 				</div>
 
 				<div class="overflow-x-auto">
-					<table class="w-full min-w-[920px] border-collapse text-sm">
-						<thead class="bg-[#f7f8fb] text-left text-[11px] uppercase tracking-wide text-neutral-500">
+					<table class="w-full min-w-[560px] border-collapse text-sm">
+						<thead
+							class="bg-[#f7f8fb] text-left text-[11px] uppercase tracking-wide text-neutral-500"
+						>
 							<tr class="border-b border-neutral-200">
-								<th class="px-4 py-3">District</th>
-								<th class="px-4 py-3">Photo</th>
-								<th class="px-4 py-3">Candidate</th>
-								<th class="px-4 py-3">Party</th>
-								<th class="px-4 py-3 text-right">Since</th>
-								<th class="px-4 py-3 text-right">Term</th>
-								<th class="px-4 py-3">Consensus</th>
-								<th class="px-4 py-3">Prediction market</th>
+								<th class="px-4 py-3" scope="col">District</th>
+								<th class="px-4 py-3" scope="col">Currently held by</th>
+								<th class="px-4 py-3" scope="col">Party</th>
+								<th class="px-4 py-3 text-right" scope="col">In the seat since</th>
 							</tr>
 						</thead>
 						<tbody class="divide-y divide-neutral-100">
-							{#each filteredRaces as race}
+							{#each shown as d (d.district)}
 								<tr class="hover:bg-[#f9fafc]">
 									<td class="px-4 py-3">
-										<span class="inline-flex h-8 w-14 items-center justify-center rounded bg-[#eef1f5] font-black text-[#061a55]">
-											{race.district}
-										</span>
-									</td>
-									<td class="px-4 py-3">
-										{#if race.photo}
-											<img
-												src={race.photo}
-												alt={`${race.candidate} headshot`}
-												class="h-11 w-11 rounded-full border border-neutral-200 object-cover"
-												loading="lazy"
-											/>
-										{:else}
-											<div
-												class="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 text-xs font-black text-white"
-												style={`background:${partyStyles[race.party].color}`}
-												aria-label={`${race.candidate} avatar`}
-											>
-												{race.initials}
-											</div>
-										{/if}
-									</td>
-									<td class="px-4 py-3 font-bold text-neutral-900">{race.candidate}</td>
-									<td class="px-4 py-3">
 										<span
-											class={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-black ${partyStyles[race.party].bg} ${partyStyles[race.party].text}`}
+											class="inline-flex h-8 w-14 items-center justify-center rounded bg-[#eef1f5] font-black text-[#061a55]"
 										>
-											<img
-												src={partyStyles[race.party].logo}
-												alt={`${race.party} Party logo`}
-												class="h-5 w-5 rounded-full object-contain"
-												loading="lazy"
-											/>
-											{race.party}
-										</span>
-									</td>
-									<td class="px-4 py-3 text-right font-semibold">{race.since}</td>
-									<td class="px-4 py-3 text-right font-semibold">{race.term}</td>
-									<td class="px-4 py-3">
-										<span class={`inline-flex rounded border px-2.5 py-1 text-xs font-black ${ratingStyles[race.rating]}`}>
-											{race.rating}
+											{d.district}
 										</span>
 									</td>
 									<td class="px-4 py-3">
 										<div class="flex items-center gap-3">
-											<div class="h-2 w-28 rounded-full bg-neutral-100">
+											{#if d.photo}
+												<img
+													src={d.photo}
+													alt=""
+													class="h-10 w-10 shrink-0 rounded-full border border-neutral-200 object-cover object-top"
+													loading="lazy"
+												/>
+											{:else}
 												<div
-													class="h-2 rounded-full bg-[#1f9d55]"
-													style={`width:${race.market}%`}
-												></div>
-											</div>
-											<span class="w-12 text-right font-black text-[#157347]">{race.market}%</span>
+													class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-neutral-200 text-xs font-black text-white"
+													style={`background:${partyStyles[d.party].color}`}
+													aria-hidden="true"
+												>
+													{d.initials}
+												</div>
+											{/if}
+											<span class="font-bold text-neutral-900">{d.holder}</span>
 										</div>
 									</td>
+									<td class="px-4 py-3">
+										<span
+											class={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-black ${partyStyles[d.party].bg}`}
+											style={`color:${partyStyles[d.party].color}`}
+										>
+											<img
+												src={partyStyles[d.party].logo}
+												alt=""
+												class="h-5 w-5 rounded-full object-contain"
+												loading="lazy"
+											/>
+											{d.party}
+										</span>
+									</td>
+									<td class="px-4 py-3 text-right font-semibold text-neutral-700">{d.since}</td>
 								</tr>
 							{/each}
 						</tbody>
 					</table>
 				</div>
+				<p class="border-t border-neutral-100 px-4 py-3 text-xs leading-relaxed text-neutral-500">
+					These are seats, not 2026 match-ups: most primaries are still to come, and some sitting
+					members will not be on the ballot. Sabato&rsquo;s Crystal Ball rates the districts
+					individually and currently has
+					<a
+						class="underline hover:text-neutral-700"
+						href="https://centerforpolitics.org/crystalball/the-house-democrats-favored-on-what-starts-as-a-small-battlefield/"
+						rel="noopener"
+						target="_blank">the Democrats favoured on a small battlefield</a
+					>.
+				</p>
 			</section>
 
-			<section class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-				<div class="mb-4 flex items-center justify-between">
-					<div>
-						<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">Market Signal</h2>
-						<p class="text-xs text-neutral-500">Modeled probability bands for House control.</p>
-					</div>
-					<span class="rounded-full bg-[#e7f7ee] px-3 py-1 text-xs font-black text-[#157347]">
-						Live-style model
-					</span>
-				</div>
-				<div class="space-y-3">
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#D83A45]">Republican control</span><span>51.6%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#1f9d55]" style="width:51.6%"></div>
-						</div>
-					</div>
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#2E5AAC]">Democratic control</span><span>47.2%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#1f9d55]" style="width:47.2%"></div>
-						</div>
-					</div>
-					<div>
-						<div class="mb-1 flex justify-between text-xs font-bold">
-							<span class="text-[#655c3f]">Exact-tie/unclear path</span><span>1.2%</span>
-						</div>
-						<div class="h-2 rounded-full bg-neutral-100">
-							<div class="h-2 rounded-full bg-[#C8BE9A]" style="width:1.2%"></div>
-						</div>
-					</div>
-				</div>
-			</section>
+			<div class="flex flex-col gap-5">
+				<ChamberOdds
+					panel={data.house}
+					title="Who controls the House"
+					question="Which party will win the House in 2026?"
+				/>
+
+				<section class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
+					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
+						How little has to move
+					</h2>
+					<p class="mt-3 text-sm leading-relaxed text-neutral-600">
+						With {GOP_NOW} seats against {DEM_NOW}, the Republican majority is {GOP_NOW -
+							FOR_MAJORITY} seats deep. A net loss of {GOP_NOW - FOR_MAJORITY + 1} hands the
+						chamber over — fewer than the {gopHeld} Republican-held competitive districts listed here,
+						which is why the whole chamber turns on a couple of dozen seats out of {TOTAL_SEATS}.
+					</p>
+				</section>
+			</div>
 		</div>
 
 		<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -631,7 +477,10 @@
 					<ul class="divide-y divide-neutral-100">
 						{#each relatedMaps as m}
 							<li>
-								<a href={m.href} class="block px-3 py-2 text-sm font-semibold text-[#2E5AAC] hover:bg-[#f7f8fb]">
+								<a
+									href={m.href}
+									class="block px-3 py-2 text-sm font-semibold text-[#2E5AAC] hover:bg-[#f7f8fb]"
+								>
 									{m.label}
 								</a>
 							</li>
@@ -639,21 +488,24 @@
 					</ul>
 				</div>
 
-				<div class="rounded-md border border-neutral-200 bg-white p-3 text-sm text-neutral-700 shadow-sm">
+				<div
+					class="rounded-md border border-neutral-200 bg-white p-3 text-sm text-neutral-700 shadow-sm"
+				>
 					<h2 class="mb-1 text-base font-black text-[#061a55]">Key Facts</h2>
 					<ul class="flex list-inside list-disc flex-col gap-1">
-						<li><strong>435</strong> voting House seats</li>
-						<li><strong>218</strong> needed for control</li>
-						<li><strong>All</strong> seats are elected every two years</li>
+						<li><strong>{TOTAL_SEATS}</strong> voting seats, <strong>{FOR_MAJORITY}</strong> for control</li>
+						<li>Now: <strong>{GOP_NOW} R &ndash; {DEM_NOW} D</strong>, {VACANT} vacant</li>
+						<li><strong>All</strong> seats elected every two years</li>
 						<li>Election Day: <strong>November 3, 2026</strong></li>
 					</ul>
 				</div>
 			</aside>
 		</div>
 
-		<footer class="mt-10 border-t border-neutral-200 pt-4 text-xs text-neutral-500">
-			Forecast ratings and probabilities are presented as modeled dashboard indicators for the
-			interactive House map.
+		<footer class="mt-10 border-t border-neutral-200 pt-4 text-xs leading-relaxed text-neutral-500">
+			Control percentages are live Polymarket prices carrying the time they were read, not a
+			forecast produced by this site. Seat counts are the current standing of the 119th Congress and
+			change with each special election.
 		</footer>
 	</article>
 	<SiteFooter />

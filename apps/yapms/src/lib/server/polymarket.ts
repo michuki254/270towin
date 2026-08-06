@@ -142,6 +142,131 @@ export const CANDIDATE_SLUGS = {
 	republicanNominee2028: 'republican-presidential-nominee-2028'
 } as const;
 
+/* ------------------------------------------------------------------ *
+ * Per-state governor markets                                         *
+ * ------------------------------------------------------------------ */
+
+export type GovernorRace = {
+	/** "New Hampshire", derived from the market slug. */
+	state: string;
+	democratic: { name: string | null; pct: number };
+	republican: { name: string | null; pct: number };
+};
+
+export type GovernorBoard = {
+	races: GovernorRace[];
+	fetchedAt: string;
+	ok: boolean;
+	/** States carrying a market we could not classify by party. */
+	skipped: string[];
+};
+
+/** "Rob Sand (D)" -> Democratic; the literal "Democrat" label -> Democratic. */
+function partyOf(label: string): 'Democratic' | 'Republican' | null {
+	const l = label.toLowerCase();
+	if (/\(\s*d\s*\)/.test(l) || /^democrat(ic)?$/.test(l.trim())) return 'Democratic';
+	if (/\(\s*r\s*\)/.test(l) || /^republican$/.test(l.trim())) return 'Republican';
+	return null;
+}
+
+/** Strip the party suffix so "Rob Sand (D)" displays as "Rob Sand". */
+function bareName(label: string): string | null {
+	const n = label.replace(/\s*\(\s*[DR]\s*\)\s*$/i, '').trim();
+	// A bare party label is not a candidate name.
+	return /^(democrat(ic)?|republican)$/i.test(n) ? null : n || null;
+}
+
+function stateFromSlug(slug: string): string {
+	return slug
+		.replace(/-governor-(winner|election)-2026$/, '')
+		.split('-')
+		.map((w) => (w.length <= 2 ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1)))
+		.join(' ');
+}
+
+/**
+ * Every 2026 governor race Polymarket prices, read in one tagged request.
+ *
+ * Driven by the `governor-midterms` tag rather than a hardcoded list of states,
+ * so a race that opens later shows up without a code change.
+ *
+ * Two things are deliberately dropped. Slugs containing "margin-of-victory" are
+ * companion markets full of unpriced "Person A" placeholders. And a state is
+ * skipped when its market is an untagged list of candidate names — California
+ * runs 23 of them with no party marker — because assigning those to parties
+ * would mean guessing.
+ */
+export async function fetchGovernorBoard(
+	opts: { timeoutMs?: number } = {}
+): Promise<GovernorBoard> {
+	const now = new Date().toISOString();
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? 8000);
+	try {
+		const res = await fetch(
+			`${GAMMA}/events?tag_slug=governor-midterms&closed=false&limit=100`,
+			{ signal: controller.signal, headers: { Accept: 'application/json' } }
+		);
+		if (!res.ok) return { races: [], fetchedAt: now, ok: false, skipped: [] };
+		const events = (await res.json()) as Array<{ slug?: string; markets?: GammaMarket[] }>;
+
+		const races: GovernorRace[] = [];
+		const skipped: string[] = [];
+
+		for (const ev of events ?? []) {
+			const slug = ev.slug ?? '';
+			if (!/-governor-(winner|election)-2026$/.test(slug)) continue;
+			if (slug.includes('margin-of-victory')) continue;
+
+			let dem: { name: string | null; pct: number } | null = null;
+			let gop: { name: string | null; pct: number } | null = null;
+			let sawAny = false;
+
+			for (const m of ev.markets ?? []) {
+				if (m.closed) continue;
+				const label = (m.groupItemTitle ?? m.question ?? '').trim();
+				if (!label) continue;
+				let outcomes: string[] = [];
+				let prices: string[] = [];
+				try {
+					outcomes = JSON.parse(m.outcomes ?? '[]');
+					prices = JSON.parse(m.outcomePrices ?? '[]');
+				} catch {
+					continue;
+				}
+				const yesAt = outcomes.findIndex((o) => o.toLowerCase() === 'yes');
+				if (yesAt < 0 || prices.length !== outcomes.length) continue;
+				const v = parseFloat(prices[yesAt]);
+				if (!Number.isFinite(v)) continue;
+				sawAny = true;
+
+				const party = partyOf(label);
+				if (!party) continue;
+				const entry = { name: bareName(label), pct: Math.round(v * 1000) / 10 };
+				// Keep the strongest entry per party, in case a state runs several.
+				if (party === 'Democratic') {
+					if (!dem || entry.pct > dem.pct) dem = entry;
+				} else if (!gop || entry.pct > gop.pct) gop = entry;
+			}
+
+			const state = stateFromSlug(slug);
+			if (dem && gop) races.push({ state, democratic: dem, republican: gop });
+			else if (sawAny) skipped.push(state);
+		}
+
+		races.sort(
+			(a, b) =>
+				Math.abs(a.democratic.pct - a.republican.pct) -
+				Math.abs(b.democratic.pct - b.republican.pct)
+		);
+		return { races, fetchedAt: now, ok: races.length > 0, skipped: skipped.sort() };
+	} catch {
+		return { races: [], fetchedAt: now, ok: false, skipped: [] };
+	} finally {
+		clearTimeout(timer);
+	}
+}
+
 /** Collapse the renderings of one person to a single key.
  *
  *  The winner market writes "JD Vance", the Republican nominee market writes
