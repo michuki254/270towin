@@ -2,7 +2,6 @@ import { fetchGovernorBoard, fetchPartyOdds, SLUGS } from '$lib/server/polymarke
 import type { PageServerLoad } from './$types';
 
 export const prerender = false;
-export const config = { isr: { expiration: 60 } };
 
 export const load: PageServerLoad = async () => {
 	const only = ['Democratic', 'Republican'];

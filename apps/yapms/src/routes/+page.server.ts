@@ -2,10 +2,11 @@ import { fetchPartyOdds, SLUGS } from '$lib/server/polymarket';
 import type { PageServerLoad } from './$types';
 
 export const prerender = false;
-/* Re-read prices at most once a minute. Prediction-market odds move slowly
- * enough that a minute is invisible to a reader, and it keeps us off
- * Polymarket's API on every page view. */
-export const config = { isr: { expiration: 60 } };
+/* The once-a-minute re-read this used to describe was declared as
+ * `config = { isr: { expiration: 60 } }`, which does nothing under
+ * adapter-node — it is an adapter-vercel feature — so prices were in fact
+ * re-read on every page view. The throttle now lives in $lib/server/polymarket
+ * as a real cache, and applies to every caller rather than page by page. */
 
 export const load: PageServerLoad = async () => {
 	const presidential = await fetchPartyOdds(SLUGS.presidential2028);

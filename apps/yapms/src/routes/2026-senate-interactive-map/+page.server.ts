@@ -2,7 +2,6 @@ import { fetchPartyOdds, SLUGS } from '$lib/server/polymarket';
 import type { PageServerLoad } from './$types';
 
 export const prerender = false;
-export const config = { isr: { expiration: 60 } };
 
 export const load: PageServerLoad = async () => {
 	// National Senate-control market only. Polymarket carries no per-state 2026

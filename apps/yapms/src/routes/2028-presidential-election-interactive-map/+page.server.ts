@@ -3,9 +3,6 @@ import { headshotFor, initialsFor } from '$lib/server/headshots';
 import type { PageServerLoad } from './$types';
 
 export const prerender = false;
-// Prices move all day; a minute-old copy is close enough, and it keeps us from
-// hitting Gamma once per visitor.
-export const config = { isr: { expiration: 60 } };
 
 /** First Tuesday after the first Monday in November 2028. */
 const ELECTION_DAY = '2028-11-07';
