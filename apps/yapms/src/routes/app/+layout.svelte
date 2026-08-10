@@ -88,7 +88,11 @@
 
 <svelte:head>
 	<title>YAPms</title>
-	<meta name="robots" content="nosnippet" />
+	<!-- The interactive map serves one JS shell for every /app URL, so each
+	     state/election variant looks identical to crawlers — Google was
+	     already folding them as duplicates. Keep the tool out of the index
+	     entirely; the crawlable content lives on the landing pages. -->
+	<meta name="robots" content="noindex, follow" />
 </svelte:head>
 
 <svelte:window
