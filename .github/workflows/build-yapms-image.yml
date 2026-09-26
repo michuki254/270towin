@@ -1,6 +1,7 @@
 name: Build YAPms Image
 
 on:
+  workflow_dispatch:
   push:
     tags: [v*]
 
