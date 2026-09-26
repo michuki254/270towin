@@ -92,7 +92,7 @@
 			const record = await pocketbaseStore.collection('maps').create(form);
 			linkID = record.id;
 		} catch (error) {
-			errorOnGenerateLink = false;
+			errorOnGenerateLink = true;
 			console.error(error);
 		}
 		fetchingLink = false;
@@ -219,7 +219,7 @@
 				</fieldset>
 			{/if}
 
-			{#if page.url.pathname !== '/app/imported'}
+			{#if page.url.pathname !== '/app/imported' && PUBLIC_TURNSTILE_SITE}
 				<fieldset class="fieldset flex flex-col gap-2">
 					<legend class="fieldset-legend">Generate Link</legend>
 					<button
@@ -261,7 +261,7 @@
 		</div>
 	</div>
 	<div slot="action">
-		{#if page.url.pathname !== '/app/imported'}
+		{#if page.url.pathname !== '/app/imported' && PUBLIC_TURNSTILE_SITE && $ShareModalStore.open}
 			<Turnstile
 				siteKey={PUBLIC_TURNSTILE_SITE}
 				on:callback={onTurnstileSuccess}

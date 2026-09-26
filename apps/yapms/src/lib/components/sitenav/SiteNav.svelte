@@ -1,4 +1,5 @@
 <script lang="ts">
+	let { home = false, active = 'President' } = $props<{ home?: boolean; active?: string }>();
 	type NavLink = {
 		label: string;
 		href: string;
@@ -21,13 +22,15 @@
 			label: 'President',
 			href: '/2028-presidential-election-interactive-map',
 			kicker: 'Electoral College',
-			description: 'Build presidential paths to 270, review certified results, and compare every historical election cycle.',
+			description:
+				'Build presidential paths to 270, review certified results, and compare every historical election cycle.',
 			image: '/path-to-win-logo.svg',
 			items: [
 				{
 					label: '2028 Electoral College Map',
 					href: '/2028-presidential-election-interactive-map',
-					description: 'Interactive forecast map with candidate options and a 270 electoral vote path.',
+					description:
+						'Interactive forecast map with candidate options and a 270 electoral vote path.',
 					image: '/favicon.svg'
 				},
 				{
@@ -54,7 +57,8 @@
 			label: 'Senate',
 			href: '/2026-senate-interactive-map',
 			kicker: 'Chamber Control',
-			description: 'Track the balance of power across Senate classes, current forecasts, and historical cycles.',
+			description:
+				'Track the balance of power across Senate classes, current forecasts, and historical cycles.',
 			image: '/party-logos/democrats.png',
 			items: [
 				{
@@ -120,7 +124,8 @@
 			label: 'Governor',
 			href: '/2026-governor-interactive-map',
 			kicker: 'State Executives',
-			description: 'Forecast gubernatorial races with candidate tables, ratings, and future election tabs.',
+			description:
+				'Forecast gubernatorial races with candidate tables, ratings, and future election tabs.',
 			image: '/favicon.svg',
 			items: [
 				{
@@ -153,13 +158,15 @@
 			label: 'States',
 			href: '/elected-officials',
 			kicker: 'Elected Officials',
-			description: 'State-by-state dashboards for federal officials, governors, legislatures, and partisan composition.',
+			description:
+				'State-by-state dashboards for federal officials, governors, legislatures, and partisan composition.',
 			image: '/favicon.svg',
 			items: [
 				{
 					label: 'Elected Officials Map',
 					href: '/elected-officials',
-					description: 'Click a 2024 presidential result map to open each state officials dashboard.',
+					description:
+						'Click a 2024 presidential result map to open each state officials dashboard.',
 					image: '/favicon.svg'
 				},
 				{
@@ -207,7 +214,8 @@
 				{
 					label: 'Election Countdown Clock',
 					href: '/election-countdown-clock',
-					description: 'A branded embeddable countdown clock for election pages and campaign sites.',
+					description:
+						'A branded embeddable countdown clock for election pages and campaign sites.',
 					image: '/favicon.svg'
 				},
 				{
@@ -219,7 +227,8 @@
 				{
 					label: 'Election Reference Tools',
 					href: '/poll-closing-times',
-					description: 'Poll closing times, primary dates, tie scenarios, and electoral vote rules.',
+					description:
+						'Poll closing times, primary dates, tie scenarios, and electoral vote rules.',
 					image: '/party-logos/republicans.png'
 				},
 				{
@@ -271,7 +280,7 @@
 	}
 </script>
 
-<header class="relative z-40 bg-[#001666] text-white shadow-md shrink-0">
+<header class="relative z-40 bg-[#001666] text-white shadow-md shrink-0" class:home-nav={home}>
 	<div class="mx-auto flex max-w-6xl items-center gap-8 px-4 py-2">
 		<a href="/" class="flex shrink-0 items-center gap-2" aria-label="Path to Win home">
 			<img
@@ -287,124 +296,205 @@
 		</a>
 		<nav class="min-w-0 flex-1" aria-label="Primary navigation">
 			<ul class="flex flex-wrap items-stretch text-sm font-semibold">
-			{#each navItems as item}
-				{#if item.items.length === 0}
-					<li>
-						<a class="block rounded px-4 py-2.5 transition-colors hover:bg-[#b60b03]" href={item.href}>
-							{item.label}
-						</a>
-					</li>
-				{:else}
-					<li
-						class="relative"
-						onmouseenter={() => openMegaMenu(item.label)}
-						onmouseleave={closeMegaMenu}
-					>
-						<!-- Split control: the label is a real link straight to the
+				{#each navItems as item}
+					{#if item.items.length === 0}
+						<li class:home-active={home && item.label === active}>
+							<a
+								class="block rounded px-4 py-2.5 transition-colors hover:bg-[#b60b03]"
+								href={item.href}
+							>
+								{item.label}
+							</a>
+						</li>
+					{:else}
+						<li
+							class="relative"
+							class:home-active={home && item.label === active}
+							onmouseenter={() => openMegaMenu(item.label)}
+							onmouseleave={closeMegaMenu}
+						>
+							<!-- Split control: the label is a real link straight to the
 						     interactive map, and the chevron opens the menu.
 						     A single <button> meant clicking "Senate" only toggled a
 						     dropdown and never went anywhere; a plain <a> would have
 						     fixed that but stranded touch users, since there is no
 						     hamburger here and tapping is the only way they reach the
 						     submenu. Desktop still opens on hover and on focus. -->
-						<span class="flex items-stretch rounded transition-colors hover:bg-[#b60b03]">
-							<a
-								class="select-none py-2.5 pl-4 pr-1"
-								href={item.href}
-								onfocus={() => openMegaMenu(item.label)}
-								onclick={() => (openMenu = undefined)}
-							>
-								{item.label}
-							</a>
-							<button
-								type="button"
-								aria-haspopup="true"
-								aria-expanded={openMenu === item.label}
-								aria-label={`${item.label} menu`}
-								class="cursor-pointer select-none py-2.5 pl-1 pr-3"
-								onclick={() => toggleMegaMenu(item.label)}
-								onfocus={() => openMegaMenu(item.label)}
-							>
-								<svg
-									class={`h-3 w-3 transition-transform ${openMenu === item.label ? 'rotate-180' : ''}`}
-									viewBox="0 0 12 12"
-									fill="none"
-									aria-hidden="true"
-								>
-									<path
-										d="M2.5 4.5 6 8l3.5-3.5"
-										stroke="currentColor"
-										stroke-width="1.6"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									/>
-								</svg>
-							</button>
-						</span>
-						{#if openMenu === item.label}
-						<div
-							class={`absolute top-full z-50 pt-2 ${item.label === 'More' ? 'right-0' : 'left-0'}`}
-						>
-							<div
-								class="w-[min(92vw,760px)] rounded-md border border-neutral-200 bg-white p-3 text-neutral-900 shadow-2xl"
-							>
-							<div class="grid gap-3 md:grid-cols-[230px_1fr]">
+							<span class="flex items-stretch rounded transition-colors hover:bg-[#b60b03]">
 								<a
-									href={item.href ?? item.items[0]?.href}
-									class="overflow-hidden rounded-md border border-neutral-200 bg-[#f5f7fb] hover:border-[#2e5aac]"
+									class="select-none py-2.5 pl-4 pr-1"
+									href={item.href}
+									onfocus={() => openMegaMenu(item.label)}
 									onclick={() => (openMenu = undefined)}
 								>
-									<div class="flex h-28 items-center justify-center bg-[#eef1f7] p-4">
-										<img
-											src={item.image}
-											alt=""
-											class="max-h-24 max-w-full object-contain"
-											loading="lazy"
-											aria-hidden="true"
-										/>
-									</div>
-									<div class="p-3">
-										<div class="text-[11px] font-black uppercase tracking-wide text-[#d83a45]">
-											{item.kicker}
-										</div>
-										<div class="mt-1 text-base font-black text-[#061a55]">{item.label}</div>
-										<p class="mt-1 text-xs leading-relaxed text-neutral-600">{item.description}</p>
-									</div>
+									{item.label}
 								</a>
+								<button
+									type="button"
+									aria-haspopup="true"
+									aria-expanded={openMenu === item.label}
+									aria-label={`${item.label} menu`}
+									class="cursor-pointer select-none py-2.5 pl-1 pr-3"
+									onclick={() => toggleMegaMenu(item.label)}
+									onfocus={() => openMegaMenu(item.label)}
+								>
+									<svg
+										class={`h-3 w-3 transition-transform ${openMenu === item.label ? 'rotate-180' : ''}`}
+										viewBox="0 0 12 12"
+										fill="none"
+										aria-hidden="true"
+									>
+										<path
+											d="M2.5 4.5 6 8l3.5-3.5"
+											stroke="currentColor"
+											stroke-width="1.6"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										/>
+									</svg>
+								</button>
+							</span>
+							{#if openMenu === item.label}
+								<div
+									class={`absolute top-full z-50 pt-2 ${item.label === 'More' ? 'right-0' : 'left-0'}`}
+								>
+									<div
+										class="w-[min(92vw,760px)] rounded-md border border-neutral-200 bg-white p-3 text-neutral-900 shadow-2xl"
+									>
+										<div class="grid gap-3 md:grid-cols-[230px_1fr]">
+											<a
+												href={item.href ?? item.items[0]?.href}
+												class="overflow-hidden rounded-md border border-neutral-200 bg-[#f5f7fb] hover:border-[#2e5aac]"
+												onclick={() => (openMenu = undefined)}
+											>
+												<div class="flex h-28 items-center justify-center bg-[#eef1f7] p-4">
+													<img
+														src={item.image}
+														alt=""
+														class="max-h-24 max-w-full object-contain"
+														loading="lazy"
+														aria-hidden="true"
+													/>
+												</div>
+												<div class="p-3">
+													<div
+														class="text-[11px] font-black uppercase tracking-wide text-[#d83a45]"
+													>
+														{item.kicker}
+													</div>
+													<div class="mt-1 text-base font-black text-[#061a55]">{item.label}</div>
+													<p class="mt-1 text-xs leading-relaxed text-neutral-600">
+														{item.description}
+													</p>
+												</div>
+											</a>
 
-								<div class="grid gap-2">
-									{#each item.items as sub}
-										<a
-											href={sub.href}
-											class="grid grid-cols-[54px_1fr] gap-3 rounded-md border border-transparent p-2 transition hover:border-neutral-200 hover:bg-[#f7f8fb]"
-											onclick={() => (openMenu = undefined)}
-										>
-											<div class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md bg-[#eef1f7]">
-												<img
-													src={sub.image}
-													alt=""
-													class="h-full w-full object-cover"
-													loading="lazy"
-													aria-hidden="true"
-												/>
+											<div class="grid gap-2">
+												{#each item.items as sub}
+													<a
+														href={sub.href}
+														class="grid grid-cols-[54px_1fr] gap-3 rounded-md border border-transparent p-2 transition hover:border-neutral-200 hover:bg-[#f7f8fb]"
+														onclick={() => (openMenu = undefined)}
+													>
+														<div
+															class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-md bg-[#eef1f7]"
+														>
+															<img
+																src={sub.image}
+																alt=""
+																class="h-full w-full object-cover"
+																loading="lazy"
+																aria-hidden="true"
+															/>
+														</div>
+														<div>
+															<div class="text-sm font-black text-[#061a55]">{sub.label}</div>
+															<p class="mt-0.5 text-xs leading-snug text-neutral-600">
+																{sub.description}
+															</p>
+														</div>
+													</a>
+												{/each}
 											</div>
-											<div>
-												<div class="text-sm font-black text-[#061a55]">{sub.label}</div>
-												<p class="mt-0.5 text-xs leading-snug text-neutral-600">
-													{sub.description}
-												</p>
-											</div>
-										</a>
-									{/each}
+										</div>
+									</div>
 								</div>
-							</div>
-							</div>
-						</div>
-						{/if}
-					</li>
-				{/if}
-			{/each}
+							{/if}
+						</li>
+					{/if}
+				{/each}
 			</ul>
 		</nav>
 	</div>
 </header>
+
+<style>
+	.home-nav {
+		background: #f8f9fa;
+		color: #343434;
+		border-top: 4px solid #173c77;
+		border-bottom: 2px solid #b52632;
+		box-shadow: none;
+		font-family: Arial, sans-serif;
+	}
+	.home-nav > div {
+		max-width: 1352px;
+		min-height: 66px;
+		gap: 38px;
+	}
+	.home-nav > div > a span span:first-child {
+		color: #183e75;
+	}
+	.home-nav > div > a span span:last-child {
+		color: #bd2935;
+	}
+	.home-nav nav > ul {
+		font-size: 16px;
+		font-weight: 400;
+	}
+	.home-nav nav > ul > li > a:hover,
+	.home-nav nav > ul > li > span:hover {
+		background: #e9edf2;
+	}
+	.home-nav nav > ul > li.home-active > a,
+	.home-nav nav > ul > li.home-active > span > a {
+		font-weight: 700;
+		color: #171717;
+	}
+	@media (max-width: 900px) {
+		.home-nav > div {
+			flex-wrap: wrap;
+			gap: 4px;
+			padding-top: 8px;
+			padding-bottom: 5px;
+		}
+		.home-nav nav {
+			flex-basis: 100%;
+		}
+		.home-nav nav > ul {
+			font-size: 13px;
+		}
+		.home-nav nav > ul > li > a {
+			padding: 9px 8px;
+		}
+		.home-nav nav > ul > li > span > a {
+			padding: 9px 0 9px 8px;
+		}
+		.home-nav nav > ul > li > span > button {
+			padding: 9px 5px;
+		}
+		.home-nav nav > ul > li {
+			position: static;
+		}
+		.home-nav nav > ul > li > div {
+			left: 8px;
+			right: 8px;
+			padding-top: 0;
+		}
+		.home-nav nav > ul > li > div > div {
+			width: 100%;
+			max-height: 65vh;
+			overflow: auto;
+		}
+	}
+</style>

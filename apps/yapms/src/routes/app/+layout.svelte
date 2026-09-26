@@ -35,6 +35,9 @@
 		handleModalOpenInteractions
 	} from '$lib/stores/Modals';
 	import type { Snippet } from 'svelte';
+	import { page } from '$app/state';
+	import HomeMap from '$lib/components/home/HomeMap.svelte';
+	const homeEmbed = $derived(page.url.searchParams.get('embed') === 'home');
 
 	const { children }: { children: Snippet } = $props();
 
@@ -100,21 +103,27 @@
 	on:keyup={handleKeyUp}
 	on:resize={reapplyPanZoom}
 	on:focusout={handleOnFocusOut}
-	on:beforeunload|preventDefault
+	on:beforeunload={(event) => {
+		if (!homeEmbed) event.preventDefault();
+	}}
 />
 
-<div class="flex flex-col h-full">
-	{#if $PresentationModeStore.enabled}
-		<PresentationNavBar />
-	{:else}
-		<NavBar />
-	{/if}
-	<div class="flex flex-row h-full overflow-hidden">
-		<MapChartContainer>
-			{@render children()}
-		</MapChartContainer>
+{#if homeEmbed}
+	<HomeMap>{@render children()}</HomeMap>
+{:else}
+	<div class="flex flex-col h-full">
+		{#if $PresentationModeStore.enabled}
+			<PresentationNavBar />
+		{:else}
+			<NavBar />
+		{/if}
+		<div class="flex flex-row h-full overflow-hidden">
+			<MapChartContainer>
+				{@render children()}
+			</MapChartContainer>
+		</div>
 	</div>
-</div>
+{/if}
 
 <NavigateHomeModal />
 

@@ -62,6 +62,7 @@ const STATIC_ROUTES = [
 	'/maps',
 	'/site-map',
 	'/about',
+	'/election-data-methodology',
 	'/contact',
 	'/advertising',
 	'/privacy'

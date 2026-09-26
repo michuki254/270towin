@@ -1,35 +1,8 @@
 <script lang="ts">
-	/* This page carried the same invented figures as its interactive-map sibling.
-	 *
-	 * The 226/81/231 "baseline" was not a projection of anything — it appeared
-	 * twice, once as a headline strip and again as "Path Math" with bar widths
-	 * (83.7%, 85.6%) hardcoded to match. Only one of those numbers was real:
-	 * 226 is Harris's actual 2024 total. The Republican 231 and the 81 toss-ups
-	 * were made up, so the page quietly asserted a near-tie in a cycle that
-	 * starts from a 312-226 Republican win.
-	 *
-	 * "Candidate Watch" listed four names with editorial labels — "National
-	 * profile", "Large-state executive", "Governor lane" — that say nothing and
-	 * cannot be checked. Its selection was also off: it carried Harris and
-	 * DeSantis, priced at 4.5% and 1.6%, while omitting Rubio, Ossoff and
-	 * Ocasio-Cortez, all of whom the market ranks higher.
-	 *
-	 * The battleground notes were the vaguest copy here ("Coalition shifts make
-	 * it central to western Sun Belt paths"). The electoral vote counts were
-	 * right, so they stay; the prose is replaced by each state's certified 2024
-	 * margin, which is concrete and checkable. North Carolina was missing
-	 * entirely, which left the set at six of the seven battlegrounds.
-	 *
-	 * The map itself is untouched.
-	 */
-	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
+	import ElectionPageShell from '$lib/components/electionpage/ElectionPageShell.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-
-	let startMode = $state<'2024map' | 'blank'>('2024map');
-	const mapEmbedUrl = $derived(`/app/usa/presidential/2028/${startMode}?embed=1`);
-	const mapFullUrl = $derived(`/app/usa/presidential/2028/${startMode}`);
 
 	/* The certified 2024 result — the real starting point, and what the map
 	   loads in "2024 Result" mode. */
@@ -75,7 +48,7 @@
 			state: 'Arizona',
 			ev: 11,
 			margin: 5.53,
-			note: 'The widest of the seven, so the hardest of the set to win back.'
+			note: 'The largest Republican margin among these seven states in 2024.'
 		},
 		{
 			state: 'Nevada',
@@ -112,8 +85,18 @@
 		const d = new Date(iso);
 		if (Number.isNaN(d.getTime())) return 'unknown';
 		const month = [
-			'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-			'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec'
 		][d.getUTCMonth()];
 		const hh = String(d.getUTCHours()).padStart(2, '0');
 		const mm = String(d.getUTCMinutes()).padStart(2, '0');
@@ -129,277 +112,543 @@
 	/>
 </svelte:head>
 
-<div class="flex h-full flex-col overflow-y-auto bg-[#eef1f5] text-neutral-900">
-	<main class="flex-1">
-		<section class="border-b border-neutral-200 bg-white">
-			<div class="mx-auto grid w-full max-w-7xl gap-5 px-4 py-6 lg:grid-cols-[0.9fr_1.4fr]">
-				<div class="flex flex-col justify-between gap-5">
-					<div>
-						<nav class="mb-3 text-xs text-neutral-500" aria-label="Breadcrumb">
-							<a href="/" class="hover:underline">Home</a>
-							<span class="mx-1">/</span>
-							<span>2028 President</span>
-						</nav>
-						<p class="text-xs font-black uppercase tracking-[0.18em] text-[#b60b03]">
-							Interactive Electoral College
-						</p>
-						<h1 class="mt-2 text-4xl font-black tracking-tight text-[#061a55] md:text-5xl">
-							2028 Presidential Election
-						</h1>
-						<p class="mt-3 max-w-xl text-sm leading-relaxed text-neutral-600">
-							The Republicans start this cycle defending {TRUMP_2024} electoral votes. Click states in
-							the map to move them and see who gets to {TO_WIN} first, either from the 2024 result or
-							from an empty board.
-						</p>
-					</div>
+<ElectionPageShell
+	active="President"
+	eyebrow="The road to the White House"
+	title="2028 Presidential Election"
+	tagline="Explore the states. Compare the field. Build your path to 270."
+	intro="Start from the certified 2024 result—312 Republican and 226 Democratic electoral votes—and explore a path to 270 by changing states."
+	baseline="2024 certified result: 312 R–226 D."
+	baselineHref="/2024-presidential-election-results"
+	baselineLinkText="certified 2024 results"
+>
+	<section id="electoral-map" aria-labelledby="map-heading">
+		<h2 id="map-heading" class="map-heading">Build your 2028 Electoral College map</h2>
+		<p class="map-caption">
+			Your map is a scenario. The starting colors show <a href="/2024-presidential-election-results"
+				>2024 results</a
+			>, not 2028 race ratings.
+		</p>
+		<iframe
+			src="/app/usa/presidential/2028/2024map?embed=home"
+			title="2028 Electoral College map with live vote totals and color palette"
+		></iframe>
+		<div class="map-footnote">
+			<span>Use “Start blank” for an empty map, or “Reset to 2024” to restore the result.</span><a
+				href="/app/usa/presidential/2028/2024map">Open full map editor ↗</a
+			>
+		</div>
+	</section>
 
-					<div>
-						<div
-							class="grid grid-cols-2 overflow-hidden rounded-md border border-neutral-200 text-center text-white"
-						>
-							{#each resultBlocks as block}
-								<div class="px-3 py-4" style={`background:${block.color}`}>
-									<div class="text-3xl font-black leading-none">{block.value}</div>
-									<div class="mt-1 text-[11px] font-black uppercase tracking-wide opacity-90">
-										{block.label}
-									</div>
-								</div>
-							{/each}
-						</div>
-						<p class="mt-2 text-xs text-neutral-500">
-							The certified 2024 result, not a 2028 projection.
-						</p>
-					</div>
-
-					<div class="grid gap-3 sm:grid-cols-2">
-						<a
-							href={mapFullUrl}
-							class="rounded-md bg-[#b60b03] px-4 py-3 text-center text-sm font-black text-white shadow-sm hover:bg-[#8f0802]"
-						>
-							Open Full Map
-						</a>
-						<a
-							href="/2028-presidential-election-interactive-map"
-							class="rounded-md border border-[#244999] bg-white px-4 py-3 text-center text-sm font-black text-[#244999] hover:bg-[#f3f6fd]"
-						>
-							Full Field &amp; Odds
-						</a>
-					</div>
-				</div>
-
-				<div class="min-w-0">
-					<div class="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-						<div>
-							<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-								Build Your 2028 Map
-							</h2>
-							<p class="text-xs text-neutral-500">
-								Switch the starting point and click states inside the map.
-							</p>
-						</div>
-						<div class="inline-flex w-fit overflow-hidden rounded-md border border-neutral-300 text-sm">
-							<button
-								type="button"
-								class={`px-3 py-1.5 font-bold ${
-									startMode === '2024map'
-										? 'bg-[#244999] text-white'
-										: 'bg-white text-neutral-700 hover:bg-neutral-100'
-								}`}
-								aria-pressed={startMode === '2024map'}
-								onclick={() => (startMode = '2024map')}
-							>
-								2024 Result
-							</button>
-							<button
-								type="button"
-								class={`border-l border-neutral-300 px-3 py-1.5 font-bold ${
-									startMode === 'blank'
-										? 'bg-[#244999] text-white'
-										: 'bg-white text-neutral-700 hover:bg-neutral-100'
-								}`}
-								aria-pressed={startMode === 'blank'}
-								onclick={() => (startMode = 'blank')}
-							>
-								Blank Map
-							</button>
-						</div>
-					</div>
-					<div class="overflow-hidden rounded-md border border-neutral-200 bg-white shadow-sm">
-						{#key startMode}
-							<iframe
-								src={mapEmbedUrl}
-								title="2028 Presidential Election Interactive Electoral College Map"
-								class="block w-full"
-								style="height: min(68vh, 650px); min-height: 430px; border: 0;"
-							></iframe>
-						{/key}
-					</div>
-				</div>
+	<section id="battlegrounds" class="battleground-section" aria-labelledby="battleground-title">
+		<div class="section-heading">
+			<h2 id="battleground-title">The seven battlegrounds</h2>
+			<span>2024 RESULTS</span>
+		</div>
+		<p class="section-intro">
+			Trump carried all seven in 2024. These past margins provide a starting point for comparing
+			scenarios; they do not predict the next election.
+		</p>
+		<div class="state-list">
+			<div class="state-table-head" aria-hidden="true">
+				<span>State</span><span>Electoral votes</span><span>2024 margin</span>
 			</div>
-		</section>
-
-		<section class="mx-auto grid w-full max-w-7xl gap-5 px-4 py-6 xl:grid-cols-[1.35fr_0.75fr]">
-			<div class="space-y-5">
-				<section>
-					<div class="mb-3 flex items-end justify-between gap-3">
-						<div>
-							<h2 class="text-xl font-black text-[#061a55]">The Seven Battlegrounds</h2>
-							<p class="text-sm text-neutral-600">
-								Trump carried all seven in 2024. Each card shows that margin.
-							</p>
-						</div>
-						<div
-							class="hidden text-xs font-bold uppercase tracking-wide text-neutral-500 sm:block"
-						>
-							{TO_WIN} needed to win
-						</div>
+			{#each battlegrounds as state}
+				<article class="state-row">
+					<div>
+						<h3>{state.state}</h3>
+						<p>{state.note}</p>
 					</div>
-					<div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-						{#each battlegrounds as state}
-							<article class="flex flex-col rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-								<div class="flex items-start justify-between gap-3">
-									<h3 class="font-black text-[#061a55]">{state.state}</h3>
-									<div
-										class="shrink-0 rounded bg-[#f0ead8] px-2 py-1 text-xs font-black text-[#655c3f]"
-									>
-										{state.ev} EV
-									</div>
-								</div>
-								<div class="mt-2 text-sm font-bold" style="color:#b60b03">
-									2024: Trump +{state.margin.toFixed(2)}
-								</div>
-								<p class="mt-2 text-sm leading-relaxed text-neutral-600">{state.note}</p>
-							</article>
-						{/each}
-					</div>
-					<p class="mt-3 text-xs leading-relaxed text-neutral-500">
-						Margins are the difference in vote share from the certified 2024 returns, as compiled on
-						<a
-							class="underline hover:text-neutral-700"
-							href="https://en.wikipedia.org/wiki/2024_United_States_presidential_election#Results_by_state"
-							rel="noopener"
-							target="_blank">Wikipedia's results-by-state table</a
-						>, which cites each state's own election authority.
-					</p>
-				</section>
-
-				<section>
-					<div class="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-						<div>
-							<h2 class="text-xl font-black text-[#061a55]">Who The Market Backs</h2>
-							<p class="text-sm text-neutral-600">
-								{#if data.board.ok}
-									Chance of taking office, priced on Polymarket. Read {readAt(data.board.fetchedAt)}.
-								{:else}
-									Live prices are unavailable right now.
-								{/if}
-							</p>
-						</div>
-						{#if data.board.ok}
-							<a
-								class="text-sm font-bold text-[#244999] hover:underline"
-								href="/2028-presidential-election-interactive-map">See the full field →</a
-							>
-						{/if}
-					</div>
-
-					{#if data.board.ok}
-						<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-							{#each data.board.candidates as c (c.name)}
-								<article
-									class="flex items-center gap-3 rounded-md border border-neutral-200 bg-white p-3 shadow-sm"
+					<span class="ev"><strong>{state.ev}</strong><span>electoral votes</span></span><span
+						class="margin">Trump +{state.margin.toFixed(2)}<small>percentage points</small></span
+					>
+				</article>
+			{/each}
+		</div>
+		<p class="source-note">
+			Margins are the difference in vote share in the certified 2024 returns, compiled in <a
+				href="https://en.wikipedia.org/wiki/2024_United_States_presidential_election#Results_by_state"
+				target="_blank"
+				rel="noopener">Wikipedia’s results-by-state table</a
+			>, with references to state election authorities.
+			<a href="/election-data-methodology">About our data and sources</a>.
+		</p>
+	</section>
+	{#snippet sidebar()}
+		<section id="candidate-markets" class="markets" aria-labelledby="market-heading">
+			<h2 id="market-heading">Candidate Markets</h2>
+			<p class="market-question">
+				Who will win the<br /><strong>2028 presidential election?</strong>
+			</p>
+			{#if data.board.ok && data.board.candidates.length}
+				<ol class="candidate-list">
+					{#each data.board.candidates as candidate (candidate.name)}
+						<li>
+							{#if candidate.photo}<img
+									src={candidate.photo}
+									alt=""
+									width="42"
+									height="42"
+									loading="lazy"
+								/>{:else}<span class="initials" aria-hidden="true">{candidate.initials}</span>{/if}
+							<div class="candidate-info">
+								<h3>{candidate.name}</h3>
+								<span style:color={partyColor(candidate.party)}
+									>{candidate.party ?? 'Party not listed'}</span
 								>
-									{#if c.photo}
-										<img
-											src={c.photo}
-											alt=""
-											class="h-14 w-14 shrink-0 rounded-full border border-neutral-200 object-cover object-top"
-											loading="lazy"
-										/>
-									{:else}
-										<div
-											class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-[#e9edf5] text-sm font-black text-[#061a55]"
-											aria-hidden="true"
-										>
-											{c.initials}
-										</div>
-									{/if}
-									<div class="min-w-0">
-										<div
-											class="text-[11px] font-black uppercase tracking-wide"
-											style={`color:${partyColor(c.party)}`}
-										>
-											{c.party ?? 'No primary market'}
-										</div>
-										<!-- Wraps rather than truncating: "Alexandria Ocasio-Cortez" does not
-										     fit one line in this card and read as "Alexandria Ocasi…". -->
-										<h3 class="font-black leading-tight text-[#061a55]">{c.name}</h3>
-										<div class="mt-0.5 text-sm font-bold text-neutral-700">{c.pct}%</div>
-									</div>
-								</article>
-							{/each}
-						</div>
-					{:else}
-						<p class="rounded-md border border-neutral-200 bg-white p-4 text-sm text-neutral-500 shadow-sm">
-							Polymarket could not be reached, so no prices are shown rather than stale ones. The map
-							above is unaffected.
-						</p>
-					{/if}
-				</section>
-			</div>
-
-			<aside class="space-y-5">
-				<section class="rounded-md border border-neutral-200 bg-white shadow-sm">
-					<div class="border-b border-neutral-200 px-4 py-3">
-						<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">Election Tools</h2>
-					</div>
-					<div class="grid gap-px bg-neutral-200">
-						{#each tools as tool}
-							<a
-								href={tool.href}
-								class="bg-white px-4 py-3 text-sm font-bold text-[#244999] hover:bg-[#f7f8fb]"
+							</div>
+							<strong class="candidate-price" style:color={partyColor(candidate.party)}
+								>{candidate.pct}<small>%</small></strong
 							>
-								{tool.label}
-							</a>
-						{/each}
-					</div>
-				</section>
-
-				<section class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
-					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">Path Math</h2>
-					<div class="mt-4 space-y-4">
-						<div>
-							<div class="flex justify-between text-xs font-bold text-neutral-600">
-								<span>Republicans hold</span>
-								<span>{TRUMP_2024} / {TO_WIN}</span>
-							</div>
-							<div class="mt-1 h-2 overflow-hidden rounded bg-neutral-200">
-								<div class="h-full bg-[#b60b03]" style="width: 100%"></div>
-							</div>
-						</div>
-						<div>
-							<div class="flex justify-between text-xs font-bold text-neutral-600">
-								<span>Democrats hold</span>
-								<span>{HARRIS_2024} / {TO_WIN}</span>
-							</div>
-							<div class="mt-1 h-2 overflow-hidden rounded bg-neutral-200">
-								<div
-									class="h-full bg-[#244999]"
-									style={`width: ${((HARRIS_2024 / TO_WIN) * 100).toFixed(1)}%`}
-								></div>
-							</div>
-						</div>
-						<p class="text-sm leading-relaxed text-neutral-600">
-							Starting from 2024, the Democrats need to flip <strong>{FLIP_NEEDED}</strong> electoral
-							votes to reach {TO_WIN}. Pennsylvania, Michigan and Wisconsin are worth exactly
-							{blueWallEV} between them — win those three back and nothing else changes, and the map
-							reads {TO_WIN}-{TRUMP_2024 - FLIP_NEEDED}. That is why those three carry the whole
-							cycle, and all three were decided by under two points.
-						</p>
-					</div>
-				</section>
-			</aside>
+						</li>
+					{/each}
+				</ol>
+				<p class="market-source">Market prices from <strong>Polymarket</strong></p>
+				<p class="market-caption">
+					Read {readAt(data.board.fetchedAt)}. Market prices reflect trading activity, not polling
+					or an official forecast.
+				</p>
+			{:else}<p class="unavailable">
+					Candidate market prices are temporarily unavailable. You can still build your election
+					map.
+				</p>{/if}
+			<a class="all-markets" href="/2028-presidential-election-interactive-map"
+				>Explore the full field &amp; odds →</a
+			>
 		</section>
-	</main>
-	<SiteFooter />
-</div>
+
+		<section class="path-math" aria-labelledby="path-heading">
+			<span class="eyebrow">ONE POSSIBLE SCENARIO</span>
+			<h2 id="path-heading">A path to <strong>{TO_WIN}</strong></h2>
+			<p>
+				From the 2024 result, Democrats need a net gain of <strong
+					>{FLIP_NEEDED} electoral votes</strong
+				> to reach a majority.
+			</p>
+			<dl>
+				<div>
+					<dt>2024 Democratic total</dt>
+					<dd>{HARRIS_2024}</dd>
+				</div>
+				{#each battlegrounds.filter((state) => blueWall.includes(state.state)) as state}<div>
+						<dt>{state.state}</dt>
+						<dd>+{state.ev}</dd>
+					</div>{/each}
+				<div class="path-total">
+					<dt>Scenario total</dt>
+					<dd>{HARRIS_2024 + blueWallEV}</dd>
+				</div>
+			</dl>
+			<p class="path-note">
+				Flipping these three states while every other result stays the same produces a {TO_WIN}–{TRUMP_2024 -
+					FLIP_NEEDED} map. Other combinations are possible.
+			</p>
+			<a href="#electoral-map">Build your own scenario ↑</a>
+		</section>
+
+		<section class="tool-links" aria-labelledby="tools-heading">
+			<h2 id="tools-heading">Election tools</h2>
+			{#each tools as tool}<a href={tool.href}>{tool.label}<span aria-hidden="true">→</span></a
+				>{/each}
+		</section>
+		<section class="result-panel">
+			<h2>2024 starting point</h2>
+			{#each resultBlocks as result}<div>
+					<span>{result.label}</span><strong style:color={result.color}>{result.value}</strong>
+				</div>{/each}<a href="/2024-presidential-election-results">View certified results →</a>
+		</section>
+	{/snippet}
+</ElectionPageShell>
+
+<style>
+	a {
+		color: #245493;
+	}
+	a:hover {
+		text-decoration: underline;
+	}
+	a:focus-visible {
+		outline: 3px solid #245493;
+		outline-offset: 4px;
+	}
+	.eyebrow {
+		color: #ae2834;
+		font-size: 10px;
+		letter-spacing: 1px;
+		font-weight: 700;
+	}
+	.map-heading {
+		font-size: 21px;
+		font-weight: 700;
+		margin-bottom: 10px;
+	}
+	.map-caption {
+		color: #757575;
+		font-size: 12px;
+		line-height: 1.5;
+		margin: 10px 0 25px;
+	}
+	.map-caption a {
+		text-decoration: underline;
+	}
+	iframe {
+		display: block;
+		width: 100%;
+		height: 570px;
+		background: white;
+		border: 0;
+	}
+	.map-footnote {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 8px 14px;
+		font-size: 11px;
+		color: #777;
+		margin-top: 15px;
+		line-height: 1.6;
+	}
+	section[id] {
+		scroll-margin-top: 24px;
+	}
+	.markets > h2,
+	.market-question,
+	.market-source,
+	.market-caption,
+	.all-markets {
+		text-align: center;
+	}
+	.markets > h2 {
+		font-size: 21px;
+		font-weight: 700;
+	}
+	.market-question {
+		font-size: 14px;
+		line-height: 1.6;
+		margin: 15px 0;
+	}
+	.market-question strong {
+		font-weight: 400;
+	}
+	.candidate-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		border-top: 1px solid #ddd;
+	}
+	.candidate-list li {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 13px 0;
+		border-bottom: 1px solid #e5e5e5;
+	}
+	.candidate-list img,
+	.initials {
+		flex-shrink: 0;
+		width: 42px;
+		height: 42px;
+		border-radius: 50%;
+		object-fit: cover;
+		object-position: top;
+		border: 1px solid #ddd;
+	}
+	.initials {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #f0f2f6;
+		color: #37557d;
+		font-size: 12px;
+	}
+	.candidate-info {
+		min-width: 0;
+		flex: 1;
+	}
+	.candidate-info h3 {
+		font-size: 13px;
+		line-height: 1.3;
+		font-weight: 700;
+	}
+	.candidate-info > span {
+		font-size: 10px;
+		display: block;
+		margin-top: 4px;
+	}
+	.candidate-price {
+		font-size: 23px;
+		font-weight: 700;
+		white-space: nowrap;
+	}
+	.candidate-price small {
+		font-size: 13px;
+	}
+	.market-source {
+		font-size: 10px;
+		color: #777;
+		margin: 16px 0 10px;
+	}
+	.market-source strong {
+		display: block;
+		color: #2154ba;
+		font-size: 20px;
+		letter-spacing: -0.6px;
+		margin-top: 2px;
+	}
+	.market-caption {
+		font-size: 10px;
+		line-height: 1.6;
+		color: #858585;
+	}
+	.all-markets {
+		display: block;
+		font-size: 12px;
+		margin-top: 14px;
+	}
+	.unavailable {
+		padding: 20px;
+		background: #f4f5f7;
+		color: #666;
+		font-size: 13px;
+		line-height: 1.6;
+	}
+	.path-math {
+		padding: 20px;
+		background: #f5f6f8;
+		border: 1px solid #e1e4e8;
+		margin-top: 32px;
+	}
+	.path-math h2 {
+		font-size: 24px;
+		margin: 8px 0 12px;
+		font-weight: 400;
+	}
+	.path-math h2 strong {
+		color: #264c83;
+	}
+	.path-math p {
+		font-size: 13px;
+		color: #62666c;
+		line-height: 1.6;
+	}
+	.path-math dl {
+		margin: 16px 0;
+	}
+	.path-math dl div {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 8px 0;
+		font-size: 12px;
+		border-bottom: 1px solid #ddd;
+	}
+	.path-math dd {
+		font-weight: 700;
+	}
+	.path-math dl .path-total {
+		font-size: 16px;
+		color: #245493;
+		font-weight: 700;
+		padding-top: 12px;
+		border: 0;
+	}
+	.path-math .path-note {
+		font-size: 11px;
+	}
+	.path-math > a {
+		display: inline-block;
+		margin-top: 13px;
+		font-size: 12px;
+	}
+	.tool-links {
+		margin-top: 32px;
+		border-top: 3px solid #294f83;
+	}
+	.tool-links h2 {
+		font-size: 18px;
+		padding: 15px 0 5px;
+	}
+	.tool-links a {
+		display: flex;
+		justify-content: space-between;
+		border-bottom: 1px solid #e5e5e5;
+		padding: 12px 0;
+		font-size: 13px;
+	}
+	.result-panel {
+		margin-top: 28px;
+		padding-top: 20px;
+		border-top: 1px solid #ddd;
+	}
+	.result-panel h2 {
+		font-size: 17px;
+		margin-bottom: 10px;
+	}
+	.result-panel > div {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 8px 0;
+		font-size: 13px;
+	}
+	.result-panel strong {
+		font-size: 23px;
+	}
+	.result-panel a {
+		display: block;
+		margin-top: 12px;
+		font-size: 12px;
+	}
+	.battleground-section {
+		margin-top: 42px;
+	}
+	.section-heading {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 10px;
+		border-bottom: 2px solid #34547e;
+		padding-bottom: 12px;
+	}
+	.section-heading h2 {
+		font-size: 25px;
+		font-weight: 700;
+	}
+	.section-heading > span {
+		font-size: 10px;
+		color: #777;
+		letter-spacing: 0.7px;
+	}
+	.section-intro {
+		font-size: 14px;
+		line-height: 1.6;
+		color: #666;
+		margin: 18px 0;
+	}
+	.state-table-head,
+	.state-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 100px 140px;
+		gap: 24px;
+		align-items: center;
+	}
+	.state-table-head {
+		font-size: 10px;
+		font-weight: 700;
+		text-transform: uppercase;
+		color: #777;
+		padding: 10px 0;
+		border-bottom: 1px solid #ddd;
+	}
+	.state-table-head span:nth-child(n + 2) {
+		text-align: right;
+	}
+	.state-row {
+		padding: 18px 0;
+		border-bottom: 1px solid #e5e5e5;
+	}
+	.state-row h3 {
+		font-size: 17px;
+		font-weight: 700;
+		color: #264c83;
+	}
+	.state-row p {
+		font-size: 12px;
+		color: #777;
+		line-height: 1.6;
+		margin-top: 5px;
+	}
+	.ev {
+		text-align: right;
+	}
+	.ev strong {
+		font-size: 23px;
+		font-weight: 700;
+	}
+	.ev > span {
+		display: none;
+	}
+	.margin {
+		text-align: right;
+		font-size: 14px;
+		color: #ad2933;
+		font-weight: 700;
+	}
+	.margin small {
+		display: block;
+		font-size: 10px;
+		color: #888;
+		font-weight: 400;
+		margin-top: 4px;
+	}
+	.source-note {
+		font-size: 11px;
+		line-height: 1.7;
+		color: #888;
+		margin-top: 18px;
+	}
+	.source-note a {
+		text-decoration: underline;
+	}
+	@media (max-width: 1100px) {
+		.state-table-head,
+		.state-row {
+			gap: 14px;
+			grid-template-columns: minmax(0, 1fr) 70px 120px;
+		}
+	}
+	@media (max-width: 900px) {
+		iframe {
+			height: 580px;
+		}
+	}
+	@media (max-width: 600px) {
+		.map-heading {
+			font-size: 20px;
+		}
+		iframe {
+			height: 650px;
+		}
+		.markets {
+			max-width: 380px;
+			width: 100%;
+			margin: auto;
+		}
+		.section-heading h2 {
+			font-size: 23px;
+		}
+		.state-table-head {
+			display: none;
+		}
+		.state-row {
+			grid-template-columns: 1fr auto;
+			gap: 12px;
+		}
+		.state-row > div {
+			grid-column: 1 / -1;
+		}
+		.ev {
+			text-align: left;
+			display: flex;
+			align-items: baseline;
+			gap: 6px;
+		}
+		.ev strong {
+			font-size: 19px;
+		}
+		.ev > span {
+			display: inline;
+			font-size: 11px;
+			color: #777;
+		}
+		.margin small {
+			display: inline;
+			margin-left: 4px;
+			font-size: 9px;
+		}
+		.margin {
+			font-size: 12px;
+		}
+	}
+</style>

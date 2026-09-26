@@ -7,24 +7,84 @@
 	import ThemeModal from '$lib/components/modals/thememodal/ThemeModal.svelte';
 	import AuthModal from '$lib/components/modals/authmodal/AuthModal.svelte';
 	import { page } from '$app/stores';
-	import { browser } from '$app/environment';
+	import type { Snippet } from 'svelte';
+	import SitePageShell from '$lib/components/sitepage/SitePageShell.svelte';
+
+	let { children }: { children: Snippet } = $props();
 
 	// Hide the site nav when a page is loaded in embed mode (e.g. the home page hero iframe).
-	$: embed = browser && $page.url.searchParams.has('embed');
-	$: isHomePage = $page.url.pathname === '/';
+	let embed = $derived($page.url.searchParams.has('embed'));
+	let isHomePage = $derived($page.url.pathname === '/');
+	const electionPages = new Map<string, string>([
+		['/2028-presidential-election', 'President'],
+		['/2028-presidential-election-interactive-map', 'President'],
+		['/2026-house-interactive-map', 'House'],
+		['/2026-senate-interactive-map', 'Senate'],
+		['/2026-governor-interactive-map', 'Governor']
+	]);
+	const widePagePrefixes = [
+		'/elected-officials',
+		'/historical-',
+		'/maps',
+		'/presidential-election-margins',
+		'/simulator',
+		'/state-election-results',
+		'/state-primary-dates',
+		'/state-primary-results',
+		'/state-trifectas',
+		'/state-voting',
+		'/states',
+		'/election-countdown-clock',
+		'/contact-senators',
+		'/house-crossover-districts',
+		'/house-retirements',
+		'/poll-closing-times',
+		'/uncontested-house-races'
+	];
+
+	function activeSection(pathname: string): string {
+		if (pathname === '/news' || pathname.startsWith('/news/')) return 'News';
+		if (
+			pathname.startsWith('/states') ||
+			pathname.startsWith('/state-') ||
+			pathname === '/elected-officials'
+		)
+			return 'States';
+		if (pathname.includes('senate')) return 'Senate';
+		if (pathname.includes('house')) return 'House';
+		if (pathname.includes('governor')) return 'Governor';
+		if (pathname.includes('presidential') || pathname.includes('electoral')) return 'President';
+		return 'More';
+	}
+
+	function isWideContent(pathname: string): boolean {
+		return (
+			widePagePrefixes.some((prefix) => pathname.startsWith(prefix)) ||
+			(/^\/\d{4}-.+-election-results$/.test(pathname) && pathname !== '/2024-election-results')
+		);
+	}
+
+	let pathname = $derived($page.url.pathname);
+	let isAppSurface = $derived(
+		pathname === '/view' || pathname === '/app' || pathname.startsWith('/app/')
+	);
+	let compactCountdown = $derived(
+		pathname === '/election-countdown-clock' && $page.url.searchParams.has('compact')
+	);
+	let hasOwnPageShell = $derived(isHomePage || electionPages.has(pathname));
+	let usePublicPageShell = $derived(
+		!embed && !compactCountdown && !isAppSurface && !hasOwnPageShell
+	);
+	let useHomepageNavigation = $derived(!embed && !isAppSurface && !compactCountdown);
+	let activeElection = $derived(electionPages.get(pathname) ?? activeSection(pathname));
+	let widePublicPage = $derived(isWideContent(pathname));
 </script>
 
 <svelte:head>
 	<!-- Site-wide canonical + social defaults, derived from the request origin
 	     so a future domain move is DNS-only. Pages add their own og:title /
-	     og:description; anything they don't set falls back to these. The home
-	     page renders the same interactive map as the 2028 page, so it
-	     canonicalises there; every other route canonicalises to itself. -->
-	<link
-		rel="canonical"
-		href={$page.url.origin +
-			($page.url.pathname === '/' ? '/2028-presidential-election-interactive-map' : $page.url.pathname)}
-	/>
+	     og:description; anything they don't set falls back to these. -->
+	<link rel="canonical" href={$page.url.origin + ($page.url.pathname.replace(/\/+$/, '') || '/')} />
 	<meta property="og:site_name" content="Path to Win" />
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content={$page.url.origin + $page.url.pathname} />
@@ -46,10 +106,14 @@
 
 <div class="flex flex-col h-full">
 	{#if !embed}
-		<SiteNav />
+		<SiteNav home={useHomepageNavigation} active={activeElection} />
 	{/if}
 	<div class="flex-1 min-h-0">
-		<slot />
+		{#if usePublicPageShell}
+			<SitePageShell wide={widePublicPage}>{@render children()}</SitePageShell>
+		{:else}
+			{@render children()}
+		{/if}
 	</div>
 </div>
 

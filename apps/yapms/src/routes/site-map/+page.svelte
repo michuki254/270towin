@@ -9,7 +9,10 @@
 				{ label: '2026 Senate Election Hub', href: '/2026-senate-election' },
 				{ label: '2026 House Election Hub', href: '/2026-house-election' },
 				{ label: '2026 Governor Election Hub', href: '/2026-governor-election' },
-				{ label: '2028 Presidential Interactive Map', href: '/2028-presidential-election-interactive-map' },
+				{
+					label: '2028 Presidential Interactive Map',
+					href: '/2028-presidential-election-interactive-map'
+				},
 				{ label: '2026 Senate Interactive Map', href: '/2026-senate-interactive-map' },
 				{ label: '2026 House Interactive Map', href: '/2026-house-interactive-map' },
 				{ label: '2026 Governor Interactive Map', href: '/2026-governor-interactive-map' },
@@ -22,7 +25,10 @@
 			links: [
 				{ label: 'Election Results Archive', href: '/election-results' },
 				{ label: '2024 Election Results Hub', href: '/2024-election-results' },
-				{ label: '2024 Presidential Election Results', href: '/2024-presidential-election-results' },
+				{
+					label: '2024 Presidential Election Results',
+					href: '/2024-presidential-election-results'
+				},
 				{ label: '2024 Senate Election Results', href: '/2024-senate-election-results' },
 				{ label: '2024 House Election Results', href: '/2024-house-election-results' },
 				{ label: '2024 Governor Election Results', href: '/2024-governor-election-results' },
@@ -30,7 +36,10 @@
 				{ label: '2022 Senate Election Results', href: '/2022-senate-election-results' },
 				{ label: '2022 House Election Results', href: '/2022-house-election-results' },
 				{ label: '2022 Governor Election Results', href: '/2022-governor-election-results' },
-				{ label: '2020 Presidential Election Results', href: '/2020-presidential-election-results' },
+				{
+					label: '2020 Presidential Election Results',
+					href: '/2020-presidential-election-results'
+				},
 				{ label: '2020 Senate Election Results', href: '/2020-senate-election-results' },
 				{ label: '2020 House Election Results', href: '/2020-house-election-results' },
 				{ label: '2020 Governor Election Results', href: '/2020-governor-election-results' },
@@ -101,7 +110,8 @@
 			links: [
 				{ label: 'Forecasts', href: '/forecasts' },
 				{ label: 'Polls', href: '/polls' },
-				{ label: 'Prediction Markets', href: '/prediction-markets' }
+				{ label: 'Prediction Markets', href: '/prediction-markets' },
+				{ label: 'Election Data & Methodology', href: '/election-data-methodology' }
 			]
 		},
 		{
@@ -147,7 +157,10 @@
 					<ul class="mt-4 space-y-3 text-sm">
 						{#each section.links as link}
 							<li>
-								<a class="font-semibold text-[#244999] hover:text-[#b60b03] hover:underline" href={link.href}>
+								<a
+									class="font-semibold text-[#244999] hover:text-[#b60b03] hover:underline"
+									href={link.href}
+								>
 									{link.label}
 								</a>
 							</li>

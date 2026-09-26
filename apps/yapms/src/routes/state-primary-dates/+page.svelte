@@ -290,24 +290,39 @@
 		<section class="rounded-md border border-neutral-200 bg-white p-5 text-sm leading-relaxed text-neutral-600 shadow-sm">
 			<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">About these dates</h2>
 			<p class="mt-3">
-				Dates are from the Federal Voting Assistance Program&rsquo;s
+				Primary and congressional runoff dates follow the Federal Voting Assistance Program&rsquo;s
 				<a
 					class="underline hover:text-neutral-700"
 					href="https://www.fvap.gov/uploads/FVAP/VAO/PrimaryElectionsCalendar.pdf"
-					rel="noopener"
-					target="_blank">2026 primary elections chart</a
-				>, current as of May 2026, and cross-checked against Wikipedia&rsquo;s 2026 Senate
-				election-dates table for the 35 states with a Senate race.
+					rel="noreferrer"
+					target="_blank">2026 primary calendar</a
+				>. Arizona&rsquo;s primary moved from August 4 to July 21, 2026; this page uses the date in the
+				<a
+					class="underline hover:text-neutral-700"
+					href="https://azsos.gov/elections/election-information/2026-election-info"
+					rel="noreferrer"
+					target="_blank">Arizona Secretary of State&rsquo;s 2026 election information</a
+				>.
 			</p>
 			<p class="mt-3">
 				The runoff column covers congressional runoffs, which {runoffStates.length} states hold when
-				no candidate clears the required share of the vote: {runoffStates.join(', ')}. A state can
-				therefore hold a runoff for another office on a date not listed here — South
-				Dakota&rsquo;s gubernatorial runoff in July is one.
+				no candidate receives the share of the vote required by state law: {runoffStates.join(', ')}.
+				Other offices may have runoffs on additional dates, such as South Dakota&rsquo;s July gubernatorial
+				runoff.
 			</p>
 			<p class="mt-3">
-				Primary dates can move, and some already have: Arizona&rsquo;s was rescheduled to 21 July.
-				Check your state election office for the authoritative date before relying on it to vote.
+				“Held” means the listed primary date has passed; it does not mean results are certified or that
+				every contest is settled. Dates and voting procedures can change. For current ballot, registration,
+				and results information, use the
+				<a
+					class="underline hover:text-neutral-700"
+					href="https://www.usa.gov/state-election-office"
+					rel="noreferrer"
+					target="_blank">official state election office directory</a
+				>.
+			</p>
+			<p class="mt-3 text-xs text-neutral-500">
+				Sources reviewed <time datetime="2026-09-26">September 26, 2026</time>.
 			</p>
 		</section>
 	</main>

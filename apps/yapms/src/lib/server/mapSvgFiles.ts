@@ -19,14 +19,8 @@ export function getMapSvg(name: string) {
 	if (/^[a-z0-9-]+$/i.test(filename) === false) {
 		return undefined;
 	}
-
-	const country = filename.split('-')[0];
-	if (country === undefined || country.length === 0) {
-		return undefined;
-	}
-
-	const file = path.resolve(mapRoot, country, `${filename}.svg`);
-	if (file.startsWith(mapRoot + path.sep) === false || fs.existsSync(file) === false) {
+	const file = getMapFileByName().get(filename);
+	if (file === undefined || fs.existsSync(file) === false) {
 		return undefined;
 	}
 

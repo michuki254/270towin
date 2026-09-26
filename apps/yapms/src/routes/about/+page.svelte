@@ -28,6 +28,14 @@
 				The site combines interactive maps, race tables, elected official profiles, historical
 				archives, and forecasting-style summaries in a clean data-heavy interface.
 			</p>
+			<p class="mt-4 leading-relaxed text-neutral-700">
+				Election results, race ratings, market prices, and map scenarios use different sources and
+				have different limits. Read the
+				<a class="font-semibold text-[#244999] underline" href="/election-data-methodology">
+					election data and methodology
+				</a>
+				for source notes and definitions.
+			</p>
 		</section>
 	</main>
 	<SiteFooter />

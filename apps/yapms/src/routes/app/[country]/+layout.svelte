@@ -20,6 +20,18 @@
 	let { children } = $props();
 
 	const requestedMap = $derived(page.url.pathname.replace('/app/', '').replaceAll('/', '-'));
+	const currentHousePrefill = $derived(
+		page.url.pathname === '/app/usa/house/2026128/blank' &&
+			page.url.searchParams.get('current-house') === '1'
+	);
+	const currentSenatePrefill = $derived(
+		page.url.pathname === '/app/usa/senate/2026/blank' &&
+			page.url.searchParams.get('current-senate') === '1'
+	);
+	const currentGovernorPrefill = $derived(
+		page.url.pathname === '/app/usa/governors/2026/blank' &&
+			page.url.searchParams.get('current-governor') === '1'
+	);
 
 	const map = $derived.by(() => {
 		if (browser === false) {
@@ -42,7 +54,11 @@
 			loadMapIdentifier(svg);
 			loadActionGroups(svg);
 		}
-		loadRegionsForApp(node);
+		loadRegionsForApp(node, {
+			currentHouse: currentHousePrefill,
+			currentSenate: currentSenatePrefill,
+			currentGovernor: currentGovernorPrefill
+		});
 
 		const mapID = page.url.searchParams.get('m');
 		const userMapID = page.url.searchParams.get('um');

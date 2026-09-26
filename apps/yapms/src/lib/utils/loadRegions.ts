@@ -18,6 +18,9 @@ import type { Region } from '$lib/types/Region';
 import { ModeSchema } from '$lib/types/Mode';
 import { CandidateSchema } from '$lib/types/Candidate';
 import { SavedRegionCandidatesSchema } from '$lib/types/Region';
+import { currentHousePartyByDistrict } from '$lib/data/currentHouseParties';
+import { currentSenate2026PartyByRegion } from '$lib/data/currentSenate2026Parties';
+import { currentGovernorPartyByRegion } from '$lib/data/currentGovernorParties';
 import { dev } from '$app/environment';
 
 function createDefaultModeStore(node: HTMLDivElement) {
@@ -177,7 +180,79 @@ function createRegionStore(node: HTMLDivElement) {
 	RegionsStore.set(regionsForStore);
 }
 
-export function loadRegionsForApp(node: HTMLDivElement): void {
+type PartyCode = 'D' | 'R' | 'I';
+
+function prefillCurrentPartyMap(
+	node: HTMLDivElement,
+	partyByRegion: ReadonlyMap<string, PartyCode>
+): void {
+	const svg = node.querySelector<SVGElement>('svg');
+	if (svg === null) return;
+
+	try {
+		const candidates = JSON.parse(svg.getAttribute('candidates') ?? '[]') as Array<{
+			id: string;
+			name: string;
+			defaultCount?: number;
+			margins: { color: string }[];
+		}>;
+		const democrats = candidates.find((candidate) => /democrat/i.test(candidate.name));
+		const republicans = candidates.find((candidate) => /republican/i.test(candidate.name));
+		if (democrats === undefined || republicans === undefined) return;
+
+		let independentId = candidates.find((candidate) => /independent/i.test(candidate.name))?.id;
+		if (Array.from(partyByRegion.values()).includes('I') && independentId === undefined) {
+			independentId = '2';
+			while (candidates.some((candidate) => candidate.id === independentId)) {
+				independentId += '-independent';
+			}
+			candidates.push({
+				id: independentId,
+				name: 'Independent',
+				defaultCount: 0,
+				margins: [{ color: '#766482' }]
+			});
+		}
+		svg.setAttribute('candidates', JSON.stringify(candidates));
+
+		const candidateIdByParty: Record<PartyCode, string | undefined> = {
+			D: democrats.id,
+			R: republicans.id,
+			I: independentId
+		};
+
+		node.querySelectorAll<SVGElement>('[map-type="regions"] [region]').forEach((region) => {
+			if (region.hasAttribute('disabled')) return;
+			const regionId = region.getAttribute('region') ?? '';
+			// The source SVG labels Tennessee's 2nd district as "TN-".
+			const districtId = regionId === 'TN-' ? 'TN-2' : regionId;
+			const party = partyByRegion.get(districtId);
+			const candidateId = party === undefined ? undefined : candidateIdByParty[party];
+			if (candidateId === undefined) return;
+
+			const rawValue = Number(region.getAttribute('value'));
+			const value = Number.isFinite(rawValue) && rawValue > 0 ? rawValue : 1;
+			region.setAttribute(
+				'candidates',
+				JSON.stringify([{ candidate: candidateId, count: value, margin: 0 }])
+			);
+		});
+	} catch (error) {
+		console.error('Unable to apply the current-party map preset:', error);
+	}
+}
+
+export function loadRegionsForApp(
+	node: HTMLDivElement,
+	options: { currentHouse?: boolean; currentSenate?: boolean; currentGovernor?: boolean } = {}
+): void {
+	if (options.currentHouse === true) {
+		prefillCurrentPartyMap(node, currentHousePartyByDistrict);
+	} else if (options.currentSenate === true) {
+		prefillCurrentPartyMap(node, new Map(Object.entries(currentSenate2026PartyByRegion)));
+	} else if (options.currentGovernor === true) {
+		prefillCurrentPartyMap(node, new Map(Object.entries(currentGovernorPartyByRegion)));
+	}
 	createCandidateStore(node);
 	createTossupCandidateStore(node);
 	createSelectedCandidateStore();

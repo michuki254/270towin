@@ -2,6 +2,7 @@ import { globSync } from 'glob';
 import fs from 'fs';
 import path from 'path';
 import historicalGovernorResults from '$lib/data/historical-governor-results.json';
+import { stateOfficials } from '$lib/data/stateOfficials';
 
 export type GovernorResult = {
 	id: string;
@@ -15,8 +16,14 @@ export type GovernorResult = {
 export type GovernorElectionData = {
 	year: string;
 	token: string;
+	dataSnapshotAt: string;
 	mapRoute: string | null;
 	hasMap: boolean;
+	raceWinners: {
+		name: string;
+		color: string;
+		states: string[];
+	}[];
 	candidates: GovernorResult[];
 	totalSeats: number;
 	seatsDecided: number;
@@ -29,12 +36,15 @@ export type GovernorElectionData = {
 
 export type GovernorElectionDetails = {
 	overview: string;
-	keyPoints: string[];
 	sources: {
 		label: string;
 		href: string;
 	}[];
 };
+
+const stateNameByAbbreviation = new Map(
+	Object.values(stateOfficials).map((state) => [state.abbreviation, state.name])
+);
 
 function fileForToken(token: string): string {
 	return `./src/lib/assets/maps/usa/usa-governors-${token}-results.svg`;
@@ -65,10 +75,9 @@ function yearForGovernorToken(token: string): string {
 
 export function listGovernorElectionYears(): { year: string; token: string }[] {
 	const generatedYears = new Map(
-		Object.entries(historicalGovernorResults.cycles as Record<string, { token: string }>).map(([year, cycle]) => [
-			year,
-			cycle.token
-		])
+		Object.entries(historicalGovernorResults.cycles as Record<string, { token: string }>).map(
+			([year, cycle]) => [year, cycle.token]
+		)
 	);
 	const mapYears = new Map(
 		globSync('./src/lib/assets/maps/usa/usa-governors-*-results.svg')
@@ -85,16 +94,44 @@ export function listGovernorElectionYears(): { year: string; token: string }[] {
 		.map((year) => ({ year, token: generatedYears.get(year) ?? mapYears.get(year) ?? year }));
 }
 
-function governorDetailsForYear(year: string, hasMap: boolean): GovernorElectionDetails {
+function governorRaceWinnersForYear(year: string): GovernorElectionData['raceWinners'] {
+	const cycles = historicalGovernorResults.cycles as Record<
+		string,
+		{ races?: Record<string, { party?: string }> }
+	>;
+	const parties = historicalGovernorResults.parties as Record<
+		string,
+		{ name: string; color: string }
+	>;
+	const groupedStates = new Map<string, string[]>();
+	for (const [abbreviation, result] of Object.entries(cycles[year]?.races ?? {})) {
+		if (!result.party || !parties[result.party]) {
+			continue;
+		}
+		const stateName = stateNameByAbbreviation.get(abbreviation) ?? abbreviation;
+		groupedStates.set(result.party, [...(groupedStates.get(result.party) ?? []), stateName]);
+	}
+
+	return [...groupedStates.entries()]
+		.map(([party, states]) => ({
+			name: parties[party].name,
+			color: parties[party].color,
+			states: states.sort((a, b) => a.localeCompare(b))
+		}))
+		.sort((a, b) => b.states.length - a.states.length || a.name.localeCompare(b.name));
+}
+
+function governorDetailsForYear(
+	year: string,
+	raceWinners: GovernorElectionData['raceWinners'],
+	candidates: GovernorResult[],
+	totalSeats: number
+): GovernorElectionDetails {
+	const raceSummary = raceWinners.map(({ name, states }) => `${name}: ${states.length}`).join(', ');
+	const balanceSummary = candidates.map(({ name, seats }) => `${name}: ${seats}`).join(', ');
+	const raceCount = raceWinners.reduce((total, group) => total + group.states.length, 0);
 	return {
-		overview: `The ${year} U.S. gubernatorial election cycle decided governorships in the states holding regular or special elections that year. ${hasMap ? 'The app includes an interactive state-by-state governor results map for this cycle.' : 'The app does not yet include an interactive governor map for this cycle.'}`,
-		keyPoints: [
-			'Governor elections are staggered by state, so most years include only a subset of states.',
-			'The map colors states with governor elections in that cycle; non-election states are counted as holdovers in the balance totals.',
-			hasMap
-				? 'Use the interactive map above to inspect the states decided in this gubernatorial cycle.'
-				: 'A future map file can be added for this year without changing the archive route.'
-		],
+		overview: `The ${year} U.S. gubernatorial cycle included ${raceCount} state races (${raceSummary || 'race outcomes are not available in this dataset'}). After the cycle, the party balance was ${balanceSummary || 'not available'} out of ${totalSeats} governorships. The balance includes governors whose terms continued in states without an election that year; the state list and map show only states with a recorded race.`,
 		sources: [
 			{
 				label: 'Wikipedia Gubernatorial Elections',
@@ -151,15 +188,24 @@ function parseMapCandidates(svg: string): GovernorResult[] {
 	return Object.values(candidates);
 }
 
-function candidatesFromOfficialBalance(year: string, mapCandidates: GovernorResult[]): GovernorResult[] {
-	const cycle = (historicalGovernorResults.cycles as Record<string, { officialBalance?: Record<string, number> | null }>)[
-		year
-	];
+function candidatesFromOfficialBalance(
+	year: string,
+	mapCandidates: GovernorResult[]
+): GovernorResult[] {
+	const cycle = (
+		historicalGovernorResults.cycles as Record<
+			string,
+			{ officialBalance?: Record<string, number> | null }
+		>
+	)[year];
 	const officialBalance = cycle?.officialBalance;
 	if (!officialBalance) {
 		return mapCandidates.map((candidate) => ({ ...candidate, seats: candidate.mapSeats }));
 	}
-	const parties = historicalGovernorResults.parties as Record<string, { id: string; name: string; color: string }>;
+	const parties = historicalGovernorResults.parties as Record<
+		string,
+		{ id: string; name: string; color: string }
+	>;
 	const mapByName = new Map(mapCandidates.map((candidate) => [candidate.name, candidate]));
 	return Object.entries(officialBalance)
 		.map(([party, seats]) => {
@@ -189,20 +235,27 @@ export function getGovernorElection(year: string): GovernorElectionData | null {
 		return null;
 	}
 
-	const cycle = (historicalGovernorResults.cycles as Record<
-		string,
-		{ races?: Record<string, unknown>; officialTotalSeats?: number | null }
-	>)[entry.year];
+	const cycle = (
+		historicalGovernorResults.cycles as Record<
+			string,
+			{ races?: Record<string, { party?: string }>; officialTotalSeats?: number | null }
+		>
+	)[entry.year];
 	const totalSeats = cycle?.officialTotalSeats ?? 50;
+	const raceWinners = governorRaceWinnersForYear(entry.year);
 	const file = fileForToken(entry.token);
 	if (!fs.existsSync(file)) {
-		const candidates = candidatesFromOfficialBalance(entry.year, []).sort((a, b) => b.seats - a.seats);
+		const candidates = candidatesFromOfficialBalance(entry.year, []).sort(
+			(a, b) => b.seats - a.seats
+		);
 		const winner = candidates.find((candidate) => candidate.seats > 0) ?? null;
 		return {
 			year: entry.year,
 			token: entry.token,
+			dataSnapshotAt: historicalGovernorResults.generatedAt,
 			mapRoute: null,
 			hasMap: false,
+			raceWinners,
 			candidates,
 			totalSeats,
 			seatsDecided: 0,
@@ -210,24 +263,30 @@ export function getGovernorElection(year: string): GovernorElectionData | null {
 			winner,
 			controlName: winner?.name ?? 'Historical governor cycle',
 			controlSeats: winner?.seats ?? 0,
-			details: governorDetailsForYear(entry.year, false)
+			details: governorDetailsForYear(entry.year, raceWinners, candidates, totalSeats)
 		};
 	}
 
 	const svg = fs.readFileSync(file, 'utf8');
 	const mapCandidates = parseMapCandidates(svg);
-	const candidates = candidatesFromOfficialBalance(entry.year, mapCandidates).sort((a, b) => b.seats - a.seats);
+	const candidates = candidatesFromOfficialBalance(entry.year, mapCandidates).sort(
+		(a, b) => b.seats - a.seats
+	);
 	const cycleRaceCount = Object.keys(cycle?.races ?? {}).length;
 	const seatsDecided =
-		cycleRaceCount > 0 ? cycleRaceCount : mapCandidates.reduce((sum, candidate) => sum + candidate.mapSeats, 0);
+		cycleRaceCount > 0
+			? cycleRaceCount
+			: mapCandidates.reduce((sum, candidate) => sum + candidate.mapSeats, 0);
 	const majority = Math.floor(totalSeats / 2) + 1;
 	const winner = candidates.find((candidate) => candidate.seats > 0) ?? null;
 
 	return {
 		year: entry.year,
 		token: entry.token,
+		dataSnapshotAt: historicalGovernorResults.generatedAt,
 		mapRoute: `/app/usa/governors/${entry.token}/results`,
 		hasMap: true,
+		raceWinners,
 		candidates: candidates.filter((candidate) => candidate.seats > 0),
 		totalSeats,
 		seatsDecided,
@@ -235,6 +294,6 @@ export function getGovernorElection(year: string): GovernorElectionData | null {
 		winner,
 		controlName: winner?.name ?? 'Historical governor cycle',
 		controlSeats: winner?.seats ?? 0,
-		details: governorDetailsForYear(entry.year, true)
+		details: governorDetailsForYear(entry.year, raceWinners, candidates, totalSeats)
 	};
 }

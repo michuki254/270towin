@@ -10,13 +10,10 @@
  * covers every state, DC and the territories in one table:
  * https://www.fvap.gov/uploads/FVAP/VAO/PrimaryElectionsCalendar.pdf
  *
- * Cross-checked against Wikipedia's 2026 Senate election-dates table for the 35
- * states with a Senate race, and against 270toWin's own reporting for the dates
- * that had already passed. Every overlapping date agreed, with one exception:
- * Wikipedia gives Rhode Island 8 September, FVAP gives the 9th. FVAP is used
- * here — Rhode Island law sets its primary on the first Wednesday after the
- * first Monday in September, which in 2026 is the 9th, so the 8th appears to be
- * the error.
+ * Arizona's primary was subsequently moved from 4 August to 21 July by HB2022;
+ * that correction is verified against the Arizona Secretary of State's 2026
+ * election information page:
+ * https://azsos.gov/elections/election-information/2026-election-info
  *
  * Dates are stored ISO so they can be sorted and compared rather than only
  * printed. There is no runoff column ambiguity to resolve: FVAP lists
@@ -100,10 +97,10 @@ export const STATES: PrimaryRow[] = [
 	row('Oklahoma', '2026-06-16', '2026-08-25', true, 5),
 	row('Oregon', '2026-05-19', null, true, 6),
 	// The FVAP chart marks Pennsylvania as having a Senate race; it does not.
-	// Its seats are Class 1, last contested in 2024, and Class 3, next in 2028,
-	// so neither is on the 2026 ballot. Wikipedia's table enumerates 35 Senate
-	// contests and Pennsylvania is not among them, which also matches the
-	// arithmetic: 33 Class 2 seats plus the Florida and Ohio specials.
+	// Its seats are Class I, last contested in 2024, and Class III, next in 2028,
+	// so neither is on the 2026 ballot. The U.S. Senate's 2026 election roster
+	// lists 33 regular Class II seats plus the Florida and Ohio specials, for 35
+	// contests total; Pennsylvania is not among them.
 	row('Pennsylvania', '2026-05-19', null, false, 17),
 	row('Rhode Island', '2026-09-09', null, true, 2),
 	row('South Carolina', '2026-06-09', '2026-06-23', true, 7),

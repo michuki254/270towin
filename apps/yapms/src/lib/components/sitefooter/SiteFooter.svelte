@@ -41,6 +41,7 @@
 			heading: 'Forecasts & data',
 			links: [
 				{ href: '/forecasts', label: 'Forecasts' },
+				{ href: '/election-data-methodology', label: 'Data & methodology' },
 				{ href: '/polls', label: 'Polls' },
 				{ href: '/prediction-markets', label: 'Prediction markets' },
 				{ href: '/presidential-election-margins', label: 'Election margins' },
@@ -60,7 +61,7 @@
 	];
 </script>
 
-<footer class="mt-auto bg-[#001666] text-[#b9c9e8]">
+<footer class="site-footer mt-auto bg-[#001666] text-[#b9c9e8]">
 	<!-- Four children, four tracks. The old five-track grid had six children,
 	     which is what pushed a whole column onto its own row. -->
 	<div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 md:grid-cols-[1.6fr_1fr_1fr_1fr]">

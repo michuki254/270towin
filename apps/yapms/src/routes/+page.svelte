@@ -1,44 +1,6 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
 
-	// --- Path to Win home page content ---
-	const headlines = [
-		{
-			title: 'Live Results: Oklahoma and DC Primaries, Georgia and Alabama Primary Runoffs',
-			date: 'June 15, 2026',
-			blurb:
-				'Georgia Republicans will select nominees for competitive U.S. Senate and Governor elections in November'
-		},
-		{
-			title: 'Live Results: California Congressional District 14 and Other June 16 Special Elections',
-			date: 'June 15, 2026',
-			blurb:
-				'The special election winner will complete the term of Democrat Eric Swalwell, who resigned in April'
-		},
-		{
-			title: 'Live Results: Frisco, Texas Mayoral Runoff Election',
-			date: 'June 13, 2026',
-			blurb: 'No candidate received a majority of the vote on May 2'
-		},
-		{
-			title: 'Live Results: Maine, Nevada, North Dakota, and South Carolina Primaries',
-			date: 'June 8, 2026',
-			blurb:
-				'Several of the more high profile primaries likely to be decided by ranked choice or runoff'
-		},
-		{
-			title:
-				'Live Results: California, Iowa, Montana, New Jersey, New Mexico, and South Dakota Primaries',
-			date: 'June 1, 2026',
-			blurb: 'California holds many of the most consequential primaries of the night'
-		}
-	];
-
-	const latestHeadline = headlines[0].title;
-
-	// Live from Polymarket via +page.server.ts. Falls back to nothing rather
-	// than to stale numbers: an empty panel is honest, a frozen one is not.
 	let { data } = $props();
 	const predictionMarkets = $derived(data?.presidential?.odds ?? []);
 	const marketsAsOf = $derived(
@@ -50,197 +12,587 @@
 				}) + ' UTC'
 			: null
 	);
-
-	// Electoral vote counter (538 total, 270 to win)
-	let evDem = $state(226);
-	let evRep = $state(219);
-	let evTossup = $state(93);
-
-	onMount(() => {
-		function updateElectoralCounter(event: MessageEvent) {
-			if (event.origin !== window.location.origin) {
-				return;
-			}
-
-			if (event.data?.type !== 'yapms:candidate-counts') {
-				return;
-			}
-
-			const candidates = event.data.candidates as
-				| Array<{ name: string; count: number }>
-				| undefined;
-			if (!Array.isArray(candidates)) {
-				return;
-			}
-
-			const democrat = candidates.find((candidate) =>
-				candidate.name.toLowerCase().includes('democrat')
-			);
-			const republican = candidates.find((candidate) =>
-				candidate.name.toLowerCase().includes('republican')
-			);
-
-			evDem = democrat?.count ?? evDem;
-			evRep = republican?.count ?? evRep;
-			evTossup = typeof event.data.tossup === 'number' ? event.data.tossup : 538 - evDem - evRep;
+	const coverage = [
+		{
+			tag: '2026 MIDTERMS',
+			title: 'Explore the race for control of Congress',
+			description:
+				'Build your own Senate and House scenarios, compare the starting balance, and follow the contests that could decide the majority.',
+			href: '/2026-senate-election',
+			image: '/path-to-win-logo.svg'
+		},
+		{
+			tag: 'ELECTION MARKETS',
+			title: 'Follow the latest election market movements',
+			description:
+				'See how tracked election markets have changed over the past day, week, and month, with a timestamp and source for each update.',
+			href: '/news',
+			image: ''
+		},
+		{
+			tag: 'RESULTS & HISTORY',
+			title: 'Every election has a different path to victory',
+			description:
+				'Explore historical presidential results and compare how the Electoral College map has changed across election cycles.',
+			href: '/historical-presidential-elections',
+			image: ''
 		}
-
-		window.addEventListener('message', updateElectoralCounter);
-		return () => window.removeEventListener('message', updateElectoralCounter);
-	});
+	];
 </script>
 
 <svelte:head>
-	<title>Path to Win - 2028 Presidential Election Interactive Map</title>
+	<title>2028 Presidential Election Interactive Map | Path to Win</title>
 	<meta
 		name="description"
-		content="2028 presidential election interactive map. Create your own 2028 election forecast with our interactive map."
+		content="Create your 2028 Electoral College map. Start with the certified 2024 result, change state ratings, and find a path to 270 electoral votes. Explore election results and markets."
 	/>
-	<meta property="og:title" content="Path to Win — 2028 Presidential Election Interactive Map" />
+	<meta property="og:title" content="2028 Presidential Election Interactive Map | Path to Win" />
 	<meta
 		property="og:description"
-		content="Build your own path to 270 electoral votes, with live prediction-market odds."
+		content="Build a path to 270 electoral votes, follow election markets, and explore U.S. election results."
 	/>
 </svelte:head>
 
-<div class="flex flex-col h-full overflow-y-auto bg-[#eef1f5] text-neutral-900">
-	<!-- Latest banner -->
-	<div class="bg-[#b60b03] text-white text-sm">
-		<div class="max-w-6xl mx-auto px-4 py-1.5 flex items-center gap-3">
-			<span
-				class="shrink-0 font-bold uppercase tracking-wide bg-white text-[#b60b03] px-2 py-0.5 rounded text-xs"
-			>
-				Latest
-			</span>
-			<a href="#headlines" class="truncate hover:underline">{latestHeadline}</a>
-		</div>
-	</div>
-
-	<!-- Hero: interactive map + prediction markets -->
-	<main class="max-w-6xl mx-auto w-full px-4 py-6 flex flex-col lg:flex-row gap-6">
-		<section class="flex-1 min-w-0">
-			<h1 class="text-2xl md:text-3xl font-bold text-[#001666]">
-				2028 Presidential Election Interactive Map
-			</h1>
-			<p class="italic text-neutral-500 mt-1">This isn&rsquo;t a popularity contest&trade;</p>
-			<p class="mt-3 text-sm leading-relaxed text-neutral-700">
-				It will take 270 electoral votes to win the 2028 presidential election. Click states on this
-				interactive map to create your own 2028 election forecast. Create a specific match-up by
-				clicking the party and/or names near the electoral vote counter. Use the buttons below the
-				map to share your forecast or embed it into a web page.
-			</p>
-
-			<!-- Electoral vote counter -->
-			<div class="mt-4 rounded-md overflow-hidden border border-neutral-300 bg-white">
-				<div class="grid grid-cols-3 text-center text-white font-bold">
-					<div class="bg-[#244999] py-2">
-						<div class="text-2xl leading-none">{evDem}</div>
-						<div class="text-xs font-semibold uppercase tracking-wide opacity-90">Democrats</div>
-					</div>
-					<div class="bg-[#001666] py-2 flex flex-col justify-center">
-						<div class="text-xs uppercase tracking-wide opacity-80">270 to win</div>
-						<div class="text-[11px] opacity-70">{evTossup} toss-up</div>
-					</div>
-					<div class="bg-[#d22532] py-2">
-						<div class="text-2xl leading-none">{evRep}</div>
-						<div class="text-xs font-semibold uppercase tracking-wide opacity-90">Republicans</div>
-					</div>
-				</div>
-				<div class="flex h-2">
-					<div class="bg-[#244999]" style={`width:${(evDem / 538) * 100}%`}></div>
-					<div class="bg-neutral-400" style={`width:${(evTossup / 538) * 100}%`}></div>
-					<div class="bg-[#d22532]" style={`width:${(evRep / 538) * 100}%`}></div>
-				</div>
+<div class="home-page">
+	<main class="page-grid">
+		<div class="main-column">
+			<div class="latest">
+				<span>MARKET WATCH</span><a href="/news"
+					>Explore the latest moves in election prediction markets <span aria-hidden="true">→</span
+					></a
+				>
 			</div>
-
-			<!-- Interactive map centerpiece: live YAPMS 2028 simulator -->
-			<div class="mt-4 rounded-md overflow-hidden border border-neutral-300 bg-white shadow-sm">
-				<iframe
-					src="/app/usa/presidential/2028/2024map?embed=1"
-					title="2028 Presidential Election Interactive Map"
-					class="w-full block"
-					style="height: 560px; border: 0;"
-					loading="lazy"
-				></iframe>
-			</div>
-
-			<!-- Map controls -->
-			<div class="mt-3 flex flex-wrap items-center gap-2 text-xs">
-				<span class="font-semibold text-neutral-600 mr-1">Map Color Palette:</span>
-				<span class="px-2 py-1 rounded bg-[#001666] text-white">Safe</span>
-				<span class="px-2 py-1 rounded bg-[#244999] text-white">Likely</span>
-				<span class="px-2 py-1 rounded bg-[#5a7fcc] text-white">Leans</span>
-				<span class="px-2 py-1 rounded bg-[#aac4ee] text-neutral-800">Tilt</span>
-				<span class="px-2 py-1 rounded bg-neutral-300 text-neutral-800">Toss-up</span>
-				<div class="ml-auto flex gap-2">
-					<a
-						href="/2028-presidential-election-interactive-map"
-						class="px-3 py-1 rounded bg-[#b60b03] text-white font-semibold hover:bg-[#8a0802]"
+			<section aria-labelledby="home-title">
+				<h1 id="home-title">2028 Presidential Election Interactive Map</h1>
+				<p class="tagline">Every state counts. Find your path to 270.</p>
+				<nav class="election-tabs" aria-label="Election maps">
+					<a class="active" href="#presidential-map" aria-current="page">President</a>
+					<a href="/2026-senate-interactive-map">Senate</a>
+					<a href="/2026-house-interactive-map">House</a>
+					<a href="/2026-governor-interactive-map">Governor</a>
+				</nav>
+				<p class="intro">
+					It takes <strong>270 electoral votes</strong> to win the presidency. Choose a color and select
+					states on the map to build your 2028 scenario. Explore different combinations, then share your
+					path to the White House.
+				</p>
+				<p class="baseline">
+					Starting map: <a href="/2024-presidential-election-results">certified 2024 results</a>.
+					Your edits are a scenario, not a forecast.
+				</p>
+				<div id="presidential-map" class="map-wrap">
+					<iframe
+						src="/app/usa/presidential/2028/2024map?embed=home"
+						title="Interactive Electoral College map with color palette and vote totals"
+					></iframe>
+				</div>
+				<p class="map-note">
+					Maine and Nebraska allocate some electoral votes by congressional district. <a
+						href="/election-data-methodology">About our data and sources</a
 					>
-						Open Interactive Map
-					</a>
-					<a href="/maps" class="px-3 py-1 rounded border border-neutral-400 hover:bg-neutral-100">
-						Map Library
-					</a>
-				</div>
-			</div>
-		</section>
+				</p>
+			</section>
 
-		<!-- Prediction Markets sidebar -->
-		<aside class="lg:w-72 shrink-0 flex flex-col gap-4">
-			<div class="border border-neutral-300 rounded-md bg-white overflow-hidden">
-				<div class="bg-[#001666] text-white px-3 py-2 font-semibold text-sm">Prediction Markets</div>
-				<div class="p-3 text-sm">
-					<p class="font-medium text-neutral-800">
-						Which party will win the 2028 Presidential Election?
-					</p>
-					<div class="mt-3 flex flex-col gap-3">
-						{#each predictionMarkets as m}
-							<div>
-								<div class="flex justify-between text-xs font-semibold text-neutral-700">
-									<span>{m.party}</span>
-									<span>{m.pct}%</span>
-								</div>
-								<div class="mt-1 h-2.5 rounded bg-neutral-200 overflow-hidden">
-									<div
-										class="h-full rounded"
-										style={`width:${m.pct}%;background:${m.color}`}
-									></div>
-								</div>
+			<section class="coverage" aria-labelledby="coverage-title">
+				<div class="section-heading">
+					<h2 id="coverage-title">Election coverage &amp; resources</h2>
+					<a href="/news">Market updates →</a>
+				</div>
+				{#each coverage as story}
+					<article class="story">
+						<div>
+							<span class="eyebrow">{story.tag}</span>
+							<h3><a href={story.href}>{story.title}</a></h3>
+							<p>{story.description}</p>
+							<a class="read-more" href={story.href}>Explore <span aria-hidden="true">→</span></a>
+						</div>
+						{#if story.image}<a
+								href={story.href}
+								class="story-image"
+								tabindex="-1"
+								aria-hidden="true"><img src={story.image} alt="" loading="lazy" /></a
+							>{/if}
+					</article>
+				{/each}
+			</section>
+		</div>
+
+		<aside class="sidebar" aria-label="Election markets and resources">
+			<section class="market-panel">
+				<h2>Prediction Markets</h2>
+				<p class="market-question">
+					Which party will win the<br /><strong>2028 Presidential Election?</strong>
+				</p>
+				{#if predictionMarkets.length}
+					<div class="market-tiles">
+						{#each predictionMarkets as market}
+							<div class="market-tile" style:--party-color={market.color}>
+								<span>{market.party}</span><strong>{market.pct}<small>%</small></strong>
 							</div>
 						{/each}
 					</div>
-					{#if marketsAsOf}
-						<p class="mt-3 text-[11px] text-neutral-500">
-							Live Polymarket prices — the most recent &lsquo;yes&rsquo; trade for each party, read
-							{marketsAsOf}. Each party is a separate binary market, so these may not total
-							100%.
-						</p>
-					{:else}
-						<p class="mt-3 text-[11px] text-neutral-500">
-							Market prices are temporarily unavailable.
-						</p>
-					{/if}
-				</div>
-			</div>
+				{:else}<p class="unavailable">Market prices are temporarily unavailable.</p>{/if}
+				<div class="market-source">Market prices from <strong>Polymarket</strong></div>
+				{#if marketsAsOf}<p class="market-caption">
+						Read {marketsAsOf}. Latest “yes” trades from separate party markets; percentages may not
+						total 100%.
+					</p>{/if}
+				<a class="sidebar-link" href="/2028-presidential-election">View election overview →</a>
+			</section>
+
+			<section class="side-section" id="state-maps">
+				<h2>2026 Election Maps</h2>
+				<a href="/2026-senate-interactive-map"
+					><span>U.S. Senate<small>Build the next Senate majority</small></span><span
+						aria-hidden="true">→</span
+					></a
+				>
+				<a href="/2026-house-interactive-map"
+					><span>U.S. House<small>Explore congressional districts</small></span><span
+						aria-hidden="true">→</span
+					></a
+				>
+				<a href="/2026-governor-interactive-map"
+					><span>Governors<small>Map the races for state leadership</small></span><span
+						aria-hidden="true">→</span
+					></a
+				>
+			</section>
+
+			<section class="road-panel">
+				<span class="eyebrow">THE ELECTORAL COLLEGE</span>
+				<h2>The road to <strong>270</strong></h2>
+				<p>
+					A majority of the 538 electoral votes decides the presidency. Use the map to see how
+					individual states change the outcome.
+				</p>
+				<dl>
+					<div>
+						<dt>Electoral votes</dt>
+						<dd>538</dd>
+					</div>
+					<div>
+						<dt>Needed to win</dt>
+						<dd>270</dd>
+					</div>
+					<div>
+						<dt>An even split</dt>
+						<dd>269–269</dd>
+					</div>
+				</dl>
+				<a href="/2028-presidential-election">Explore the 2028 election →</a>
+			</section>
+
+			<section class="side-section archive">
+				<h2>Past Election Results</h2>
+				<a href="/2024-presidential-election-results"
+					>2024 Presidential Results <span aria-hidden="true">→</span></a
+				><a href="/historical-presidential-elections"
+					>Presidential Election Archive <span aria-hidden="true">→</span></a
+				><a href="/historical-governor-elections"
+					>Governor Election Archive <span aria-hidden="true">→</span></a
+				>
+			</section>
 		</aside>
 	</main>
-
-	<!-- Headlines -->
-	<section id="headlines" class="bg-[#eef1f5] border-t border-neutral-200">
-		<div class="max-w-6xl mx-auto px-4 py-8">
-			<h2 class="text-xl font-bold text-[#001666] mb-4">Headlines</h2>
-			<ul class="flex flex-col divide-y divide-neutral-200 bg-white rounded-md border border-neutral-200">
-				{#each headlines as h}
-					<li class="p-4">
-						<a href="#headlines" class="font-semibold text-[#244999] hover:underline">{h.title}</a>
-						<div class="mt-1 text-xs text-neutral-500">{h.date}</div>
-						<p class="mt-1 text-sm text-neutral-700">{h.blurb}</p>
-					</li>
-				{/each}
-			</ul>
-		</div>
-	</section>
-
 	<SiteFooter />
 </div>
+
+<style>
+	:global(html:has(.home-page)),
+	:global(body:has(.home-page)) {
+		touch-action: pan-y;
+	}
+	.home-page {
+		height: 100%;
+		overflow-y: auto;
+		background: white;
+		color: #262626;
+		font-family: Arial, Helvetica, sans-serif;
+		scroll-behavior: smooth;
+	}
+	.page-grid {
+		max-width: 1352px;
+		margin: auto;
+		padding: 72px 16px 68px;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 288px;
+		gap: 44px;
+	}
+	.main-column {
+		min-width: 0;
+	}
+	a {
+		color: #245493;
+	}
+	a:hover {
+		text-decoration: underline;
+	}
+	a:focus-visible {
+		outline: 3px solid #245493;
+		outline-offset: 4px;
+	}
+	.latest {
+		display: flex;
+		min-height: 35px;
+		background: #f0f0f0;
+		align-items: center;
+		margin-bottom: 24px;
+		font-size: 13px;
+	}
+	.latest > span {
+		align-self: stretch;
+		display: flex;
+		align-items: center;
+		padding: 8px 20px 8px 12px;
+		color: white;
+		background: #b82732;
+		clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.5px;
+		white-space: nowrap;
+	}
+	.latest a {
+		padding: 7px 12px;
+		font-weight: 700;
+		color: #353535;
+	}
+	h1 {
+		font-size: 32px;
+		font-weight: 700;
+		line-height: 1.2;
+		letter-spacing: -0.7px;
+		margin: 0;
+	}
+	.tagline {
+		font-size: 18px;
+		font-style: italic;
+		color: #737373;
+		margin: 8px 0 17px;
+	}
+	.election-tabs {
+		display: flex;
+		gap: 5px;
+		margin-bottom: 18px;
+	}
+	.election-tabs a {
+		font-size: 12px;
+		padding: 5px 12px;
+		background: #eff2f5;
+		border-radius: 2px;
+		font-weight: 700;
+	}
+	.election-tabs .active {
+		background: #285b97;
+		color: white;
+	}
+	.intro {
+		font-size: 16px;
+		line-height: 1.6;
+		margin: 0;
+	}
+	.baseline {
+		margin: 10px 0 25px;
+		font-size: 12px;
+		color: #727272;
+		line-height: 1.5;
+	}
+	.baseline a,
+	.map-note a {
+		text-decoration: underline;
+	}
+	.map-wrap {
+		scroll-margin-top: 16px;
+	}
+	iframe {
+		display: block;
+		width: 100%;
+		height: 570px;
+		border: 0;
+		background: white;
+	}
+	.map-note {
+		font-size: 11px;
+		color: #777;
+		margin: 14px 0 0;
+		line-height: 1.6;
+	}
+	.sidebar h2 {
+		font-size: 21px;
+		font-weight: 700;
+		line-height: 1.3;
+	}
+	.market-panel {
+		text-align: center;
+	}
+	.market-question {
+		font-size: 14px;
+		line-height: 1.5;
+		margin: 20px 0 18px;
+	}
+	.market-question strong {
+		font-weight: 400;
+	}
+	.market-tiles {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+	.market-tile {
+		display: flex;
+		flex-direction: column;
+		border: 6px solid #ededed;
+		padding: 10px 3px 13px;
+		background: var(--party-color);
+		color: white;
+	}
+	.market-tile > span {
+		font-size: 13px;
+	}
+	.market-tile > strong {
+		font-size: 42px;
+		line-height: 1.25;
+		font-weight: 700;
+	}
+	.market-tile small {
+		font-size: 24px;
+	}
+	.market-source {
+		font-size: 11px;
+		margin-top: 13px;
+		color: #777;
+	}
+	.market-source strong {
+		display: block;
+		font-size: 21px;
+		letter-spacing: -0.7px;
+		color: #2154ba;
+		margin-top: 3px;
+	}
+	.market-caption {
+		font-size: 10px;
+		line-height: 1.5;
+		color: #888;
+		margin: 12px 3px;
+	}
+	.sidebar-link {
+		display: inline-block;
+		font-size: 12px;
+		margin-top: 7px;
+	}
+	.unavailable {
+		background: #f3f4f5;
+		padding: 20px;
+		font-size: 13px;
+		color: #666;
+	}
+	.side-section {
+		border-top: 3px solid #294f83;
+		margin-top: 36px;
+	}
+	.side-section h2 {
+		font-size: 18px;
+		padding: 15px 0 5px;
+	}
+	.side-section > a {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 8px;
+		padding: 13px 0;
+		border-bottom: 1px solid #e5e5e5;
+		font-size: 14px;
+		font-weight: 700;
+	}
+	.side-section small {
+		display: block;
+		color: #777;
+		font-size: 11px;
+		font-weight: 400;
+		margin-top: 4px;
+	}
+	.road-panel {
+		margin-top: 32px;
+		padding: 20px;
+		background: #f5f6f8;
+		border: 1px solid #e1e4e8;
+	}
+	.eyebrow {
+		font-size: 10px;
+		letter-spacing: 1px;
+		font-weight: 700;
+		color: #a72932;
+	}
+	.road-panel h2 {
+		margin: 8px 0 12px;
+		font-weight: 400;
+		font-size: 23px;
+	}
+	.road-panel h2 strong {
+		color: #264c83;
+	}
+	.road-panel p {
+		font-size: 13px;
+		color: #62666c;
+		line-height: 1.6;
+	}
+	.road-panel dl {
+		margin: 14px 0;
+		font-size: 13px;
+	}
+	.road-panel dl div {
+		display: flex;
+		justify-content: space-between;
+		padding: 9px 0;
+		border-bottom: 1px solid #ddd;
+	}
+	.road-panel dd {
+		font-weight: 700;
+	}
+	.road-panel > a {
+		font-size: 12px;
+	}
+	.archive > a {
+		font-size: 12px;
+	}
+	.coverage {
+		margin-top: 38px;
+	}
+	.section-heading {
+		border-bottom: 2px solid #34547e;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+		padding-bottom: 12px;
+	}
+	.section-heading h2 {
+		font-size: 23px;
+		font-weight: 700;
+	}
+	.section-heading > a {
+		font-size: 12px;
+		white-space: nowrap;
+	}
+	.story {
+		display: flex;
+		gap: 24px;
+		justify-content: space-between;
+		border-bottom: 1px solid #ddd;
+		padding: 25px 0;
+	}
+	.story h3 {
+		font-size: 22px;
+		line-height: 1.3;
+		font-weight: 700;
+		margin: 8px 0;
+	}
+	.story p {
+		font-size: 14px;
+		color: #626262;
+		line-height: 1.65;
+		max-width: 680px;
+	}
+	.read-more {
+		display: inline-block;
+		margin-top: 12px;
+		font-size: 12px;
+		font-weight: 700;
+	}
+	.story-image {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 170px;
+		flex-shrink: 0;
+		padding: 14px;
+		background: #f5f6f8;
+	}
+	.story-image img {
+		width: 100%;
+	}
+	@media (max-width: 1100px) {
+		.page-grid {
+			gap: 28px;
+			grid-template-columns: minmax(0, 1fr) 250px;
+			padding-top: 42px;
+		}
+		h1 {
+			font-size: 29px;
+		}
+	}
+	@media (max-width: 900px) {
+		.page-grid {
+			grid-template-columns: 1fr;
+			padding-top: 28px;
+		}
+		.sidebar {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 28px;
+			align-items: start;
+		}
+		.side-section,
+		.road-panel {
+			margin-top: 0;
+		}
+		iframe {
+			height: 580px;
+		}
+	}
+	@media (max-width: 600px) {
+		.page-grid {
+			padding: 20px 16px 40px;
+			gap: 36px;
+		}
+		h1 {
+			font-size: 27px;
+			letter-spacing: -0.5px;
+		}
+		.tagline {
+			font-size: 16px;
+		}
+		.latest {
+			font-size: 11px;
+			margin-bottom: 22px;
+		}
+		.latest > span {
+			font-size: 9px;
+			padding-left: 8px;
+		}
+		.intro {
+			font-size: 14px;
+		}
+		.baseline {
+			font-size: 11px;
+			margin-bottom: 20px;
+		}
+		iframe {
+			height: 650px;
+		}
+		.sidebar {
+			grid-template-columns: 1fr;
+		}
+		.market-panel {
+			max-width: 340px;
+			width: 100%;
+			margin: auto;
+		}
+		.section-heading {
+			flex-wrap: wrap;
+		}
+		.section-heading h2 {
+			font-size: 21px;
+		}
+		.story h3 {
+			font-size: 20px;
+		}
+		.story-image {
+			display: none;
+		}
+		.coverage {
+			margin-top: 30px;
+		}
+	}
+</style>
