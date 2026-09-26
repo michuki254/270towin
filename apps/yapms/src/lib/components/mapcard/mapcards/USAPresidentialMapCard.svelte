@@ -10,7 +10,7 @@
 				{
 					label: '2024',
 					modalLabel: 'Presidential 2024',
-					route: '/app/usa/presidential/2024310/results'
+					route: '/2024-presidential-election-results'
 				},
 				{
 					label: '2020',

@@ -1,0 +1,8 @@
+.git
+.turbo
+node_modules
+apps/*/node_modules
+apps/yapms/.svelte-kit
+apps/yapms/build
+apps/pocketbase/pb_data
+*.log

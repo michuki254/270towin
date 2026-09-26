@@ -9,8 +9,14 @@
 	const {
 		candidate,
 		selectable,
-		transitions = true
-	}: { candidate: Candidate; selectable: boolean; transitions: boolean } = $props();
+		transitions = true,
+		countOverride
+	}: {
+		candidate: Candidate;
+		selectable: boolean;
+		transitions: boolean;
+		countOverride?: number;
+	} = $props();
 
 	let selected = $derived(selectable && $SelectedCandidateStore.id === candidate.id);
 	let textColor = $derived(calculateLumaHEX(candidate.margins[0].color) > 0.5 ? 'black' : 'white');
@@ -40,7 +46,7 @@
 	<div class="flex flex-col justify-between h-full">
 		<div class="px-2 py-1">
 			{candidate.name}
-			{$CandidateCounts.get(candidate.id) ?? 0}
+			{countOverride ?? $CandidateCounts.get(candidate.id) ?? 0}
 		</div>
 		{#if candidate.margins.length > 1}
 			<div class="flex flex-row w-full h-2">

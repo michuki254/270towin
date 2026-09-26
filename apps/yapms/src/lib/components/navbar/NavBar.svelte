@@ -13,9 +13,6 @@
 	} from '$lib/stores/Modals';
 	import { ModeStore } from '$lib/stores/Mode';
 	import { PresentationModeStore } from '$lib/stores/PresentationMode';
-	import ChevronDoubleRight from '$lib/icons/ChevronDoubleRight.svelte';
-	import ChevronDoubleLeft from '$lib/icons/ChevronDoubleLeft.svelte';
-	import { SideBarStore } from '$lib/stores/SideBar';
 	import { PocketBaseStore } from '$lib/stores/PocketBase';
 	import VideoCamera from '$lib/icons/VideoCamera.svelte';
 
@@ -60,10 +57,6 @@
 		$ToolsModalStore.open = true;
 	}
 
-	function toggleSidebar() {
-		$SideBarStore.open = !$SideBarStore.open;
-	}
-
 	function togglePresentationMode() {
 		$PresentationModeStore.enabled = !$PresentationModeStore.enabled;
 	}
@@ -94,12 +87,5 @@
 	<div class="divider divider-horizontal m-0 w-0" class:hidden={isOverflow === false}></div>
 	<button class="btn btn-sm btn-neutral" onclick={togglePresentationMode}>
 		<VideoCamera class="w-6 h-6" />
-	</button>
-	<button class="btn btn-sm btn-neutral ml-1" onclick={toggleSidebar}>
-		{#if $SideBarStore.open}
-			<ChevronDoubleRight class="w-6 h-6" />
-		{:else}
-			<ChevronDoubleLeft class="w-6 h-6" />
-		{/if}
 	</button>
 </div>

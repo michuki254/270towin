@@ -1,31 +1,14 @@
+import { fetchPartyOdds, SLUGS } from '$lib/server/polymarket';
 import type { PageServerLoad } from './$types';
-import { globSync } from 'glob';
-import fs from 'fs';
-import path from 'path';
 
-export const load: PageServerLoad = () => {
-	const files = globSync('./src/lib/assets/maps/**/*.svg');
+export const prerender = false;
+/* The once-a-minute re-read this used to describe was declared as
+ * `config = { isr: { expiration: 60 } }`, which does nothing under
+ * adapter-node — it is an adapter-vercel feature — so prices were in fact
+ * re-read on every page view. The throttle now lives in $lib/server/polymarket
+ * as a real cache, and applies to every caller rather than page by page. */
 
-	const search = [];
-
-	for (const file of files) {
-		const data = fs.readFileSync(file, 'utf8');
-		const title = data.match(/title=['"](?<title>[^'"]*)['"]/)?.groups?.['title'];
-		if (title === undefined) {
-			continue;
-		}
-		const route = '/app/' + file.split(path.sep).pop()?.split('.').at(0)?.replaceAll('-', '/');
-		search.unshift({
-			title,
-			route
-		});
-	}
-
-	return {
-		post: {
-			search
-		}
-	};
+export const load: PageServerLoad = async () => {
+	const presidential = await fetchPartyOdds(SLUGS.presidential2028);
+	return { presidential };
 };
-
-export const prerender = true;

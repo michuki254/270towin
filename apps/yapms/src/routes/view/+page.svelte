@@ -18,8 +18,10 @@
 	let filename = $state(undefined as string | undefined);
 	let countryPath = $state(undefined as string | undefined);
 	let map = $derived(
-		filename !== undefined && countryPath !== undefined
-			? import(`../../lib/assets/maps/${countryPath}/${filename}.svg?raw`)
+		filename !== undefined && countryPath !== undefined && browser
+			? fetch(`/api/map-svg/${filename}`).then((response) =>
+					response.ok ? response.text() : undefined
+				)
 			: undefined
 	);
 
@@ -76,7 +78,7 @@
 			<CandidateBoxContainer selectable={false} transitions={false} />
 			<div class="grow"></div>
 			<div use:setupMap id="map-div" class="overflow-hidden">
-				{@html map.default}
+				{@html map}
 			</div>
 			<div class="grow"></div>
 			<div>
