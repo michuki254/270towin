@@ -36,4 +36,6 @@ FROM node:24.16.0 AS runner
 WORKDIR /app
 COPY --from=installer /app/apps/yapms/package.json .
 COPY --from=installer /app/apps/yapms/build/ .
+# The map SVG API reads files from this directory at runtime.
+COPY --from=installer /app/apps/yapms/src/lib/assets/maps ./src/lib/assets/maps
 CMD ["node", "index.js"]
