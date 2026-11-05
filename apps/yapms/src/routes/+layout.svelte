@@ -76,7 +76,9 @@
 		!embed && !compactCountdown && !isAppSurface && !hasOwnPageShell
 	);
 	let useHomepageNavigation = $derived(!embed && !isAppSurface && !compactCountdown);
-	let activeElection = $derived(electionPages.get(pathname) ?? activeSection(pathname));
+	let activeElection = $derived(
+		isHomePage ? 'Senate' : (electionPages.get(pathname) ?? activeSection(pathname))
+	);
 	let widePublicPage = $derived(isWideContent(pathname));
 </script>
 

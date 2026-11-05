@@ -1,0 +1,305 @@
+{
+	"checkedAt": "2026-11-05T20:49:25.346Z",
+	"source": "Decision Desk HQ",
+	"sourceUrl": "https://race-api-proxy-production.decisiondeskhq.workers.dev/senate",
+	"referenceUrl": "https://www.270towin.com/2026-election-results-live/",
+	"holdovers": {
+		"D": 34,
+		"R": 31,
+		"I": 0
+	},
+	"won": {
+		"D": 20,
+		"R": 13,
+		"I": 0,
+		"uncalled": 2
+	},
+	"totals": {
+		"D": 54,
+		"R": 44,
+		"I": 0,
+		"uncalled": 2
+	},
+	"races": [
+		{
+			"region": "AL",
+			"state": "Alabama",
+			"party": "R",
+			"winner": "Barry Moore",
+			"sourceUpdatedAt": "2026-11-05 17:45:12.245381+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/alabama/"
+		},
+		{
+			"region": "AK",
+			"state": "Alaska",
+			"party": null,
+			"winner": null,
+			"sourceUpdatedAt": "2026-11-05 00:26:01.702992+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/alaska/"
+		},
+		{
+			"region": "AR",
+			"state": "Arkansas",
+			"party": "R",
+			"winner": "Tom Cotton",
+			"sourceUpdatedAt": "2026-11-05 17:37:07.661126+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/arkansas/"
+		},
+		{
+			"region": "CO",
+			"state": "Colorado",
+			"party": "D",
+			"winner": "John Hickenlooper",
+			"sourceUpdatedAt": "2026-11-05 20:13:12.396618+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/colorado/"
+		},
+		{
+			"region": "DE",
+			"state": "Delaware",
+			"party": "D",
+			"winner": "Chris Coons",
+			"sourceUpdatedAt": "2026-11-04 08:52:22.609775+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/delaware/"
+		},
+		{
+			"region": "FL-S",
+			"state": "Florida",
+			"party": "R",
+			"winner": "Ashley Moody",
+			"sourceUpdatedAt": "2026-11-04 08:00:41.04968+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/florida/"
+		},
+		{
+			"region": "GA",
+			"state": "Georgia",
+			"party": "D",
+			"winner": "Jon Ossoff",
+			"sourceUpdatedAt": "2026-11-05 16:40:22.312352+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/georgia/"
+		},
+		{
+			"region": "ID",
+			"state": "Idaho",
+			"party": "R",
+			"winner": "Jim Risch",
+			"sourceUpdatedAt": "2026-11-04 19:40:28.438669+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/idaho/"
+		},
+		{
+			"region": "IL",
+			"state": "Illinois",
+			"party": "D",
+			"winner": "Juliana Stratton",
+			"sourceUpdatedAt": "2026-11-05 20:00:17.420332+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/illinois/"
+		},
+		{
+			"region": "IA",
+			"state": "Iowa",
+			"party": "D",
+			"winner": "Josh Turek",
+			"sourceUpdatedAt": "2026-11-04 20:52:25.251063+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/iowa/"
+		},
+		{
+			"region": "KS",
+			"state": "Kansas",
+			"party": "D",
+			"winner": "Adam Hamilton",
+			"sourceUpdatedAt": "2026-11-05 18:24:29.939227+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/kansas/"
+		},
+		{
+			"region": "KY",
+			"state": "Kentucky",
+			"party": "R",
+			"winner": "Andy Barr",
+			"sourceUpdatedAt": "2026-11-05 20:30:29.155843+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/kentucky/"
+		},
+		{
+			"region": "LA",
+			"state": "Louisiana",
+			"party": "R",
+			"winner": "Julia Letlow",
+			"sourceUpdatedAt": "2026-11-04 07:12:46.021603+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/louisiana/"
+		},
+		{
+			"region": "ME",
+			"state": "Maine",
+			"party": "D",
+			"winner": "Troy Jackson",
+			"sourceUpdatedAt": "2026-11-05 16:49:04.666087+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/maine/"
+		},
+		{
+			"region": "MA",
+			"state": "Massachusetts",
+			"party": "D",
+			"winner": "Edward Markey",
+			"sourceUpdatedAt": "2026-11-05 00:01:17.289674+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/massachusetts/"
+		},
+		{
+			"region": "MI",
+			"state": "Michigan",
+			"party": "D",
+			"winner": "Abdul El-Sayed",
+			"sourceUpdatedAt": "2026-11-05 19:50:19.897148+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/michigan/"
+		},
+		{
+			"region": "MN",
+			"state": "Minnesota",
+			"party": "D",
+			"winner": "Peggy Flanagan",
+			"sourceUpdatedAt": "2026-11-04 22:30:58.851671+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/minnesota/"
+		},
+		{
+			"region": "MS",
+			"state": "Mississippi",
+			"party": null,
+			"winner": null,
+			"sourceUpdatedAt": "2026-11-05 20:30:25.540714+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/mississippi/"
+		},
+		{
+			"region": "MT",
+			"state": "Montana",
+			"party": "R",
+			"winner": "Kurt Alme",
+			"sourceUpdatedAt": "2026-11-04 22:53:00.619956+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/montana/"
+		},
+		{
+			"region": "NE",
+			"state": "Nebraska",
+			"party": "R",
+			"winner": "Pete Ricketts",
+			"sourceUpdatedAt": "2026-11-05 17:10:57.718701+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/nebraska/"
+		},
+		{
+			"region": "NH",
+			"state": "New Hampshire",
+			"party": "D",
+			"winner": "Chris Pappas",
+			"sourceUpdatedAt": "2026-11-05 18:36:47.413083+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/new-hampshire/"
+		},
+		{
+			"region": "NJ",
+			"state": "New Jersey",
+			"party": "D",
+			"winner": "Cory Booker",
+			"sourceUpdatedAt": "2026-11-05 20:11:49.287139+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/new-jersey/"
+		},
+		{
+			"region": "NM",
+			"state": "New Mexico",
+			"party": "D",
+			"winner": "Ben Ray Lujan",
+			"sourceUpdatedAt": "2026-11-05 19:50:07.954904+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/new-mexico/"
+		},
+		{
+			"region": "NC",
+			"state": "North Carolina",
+			"party": "D",
+			"winner": "Roy Cooper",
+			"sourceUpdatedAt": "2026-11-04 19:00:55.923786+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/north-carolina/"
+		},
+		{
+			"region": "OH-S",
+			"state": "Ohio",
+			"party": "D",
+			"winner": "Sherrod Brown",
+			"sourceUpdatedAt": "2026-11-04 10:40:07.666544+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/ohio/"
+		},
+		{
+			"region": "OK",
+			"state": "Oklahoma",
+			"party": "R",
+			"winner": "Kevin Hern",
+			"sourceUpdatedAt": "2026-11-04 19:12:00.522394+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/oklahoma/"
+		},
+		{
+			"region": "OR",
+			"state": "Oregon",
+			"party": "D",
+			"winner": "Jeff Merkley",
+			"sourceUpdatedAt": "2026-11-04 23:05:31.141003+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/oregon/"
+		},
+		{
+			"region": "RI",
+			"state": "Rhode Island",
+			"party": "D",
+			"winner": "Jack Reed",
+			"sourceUpdatedAt": "2026-11-05 01:04:00.990095+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/rhode-island/"
+		},
+		{
+			"region": "SC",
+			"state": "South Carolina",
+			"party": "D",
+			"winner": "Annie Andrews",
+			"sourceUpdatedAt": "2026-11-04 19:33:02.604186+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/south-carolina/"
+		},
+		{
+			"region": "SD",
+			"state": "South Dakota",
+			"party": "R",
+			"winner": "Mike Rounds",
+			"sourceUpdatedAt": "2026-11-05 20:49:01.116115+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/south-dakota/"
+		},
+		{
+			"region": "TN",
+			"state": "Tennessee",
+			"party": "R",
+			"winner": "Bill Hagerty",
+			"sourceUpdatedAt": "2026-11-04 08:16:31.719184+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/tennessee/"
+		},
+		{
+			"region": "TX",
+			"state": "Texas",
+			"party": "D",
+			"winner": "James Talarico",
+			"sourceUpdatedAt": "2026-11-05 19:55:11.993318+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/texas/"
+		},
+		{
+			"region": "VA",
+			"state": "Virginia",
+			"party": "D",
+			"winner": "Mark Warner",
+			"sourceUpdatedAt": "2026-11-05 20:11:00.954997+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/virginia/"
+		},
+		{
+			"region": "WV",
+			"state": "West Virginia",
+			"party": "R",
+			"winner": "Shelley Moore Capito",
+			"sourceUpdatedAt": "2026-11-04 07:36:07.229033+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/west-virginia/"
+		},
+		{
+			"region": "WY",
+			"state": "Wyoming",
+			"party": "R",
+			"winner": "Harriet Hageman",
+			"sourceUpdatedAt": "2026-11-04 07:02:41.529241+00",
+			"url": "https://www.270towin.com/2026-election-results-live/state/wyoming/"
+		}
+	]
+}

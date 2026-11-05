@@ -26,18 +26,25 @@
 	 * derived: if neither candidate in a state holds the seat, it is an open
 	 * seat, which is a fact about the data rather than a label to maintain.
 	 *
-	 * The interactive map now starts with the current party holding each seat
-	 * on the 2026 ballot, including Florida and Ohio special elections.
+	 * The map now starts with the sourced November 5 results snapshot.
+	 * The race ratings and incumbent tracker below are pre-election archives.
 	 */
 	import ElectionPageShell from '$lib/components/electionpage/ElectionPageShell.svelte';
 	import ChamberOdds from '$lib/components/marketodds/ChamberOdds.svelte';
 	import ElectionDataNotes from '$lib/components/electiondata/ElectionDataNotes.svelte';
 	import type { PageData } from './$types';
+	import senateResults from '$lib/data/senate2026Results.json';
+	const resultsChecked =
+		new Date(senateResults.checkedAt).toLocaleString('en-US', {
+			timeZone: 'UTC',
+			dateStyle: 'medium',
+			timeStyle: 'short'
+		}) + ' UTC';
 
 	let { data }: { data: PageData } = $props();
 
-	const mapEmbedUrl = '/app/usa/senate/2026/blank?embed=1&current-senate=1';
-	const mapFullUrl = '/app/usa/senate/2026/blank?current-senate=1';
+	const mapEmbedUrl = '/app/usa/senate/2026/results?embed=home';
+	const mapFullUrl = '/app/usa/senate/2026/results';
 
 	type Party = 'Democratic' | 'Republican' | 'Independent';
 	type Rating = 'Safe' | 'Likely' | 'Lean' | 'Tilt' | 'Toss-Up';
@@ -651,16 +658,16 @@
 </script>
 
 <svelte:head>
-	<title>2026 Senate Elections | All 35 Races, Map &amp; Ratings</title>
+	<title>2026 Senate Election Results | Map &amp; Archived Ratings</title>
 	<meta
 		name="description"
-		content="Explore all 35 Senate seats on the 2026 ballot, including incumbents, primary dates, official state election links, selected race ratings, and control odds."
+		content="View reported 2026 Senate election results, uncalled races, and an interactive results map. Compare the election with archived pre-election ratings."
 	/>
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content="2026 Senate Elections | All 35 Races and Map" />
+	<meta property="og:title" content="2026 Senate Election Results | All 35 Races and Map" />
 	<meta
 		property="og:description"
-		content="Review all 35 2026 Senate contests, current incumbents, primary dates, official state election links, and control odds."
+		content="Reported winners, uncalled races, and the next Senate's composition, with an interactive map and archived pre-election ratings."
 	/>
 	<meta name="twitter:card" content="summary_large_image" />
 	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd)}</` + `script>`}
@@ -669,29 +676,28 @@
 <ElectionPageShell
 	active="Senate"
 	eyebrow="2026 Midterms · U.S. Senate"
-	title="2026 Senate Elections"
-	tagline="35 seats. A narrow road to 51."
-	intro="Thirty-five seats are on the ballot, including two special elections. Republicans defend 22; use the map to explore how each contest could shape control of the Senate."
-	baseline="Current party holding each contested seat, including Florida and Ohio; independents are grouped with the Democratic caucus in the total."
+	title="2026 Senate Election Results"
+	tagline={`${35 - senateResults.won.uncalled} of 35 races called.`}
+	intro={`The map shows reported 2026 winners and uncalled races. Including seats not on the ballot, the Democratic caucus has ${senateResults.totals.D} seats and Republicans have ${senateResults.totals.R}, with ${senateResults.totals.uncalled} races uncalled.`}
+	baseline={`Decision Desk HQ results snapshot checked ${resultsChecked}. Democratic totals include two independent senators. These are reported calls, not certified final results.`}
 >
 	<section class="mt-5">
 		<div class="mb-3">
 			<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-				Build a Senate scenario
+				Reported results map
 			</h2>
 			<p class="text-xs text-neutral-500">
-				Starts with the current party holding each seat on the 2026 ballot, including the Florida
-				and Ohio special elections. The map groups the two independents with the Democratic caucus
-				in its total. Change any seat to explore a scenario; this is an incumbent baseline, not a
-				forecast.
+				Select a state to see its winner. Tan marks uncalled races; gray states had no election.
+				Choose “Customize scenario” to edit the map, then “Reset to results” to restore the reported
+				calls.
+				<a href="/#senate-races" class="underline">View all 35 race results</a>.
 			</p>
 		</div>
 		<div class="overflow-hidden rounded-md border border-neutral-200 bg-white shadow-sm">
 			<iframe
 				src={mapEmbedUrl}
 				title="2026 U.S. Senate Interactive Election Map"
-				class="block w-full"
-				style="height: 610px; border: 0;"
+				class="block h-[900px] w-full border-0 min-[900px]:h-[650px]"
 			></iframe>
 		</div>
 		<div class="mt-3 flex flex-wrap gap-2 text-sm">
@@ -699,7 +705,7 @@
 				href={mapFullUrl}
 				class="rounded bg-[#D83A45] px-4 py-2 font-bold text-white hover:bg-[#b92f39]"
 			>
-				Open Full Interactive Map
+				Open Scenario Editor
 			</a>
 		</div>
 	</section>
@@ -707,7 +713,9 @@
 	<section class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4" aria-label="Key numbers">
 		<div class="rounded-md border border-neutral-200 bg-white p-4 shadow-sm">
 			<div class="mb-3 h-1.5 w-12 rounded-full" style="background:#D83A45"></div>
-			<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">Senate now</div>
+			<div class="text-[11px] font-bold uppercase tracking-wide text-neutral-500">
+				Entering Election Day
+			</div>
 			<div class="mt-1 text-2xl font-black tracking-tight text-[#061a55]">
 				53 R &middot; 45 D &middot; 2 I
 			</div>
@@ -752,7 +760,7 @@
 			>
 				<div>
 					<h2 class="text-sm font-black uppercase tracking-wide text-[#061a55]">
-						Selected competitive 2026 races
+						Pre-election race ratings (archive)
 					</h2>
 					<p class="text-xs text-neutral-500">
 						A selected set of contests; ratings follow Sabato&rsquo;s Crystal Ball. Safe seats are

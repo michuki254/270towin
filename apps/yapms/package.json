@@ -9,6 +9,8 @@
 		"start": "dotenv -e ../../.env -- node ./build/index.js",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"smoke:routes": "node ./scripts/smoke-public-routes.mjs",
+		"results:update:senate": "node ./scripts/update-senate-results.mjs",
+		"test:senate-results": "node --test ./scripts/senate-results.test.mjs",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint-no-warnings": "prettier --plugin prettier-plugin-svelte --check . && eslint --max-warnings 0 .",
 		"lint": "prettier --plugin prettier-plugin-svelte --check . && eslint .",

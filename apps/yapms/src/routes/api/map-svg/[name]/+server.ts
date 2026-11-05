@@ -11,7 +11,11 @@ export const GET: RequestHandler = ({ params }) => {
 	return new Response(svg, {
 		headers: {
 			'content-type': 'image/svg+xml; charset=utf-8',
-			'cache-control': 'public, max-age=31536000, immutable'
+			// The 2026 results snapshot can change while races remain uncalled.
+			'cache-control':
+				params.name.replace(/\.svg$/, '') === 'usa-senate-2026-results'
+					? 'public, max-age=60, must-revalidate'
+					: 'public, max-age=31536000, immutable'
 		}
 	});
 };

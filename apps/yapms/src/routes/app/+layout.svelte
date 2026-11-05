@@ -42,6 +42,8 @@
 	const { children }: { children: Snippet } = $props();
 
 	function handleKeyDown(event: KeyboardEvent) {
+		// Embedded maps expose their own controls; editor hotkeys must not mutate a results view.
+		if (homeEmbed) return;
 		$InteractionStore.set(event.code, true);
 
 		if (event.target instanceof Element && event.target.id === 'map-div') {
@@ -109,7 +111,12 @@
 />
 
 {#if homeEmbed}
-	<HomeMap>{@render children()}</HomeMap>
+	<HomeMap
+		election={page.params.map === 'senate' ? 'senate' : 'presidential'}
+		resultBaseline={page.params.map === 'senate' &&
+			page.params.year === '2026' &&
+			page.params.variant === 'results'}>{@render children()}</HomeMap
+	>
 {:else}
 	<div class="flex flex-col h-full">
 		{#if $PresentationModeStore.enabled}

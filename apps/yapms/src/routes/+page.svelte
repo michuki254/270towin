@@ -1,7 +1,37 @@
 <script lang="ts">
 	import SiteFooter from '$lib/components/sitefooter/SiteFooter.svelte';
+	import type { PageData } from './$types';
+	import senateResults from '$lib/data/senate2026Results.json';
+	const resultsChecked =
+		new Date(senateResults.checkedAt).toLocaleString('en-US', {
+			timeZone: 'UTC',
+			dateStyle: 'medium',
+			timeStyle: 'short'
+		}) + ' UTC';
+	const uncalledStates = senateResults.races
+		.filter((race) => race.party === null)
+		.map((race) => race.state)
+		.join(' and ');
 
-	let { data } = $props();
+	let { data }: { data: PageData } = $props();
+	const resultsUrl = 'https://www.270towin.com/2026-election-results-live/';
+	const resultLinks = [
+		{
+			label: 'U.S. Senate',
+			detail: 'Senate control and race results',
+			href: 'https://www.270towin.com/content/2026-senate-election-live-results/'
+		},
+		{
+			label: 'U.S. House',
+			detail: 'House control and district results',
+			href: 'https://www.270towin.com/content/2026-house-election-live-results/'
+		},
+		{
+			label: 'Governors',
+			detail: 'Results from the states',
+			href: 'https://www.270towin.com/content/2026-governor-election-live-results/'
+		}
+	];
 	const predictionMarkets = $derived(data?.presidential?.odds ?? []);
 	const marketsAsOf = $derived(
 		data?.presidential?.ok
@@ -14,20 +44,22 @@
 	);
 	const coverage = [
 		{
-			tag: '2026 MIDTERMS',
-			title: 'Explore the race for control of Congress',
+			tag: '2026 MIDTERM RESULTS',
+			title: 'Follow the results of the November 3 election',
 			description:
-				'Build your own Senate and House scenarios, compare the starting balance, and follow the contests that could decide the majority.',
-			href: '/2026-senate-election',
-			image: '/path-to-win-logo.svg'
+				'Visit 270toWin for reported winners, outstanding races, and results by state for the Senate, House, and governors.',
+			href: resultsUrl,
+			image: '',
+			external: true
 		},
 		{
-			tag: 'ELECTION MARKETS',
-			title: 'Follow the latest election market movements',
+			tag: 'THE NEXT PRESIDENTIAL ELECTION',
+			title: 'Look ahead to the road to 270 in 2028',
 			description:
-				'See how tracked election markets have changed over the past day, week, and month, with a timestamp and source for each update.',
-			href: '/news',
-			image: ''
+				'Start with the certified 2024 Electoral College map, change state ratings, and explore your own path to the White House.',
+			href: '/2028-presidential-election-interactive-map',
+			image: '/path-to-win-logo.svg',
+			external: false
 		},
 		{
 			tag: 'RESULTS & HISTORY',
@@ -35,62 +67,160 @@
 			description:
 				'Explore historical presidential results and compare how the Electoral College map has changed across election cycles.',
 			href: '/historical-presidential-elections',
-			image: ''
+			image: '',
+			external: false
 		}
 	];
 </script>
 
 <svelte:head>
-	<title>2028 Presidential Election Interactive Map | Path to Win</title>
+	<title>2026 Senate Election Results &amp; Interactive Map | Path to Win</title>
 	<meta
 		name="description"
-		content="Create your 2028 Electoral College map. Start with the certified 2024 result, change state ratings, and find a path to 270 electoral votes. Explore election results and markets."
+		content="View reported 2026 Senate election results by state, called winners, uncalled races, and the balance of the next Senate. Customize a separate map scenario."
 	/>
-	<meta property="og:title" content="2028 Presidential Election Interactive Map | Path to Win" />
+	<meta
+		property="og:title"
+		content="2026 Senate Election Results & Interactive Map | Path to Win"
+	/>
 	<meta
 		property="og:description"
-		content="Build a path to 270 electoral votes, follow election markets, and explore U.S. election results."
+		content="2026 midterm election results, an interactive Senate map, and a look ahead to the 2028 presidential election."
 	/>
 </svelte:head>
 
 <div class="home-page">
 	<main class="page-grid">
 		<div class="main-column">
-			<div class="latest">
-				<span>MARKET WATCH</span><a href="/news"
-					>Explore the latest moves in election prediction markets <span aria-hidden="true">→</span
-					></a
-				>
-			</div>
+			<nav class="results-banner" aria-label="2026 election results">
+				<strong>2026 ELECTION RESULTS</strong>
+				<a href="#senate-map">Results map <span aria-hidden="true">↓</span></a>
+				<a href="#senate-races">Results by race <span aria-hidden="true">↓</span></a>
+			</nav>
 			<section aria-labelledby="home-title">
-				<h1 id="home-title">2028 Presidential Election Interactive Map</h1>
-				<p class="tagline">Every state counts. Find your path to 270.</p>
 				<nav class="election-tabs" aria-label="Election maps">
-					<a class="active" href="#presidential-map" aria-current="page">President</a>
-					<a href="/2026-senate-interactive-map">Senate</a>
+					<strong>2026 Midterm Maps:</strong>
+					<a class="active" href="#senate-map" aria-current="page">Senate</a>
 					<a href="/2026-house-interactive-map">House</a>
 					<a href="/2026-governor-interactive-map">Governor</a>
+					<a href="#senate-races">Election Results</a>
+					<a href="/2028-presidential-election-interactive-map">2028 Presidential Map</a>
 				</nav>
+				<h1 id="home-title">2026 Senate Election Results Map</h1>
+				<p class="tagline">35 U.S. Senate seats contested in the 2026 midterms</p>
+				<p class="archive-notice">
+					<span>REPORTED RESULTS</span>
+					{35 - senateResults.won.uncalled} of 35 races called. Snapshot checked {resultsChecked}.
+				</p>
 				<p class="intro">
-					It takes <strong>270 electoral votes</strong> to win the presidency. Choose a color and select
-					states on the map to build your 2028 scenario. Explore different combinations, then share your
-					path to the White House.
+					Reported calls put the next Senate at <strong
+						>{senateResults.totals.D} Democratic-caucus seats</strong
+					>
+					and
+					<strong>{senateResults.totals.R} Republican seats</strong>{#if senateResults.totals.I},
+						plus <strong>{senateResults.totals.I} independent / other seats</strong>{/if}.
+					{#if senateResults.won.uncalled}<strong>{uncalledStates}</strong> remain uncalled.{:else}All
+						35 races have been called.{/if}
+					The totals include the 65 seats not on the 2026 ballot.
 				</p>
 				<p class="baseline">
-					Starting map: <a href="/2024-presidential-election-results">certified 2024 results</a>.
-					Your edits are a scenario, not a forecast.
+					Select a state to see its reported winner. Blue and red show called races; tan means
+					uncalled, and gray means no election. Choose “Customize scenario” to make your own
+					changes, or “Reset to results” to return to this snapshot.
 				</p>
-				<div id="presidential-map" class="map-wrap">
+				<div id="senate-map" class="map-wrap">
+					<div class="map-heading">
+						<strong>2026 reported results</strong><span
+							>2026 contested seats · 100-seat chamber</span
+						>
+					</div>
 					<iframe
-						src="/app/usa/presidential/2028/2024map?embed=home"
-						title="Interactive Electoral College map with color palette and vote totals"
+						src="/app/usa/senate/2026/results?embed=home"
+						title="2026 Senate election results map with reported winners and uncalled races"
 					></iframe>
 				</div>
 				<p class="map-note">
-					Maine and Nebraska allocate some electoral votes by congressional district. <a
-						href="/election-data-methodology">About our data and sources</a
-					>
+					Source: <a href={senateResults.referenceUrl} target="_blank" rel="noopener noreferrer"
+						>Decision Desk HQ, as used by 270toWin</a
+					>. This is a dated snapshot of reported calls, not certified final results. Democratic
+					totals include two independent senators who caucus with the Democrats.
+					<a href="/election-data-methodology">About our data</a>
 				</p>
+			</section>
+
+			<section class="senate-balance" aria-labelledby="balance-title">
+				<div class="section-heading">
+					<h2 id="balance-title">The next Senate</h2>
+					<a href="#senate-races">View all 35 races →</a>
+				</div>
+				<table>
+					<thead
+						><tr
+							><th scope="col">Seat breakdown</th><th scope="col" class="democratic"
+								>Democratic caucus</th
+							><th scope="col" class="republican">Republicans</th><th scope="col">Uncalled</th><th
+								scope="col">Total</th
+							></tr
+						></thead
+					>
+					<tbody>
+						<tr
+							><th scope="row">Reported composition</th><td class="democratic"
+								>{senateResults.totals.D}</td
+							><td class="republican">{senateResults.totals.R}</td><td
+								>{senateResults.won.uncalled}</td
+							><td>100</td></tr
+						>
+						<tr
+							><th scope="row">2026 races</th><td class="democratic">{senateResults.won.D}</td><td
+								class="republican">{senateResults.won.R}</td
+							><td>{senateResults.won.uncalled}</td><td>35</td></tr
+						>
+						<tr
+							><th scope="row">Not on the 2026 ballot</th><td class="democratic">34</td><td
+								class="republican">31</td
+							><td>0</td><td>65</td></tr
+						>
+					</tbody>
+				</table>
+			</section>
+
+			<section id="senate-races" class="senate-balance" aria-labelledby="race-results-title">
+				<div class="section-heading">
+					<h2 id="race-results-title">2026 Senate results by state</h2>
+				</div>
+				<p class="map-note">
+					Called winners and uncalled races as of {resultsChecked}. Florida and Ohio held special
+					elections.
+				</p>
+				<table class="race-results">
+					<thead
+						><tr
+							><th scope="col">State</th><th scope="col">Reported winner</th><th scope="col"
+								>Status</th
+							></tr
+						></thead
+					>
+					<tbody
+						>{#each senateResults.races as race}<tr>
+								<th scope="row"
+									><a href={race.url} target="_blank" rel="noopener noreferrer"
+										>{race.state}{race.region.endsWith('-S') ? ' (special)' : ''} ↗</a
+									></th
+								>
+								<td>{race.winner ?? '—'}</td>
+								<td class:democratic={race.party === 'D'} class:republican={race.party === 'R'}
+									>{race.party === 'D'
+										? 'Democratic win'
+										: race.party === 'R'
+											? 'Republican win'
+											: race.party === 'I'
+												? 'Independent / other win'
+												: 'Uncalled'}</td
+								>
+							</tr>{/each}</tbody
+					>
+				</table>
 			</section>
 
 			<section class="coverage" aria-labelledby="coverage-title">
@@ -102,9 +232,22 @@
 					<article class="story">
 						<div>
 							<span class="eyebrow">{story.tag}</span>
-							<h3><a href={story.href}>{story.title}</a></h3>
+							<h3>
+								<a
+									href={story.href}
+									target={story.external ? '_blank' : undefined}
+									rel={story.external ? 'noopener noreferrer' : undefined}>{story.title}</a
+								>
+							</h3>
 							<p>{story.description}</p>
-							<a class="read-more" href={story.href}>Explore <span aria-hidden="true">→</span></a>
+							<a
+								class="read-more"
+								href={story.href}
+								target={story.external ? '_blank' : undefined}
+								rel={story.external ? 'noopener noreferrer' : undefined}
+								>{story.external ? 'View on 270toWin' : 'Explore'}
+								<span aria-hidden="true">{story.external ? '↗' : '→'}</span></a
+							>
 						</div>
 						{#if story.image}<a
 								href={story.href}
@@ -118,6 +261,22 @@
 		</div>
 
 		<aside class="sidebar" aria-label="Election markets and resources">
+			<section class="results-panel" id="election-results" aria-labelledby="results-title">
+				<span class="eyebrow">NOVEMBER 3, 2026</span>
+				<h2 id="results-title">Midterm Election Results</h2>
+				<p>Follow reported results and race calls on 270toWin.</p>
+				{#each resultLinks as result}
+					<a href={result.href} target="_blank" rel="noopener noreferrer"
+						><span>{result.label}<small>{result.detail}</small></span><span aria-hidden="true"
+							>↗</span
+						></a
+					>
+				{/each}
+				<a class="all-results" href={resultsUrl} target="_blank" rel="noopener noreferrer"
+					>All results &amp; state map <span aria-hidden="true">↗</span></a
+				>
+				<p class="results-source">Results links open 270toWin in a new tab.</p>
+			</section>
 			<section class="market-panel">
 				<h2>Prediction Markets</h2>
 				<p class="market-question">
@@ -143,7 +302,7 @@
 			<section class="side-section" id="state-maps">
 				<h2>2026 Election Maps</h2>
 				<a href="/2026-senate-interactive-map"
-					><span>U.S. Senate<small>Build the next Senate majority</small></span><span
+					><span>U.S. Senate<small>Reported results and map scenarios</small></span><span
 						aria-hidden="true">→</span
 					></a
 				>
@@ -153,7 +312,7 @@
 					></a
 				>
 				<a href="/2026-governor-interactive-map"
-					><span>Governors<small>Map the races for state leadership</small></span><span
+					><span>Governors<small>Explore the 2026 governor contests</small></span><span
 						aria-hidden="true">→</span
 					></a
 				>
@@ -214,7 +373,7 @@
 	.page-grid {
 		max-width: 1352px;
 		margin: auto;
-		padding: 72px 16px 68px;
+		padding: 38px 16px 68px;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 288px;
 		gap: 44px;
@@ -232,15 +391,16 @@
 		outline: 3px solid #245493;
 		outline-offset: 4px;
 	}
-	.latest {
+	.results-banner {
 		display: flex;
-		min-height: 35px;
-		background: #f0f0f0;
+		min-height: 42px;
+		background: #f0f1f3;
+		border: 1px solid #e0e1e4;
 		align-items: center;
 		margin-bottom: 24px;
 		font-size: 13px;
 	}
-	.latest > span {
+	.results-banner > strong {
 		align-self: stretch;
 		display: flex;
 		align-items: center;
@@ -248,13 +408,16 @@
 		color: white;
 		background: #b82732;
 		clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
-		font-size: 11px;
+		font-size: 13px;
 		font-weight: 700;
 		letter-spacing: 0.5px;
 		white-space: nowrap;
 	}
-	.latest a {
-		padding: 7px 12px;
+	.results-banner a {
+		flex: 1;
+		padding: 10px 12px;
+		text-align: center;
+		border-left: 1px solid #e0e1e4;
 		font-weight: 700;
 		color: #353535;
 	}
@@ -273,19 +436,43 @@
 	}
 	.election-tabs {
 		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
 		gap: 5px;
 		margin-bottom: 18px;
+	}
+	.election-tabs > strong {
+		font-size: 13px;
+		margin-right: 7px;
 	}
 	.election-tabs a {
 		font-size: 12px;
 		padding: 5px 12px;
-		background: #eff2f5;
+		background: white;
+		border: 1px solid #c6ced8;
 		border-radius: 2px;
 		font-weight: 700;
 	}
 	.election-tabs .active {
 		background: #285b97;
+		border-color: #285b97;
 		color: white;
+	}
+	.archive-notice {
+		font-size: 13px;
+		line-height: 1.7;
+		color: #646b74;
+		margin: 0 0 20px;
+	}
+	.archive-notice > span {
+		display: inline-block;
+		padding: 3px 7px;
+		margin-right: 7px;
+		background: #f0f2f5;
+		color: #5b6470;
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 0.5px;
 	}
 	.intro {
 		font-size: 16px;
@@ -294,21 +481,35 @@
 	}
 	.baseline {
 		margin: 10px 0 25px;
-		font-size: 12px;
-		color: #727272;
+		font-size: 14px;
+		color: #62666c;
 		line-height: 1.5;
 	}
-	.baseline a,
 	.map-note a {
 		text-decoration: underline;
 	}
 	.map-wrap {
 		scroll-margin-top: 16px;
 	}
+	.map-heading {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 6px 16px;
+		padding: 12px 14px;
+		margin-bottom: 18px;
+		background: #f5f6f8;
+		border-top: 2px solid #294f83;
+		font-size: 13px;
+	}
+	.map-heading span {
+		color: #676f79;
+		font-size: 12px;
+	}
 	iframe {
 		display: block;
 		width: 100%;
-		height: 570px;
+		height: 650px;
 		border: 0;
 		background: white;
 	}
@@ -325,6 +526,95 @@
 	}
 	.market-panel {
 		text-align: center;
+		margin-top: 32px;
+	}
+	.results-panel {
+		border-top: 3px solid #b82732;
+		background: #f6f7f9;
+		padding: 20px;
+		scroll-margin-top: 20px;
+	}
+	.results-panel h2 {
+		margin-top: 8px;
+		font-size: 22px;
+	}
+	.results-panel > p {
+		margin: 12px 0;
+		font-size: 13px;
+		line-height: 1.6;
+		color: #62666c;
+	}
+	.results-panel > a {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 12px;
+		padding: 14px 0;
+		border-top: 1px solid #dde1e7;
+		font-size: 15px;
+		font-weight: 700;
+	}
+	.results-panel small {
+		display: block;
+		margin-top: 5px;
+		font-size: 11px;
+		font-weight: 400;
+		color: #62666c;
+		line-height: 1.5;
+	}
+	.results-panel > .all-results {
+		font-size: 12px;
+		padding-bottom: 0;
+	}
+	.results-panel > .results-source {
+		font-size: 10px;
+		margin-bottom: 0;
+	}
+	.senate-balance {
+		margin-top: 34px;
+		scroll-margin-top: 20px;
+	}
+	.race-results td {
+		font-size: 13px;
+		font-weight: 400;
+		text-align: left;
+	}
+	.race-results th {
+		text-align: left;
+	}
+	.senate-balance h2 {
+		font-size: 21px;
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 13px;
+	}
+	th,
+	td {
+		padding: 13px 10px;
+		text-align: center;
+		border-bottom: 1px solid #e3e5e8;
+	}
+	th:first-child {
+		text-align: left;
+		padding-left: 0;
+	}
+	thead {
+		font-size: 11px;
+	}
+	tbody th {
+		font-weight: 400;
+	}
+	td {
+		font-weight: 700;
+		font-size: 16px;
+	}
+	.democratic {
+		color: #245493;
+	}
+	.republican {
+		color: #b82732;
 	}
 	.market-question {
 		font-size: 14px;
@@ -538,7 +828,7 @@
 			margin-top: 0;
 		}
 		iframe {
-			height: 580px;
+			height: 700px;
 		}
 	}
 	@media (max-width: 600px) {
@@ -553,23 +843,43 @@
 		.tagline {
 			font-size: 16px;
 		}
-		.latest {
+		.results-banner {
 			font-size: 11px;
 			margin-bottom: 22px;
+			flex-wrap: wrap;
 		}
-		.latest > span {
-			font-size: 9px;
-			padding-left: 8px;
+		.results-banner > strong {
+			font-size: 12px;
+			width: 100%;
+			clip-path: none;
+			justify-content: center;
+		}
+		.election-tabs > strong {
+			width: 100%;
+			margin-bottom: 4px;
+		}
+		.election-tabs a {
+			padding: 7px 9px;
+		}
+		.senate-balance .section-heading {
+			flex-wrap: wrap;
+		}
+		th,
+		td {
+			padding: 12px 5px;
+		}
+		table {
+			font-size: 12px;
 		}
 		.intro {
 			font-size: 14px;
 		}
 		.baseline {
-			font-size: 11px;
+			font-size: 13px;
 			margin-bottom: 20px;
 		}
 		iframe {
-			height: 650px;
+			height: 900px;
 		}
 		.sidebar {
 			grid-template-columns: 1fr;
